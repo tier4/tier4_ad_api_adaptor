@@ -17,11 +17,13 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
+#include "autoware_external_api_msgs/msg/vehicle_command_stamped.hpp"
 #include "autoware_external_api_msgs/msg/vehicle_status_stamped.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "autoware_vehicle_msgs/msg/steering.hpp"
 #include "autoware_vehicle_msgs/msg/turn_signal.hpp"
 #include "autoware_vehicle_msgs/msg/shift_stamped.hpp"
+#include "autoware_vehicle_msgs/msg/vehicle_command.hpp"
 
 namespace external_api
 {
@@ -32,13 +34,17 @@ public:
   explicit VehicleStatus(const rclcpp::NodeOptions & options);
 
 private:
-  // ros interface
+  // ros interface for vehicle status
   rclcpp::Publisher<autoware_external_api_msgs::msg::VehicleStatusStamped>::SharedPtr pub_status_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr sub_twist_;
   rclcpp::Subscription<autoware_vehicle_msgs::msg::Steering>::SharedPtr sub_steering_;
   rclcpp::Subscription<autoware_vehicle_msgs::msg::TurnSignal>::SharedPtr sub_turn_signal_;
   rclcpp::Subscription<autoware_vehicle_msgs::msg::ShiftStamped>::SharedPtr sub_gear_shift_;
+
+  // ros interface for vehicle command
+  rclcpp::Publisher<autoware_external_api_msgs::msg::VehicleCommandStamped>::SharedPtr pub_cmd_;
+  rclcpp::Subscription<autoware_vehicle_msgs::msg::VehicleCommand>::SharedPtr sub_cmd_;
 
   // ros callback
   void onTimer();

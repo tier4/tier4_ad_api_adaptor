@@ -101,6 +101,19 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
     {
       gear_shift_ = msg;
     });
+
+  pub_cmd_ = create_publisher<autoware_external_api_msgs::msg::VehicleCommandStamped>(
+    "/api/external/get/command/selected/vehicle", rclcpp::QoS(1));
+  sub_cmd_ = create_subscription<autoware_vehicle_msgs::msg::VehicleCommand>(
+    "/control/vehicle_cmd", rclcpp::QoS(1),
+    [this](const autoware_vehicle_msgs::msg::VehicleCommand::ConstSharedPtr msg)
+    {
+      autoware_external_api_msgs::msg::VehicleCommandStamped cmd;
+      cmd.stamp = msg->header.stamp;
+      cmd.command.velocity = msg->control.velocity;
+      cmd.command.acceleration = msg->control.acceleration;
+      pub_cmd_->publish(cmd);
+    });
 }
 
 void VehicleStatus::onTimer()
