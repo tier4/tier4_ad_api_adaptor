@@ -32,6 +32,11 @@ Emergency::Emergency(const rclcpp::NodeOptions & options)
   cli_ = proxy.create_client<autoware_external_api_msgs::srv::SetEmergency>(
     "/api/autoware/set/emergency",
     rmw_qos_profile_services_default);
+  pub_emergency_ = create_publisher<autoware_external_api_msgs::msg::Emergency>(
+    "/api/external/get/emergency", rclcpp::QoS(1));
+  sub_emergency_ = create_subscription<autoware_external_api_msgs::msg::Emergency>(
+    "/api/autoware/get/emergency", rclcpp::QoS(1),
+    std::bind(&Emergency::getEmergency, this, _1));
 }
 
 void Emergency::setEmergency(
@@ -44,6 +49,12 @@ void Emergency::setEmergency(
     return;
   }
   response->status = resp->status;
+}
+
+void Emergency::getEmergency(
+  const autoware_external_api_msgs::msg::Emergency::SharedPtr message)
+{
+  pub_emergency_->publish(*message);
 }
 
 }  // namespace external_api
