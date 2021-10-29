@@ -26,6 +26,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/route.cpp
   src/service.cpp
   src/start.cpp
+  src/vehicle_status.cpp
   src/velocity.cpp
   src/version.cpp
 )
@@ -40,6 +41,7 @@ rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::MetadataPackages
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Route")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Service")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Start")
+rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::VehicleStatus")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Velocity")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Version")
 
