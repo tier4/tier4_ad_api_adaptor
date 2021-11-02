@@ -21,6 +21,16 @@ Map::Map(const rclcpp::NodeOptions & options)
 : Node("external_api_map", options)
 {
   using namespace std::placeholders;
+  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+
+  group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+  srv_lanelet_xml_ = proxy.create_service<autoware_external_api_msgs::srv::GetTextFile>(
+    "/api/external/get/map/lanelet/xml",
+    std::bind(&Map::getLaneletXml, this, _1, _2),
+    rmw_qos_profile_services_default, group_);
+  cli_lanelet_xml_ = proxy.create_client<autoware_external_api_msgs::srv::GetTextFile>(
+    "/api/autoware/get/map/lanelet/xml",
+    rmw_qos_profile_services_default);
 
   pub_map_info_ = create_publisher<autoware_external_api_msgs::msg::MapHash>(
     "/api/external/get/map/info/hash", rclcpp::QoS(1).transient_local());
@@ -32,6 +42,19 @@ Map::Map(const rclcpp::NodeOptions & options)
 void Map::getMapHash(const autoware_external_api_msgs::msg::MapHash::SharedPtr message)
 {
   pub_map_info_->publish(*message);
+}
+
+void Map::getLaneletXml(
+  const autoware_external_api_msgs::srv::GetTextFile::Request::SharedPtr request,
+  const autoware_external_api_msgs::srv::GetTextFile::Response::SharedPtr response)
+{
+  auto [status, resp] = cli_lanelet_xml_->call(request);
+  if (!autoware_api_utils::is_success(status)) {
+    response->status = status;
+    return;
+  }
+  response->file = resp->file;
+  response->status = resp->status;
 }
 
 }  // namespace external_api
