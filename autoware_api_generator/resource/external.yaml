@@ -1,0 +1,127 @@
+external/get/version:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/GetVersion
+external/set/service:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetService
+external/get/service:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Service
+external/get/diagnostics:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/ClassifiedDiagnostics
+external/set/engage:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/Engage
+external/get/engage:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/EngageStatus
+  default-qos:
+    pub: {depth: 5, reliability: default, durability: default}
+    sub: {depth: 1, reliability: default, durability: default}
+external/set/emergency:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetEmergency
+external/set/door:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetDoor
+external/get/vehicle/status:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/VehicleStatusStamped
+external/set/initialize_pose:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/InitializePose
+external/set/initialize_pose_auto:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/InitializePoseAuto
+external/set/route:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetRoute
+external/get/route:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Route
+external/set/clear_route:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/ClearRoute
+external/set/operator:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetOperator
+external/get/operator:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Operator
+external/set/observer:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetObserver
+external/get/observer:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Observer
+external/get/map/info/hash:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/MapHash
+external/set/pause_driving:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/PauseDriving
+external/set/velocity_limit:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetVelocityLimit
+external/set/command/local/control:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/ControlCommandStamped
+external/set/command/local/gear_shift:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/GearShiftStamped
+external/set/command/local/turn_signal:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/TurnSignalStamped
+external/set/command/local/heartbeat:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Heartbeat
+external/set/command/remote/control:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/ControlCommandStamped
+external/set/command/remote/gear_shift:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/GearShiftStamped
+external/set/command/remote/turn_signal:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/TurnSignalStamped
+external/set/command/remote/heartbeat:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Heartbeat
+external/get/command/selected/control:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/ControlCommandStamped
+external/get/command/selected/vehicle:
+  category: optional
+  behavior: topic
+  type: autoware_external_api_msgs/msg/ControlCommandStamped

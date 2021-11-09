@@ -22,21 +22,17 @@ Engage::Engage(const rclcpp::NodeOptions & options)
 : Node("external_api_engage", options)
 {
   using namespace std::placeholders;
+
   autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  auto srv_callback = std::bind(&Engage::setEngage, this, _1, _2);
+  auto sub_callback = std::bind(&Engage::onEngageStatus, this, _1);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_engage_ = proxy.create_service<autoware_external_api_msgs::srv::Engage>(
-    "/api/external/set/engage",
-    std::bind(&Engage::setEngage, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
-  cli_engage_ = proxy.create_client<autoware_external_api_msgs::srv::Engage>(
-    "/api/autoware/set/engage",
-    rmw_qos_profile_services_default);
-  pub_engage_status_ = create_publisher<autoware_external_api_msgs::msg::EngageStatus>(
-    "/api/external/get/engage", rclcpp::QoS(1));
-  sub_engage_status_ = create_subscription<autoware_vehicle_msgs::msg::Engage>(
-    "/api/autoware/get/engage", rclcpp::QoS(1),
-    std::bind(&Engage::onEngageStatus, this, _1));
+  srv_set_engage_ = ExternalEngageAPI::create_service(&proxy, srv_callback, group_);
+  cli_set_engage_ = InternalEngageAPI::create_client(&proxy);
+  pub_get_engage_ = ExternalStatusAPI::create_publisher(this);
+  sub_get_engage_ = InternalStatusAPI::create_subscription(this, sub_callback);
+
   sub_autoware_state_ = create_subscription<autoware_system_msgs::msg::AutowareState>(
     "/autoware/state", rclcpp::QoS(1),
     std::bind(&Engage::onAutowareState, this, _1));
@@ -45,15 +41,15 @@ Engage::Engage(const rclcpp::NodeOptions & options)
 }
 
 void Engage::setEngage(
-  const autoware_external_api_msgs::srv::Engage::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::Engage::Response::SharedPtr response)
+  const ExternalEngageAPI::RequestType::SharedPtr request,
+  const ExternalEngageAPI::ResponseType::SharedPtr response)
 {
   if (request->engage && !waiting_for_engage_) {
     response->status = autoware_api_utils::response_error("It is not ready to engage.");
     return;
   }
 
-  auto [status, resp] = cli_engage_->call(request);
+  auto [status, resp] = cli_set_engage_->call(request);
   if (!autoware_api_utils::is_success(status)) {
     response->status = status;
     return;
@@ -62,11 +58,10 @@ void Engage::setEngage(
 }
 
 void Engage::onEngageStatus(
-  const autoware_vehicle_msgs::msg::Engage::SharedPtr message)
+  const InternalStatusAPI::MessageType::SharedPtr message)
 {
-  auto msg = autoware_external_api_msgs::build<autoware_external_api_msgs::msg::EngageStatus>()
-    .stamp(message->stamp).engage(message->engage);
-  pub_engage_status_->publish(msg);
+  pub_get_engage_->publish(
+    ExternalStatusAPI::build_message().stamp(message->stamp).engage(message->engage));
 }
 
 void Engage::onAutowareState(

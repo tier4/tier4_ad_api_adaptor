@@ -1,0 +1,2 @@
+internal/set/engage: /api/autoware/set/engage
+internal/get/engage: /api/autoware/get/engage

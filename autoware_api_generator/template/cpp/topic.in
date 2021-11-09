@@ -1,0 +1,77 @@
+// Copyright 2021 Tier IV, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef @CPP_INCLUDE_GUARD@
+#define @CPP_INCLUDE_GUARD@
+
+#include <string>
+#include <utility>
+#include "@CPP_TOPIC_HEADER@"
+#include "@CPP_TYPE_HEADER@"
+
+namespace @CPP_NAMESPACE@
+{
+
+struct API
+{
+  using MessageType = @CPP_TYPE_NAME@;
+  using Subscription = @CPP_SUBSCRIPTION@<MessageType>::SharedPtr;
+  using Publisher = @CPP_PUBLISHER@<MessageType>::SharedPtr;
+
+  static inline std::string get_spec_name()
+  {
+    return "@API_SPEC_NAME@";
+  }
+
+  static inline std::string get_impl_name()
+  {
+    return "@API_IMPL_NAME@";
+  }
+
+  static inline rclcpp::QoS get_default_subscription_qos()
+  {
+    return @CPP_QOS_SUBSCRIBE@;
+  }
+
+  static inline rclcpp::QoS get_default_publisher_qos()
+  {
+    return @CPP_QOS_PUBLISH@;
+  }
+
+  static inline auto build_message()
+  {
+    return @CPP_TYPE_PACKAGE@::build<MessageType>();
+  }
+
+  template<class NodeT, class CallbackT>
+  static Subscription create_subscription(NodeT * node, CallbackT && callback)
+  {
+    return node->template create_subscription<MessageType>(
+      get_impl_name(),
+      get_default_subscription_qos(),
+      std::forward<CallbackT>(callback));
+  }
+
+  template<class NodeT>
+  static Publisher create_publisher(NodeT * node)
+  {
+    return node->template create_publisher<MessageType>(
+      get_impl_name(),
+      get_default_publisher_qos());
+  }
+};
+
+}  // namespace @CPP_NAMESPACE@
+
+#endif  // @CPP_INCLUDE_GUARD@

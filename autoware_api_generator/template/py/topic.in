@@ -1,0 +1,38 @@
+import rclpy
+import rclpy.qos
+from @PY_TYPE_IMPORT@ import @PY_TYPE_NAME@ as MessageType
+
+def get_spec_name():
+    return '@API_SPEC_NAME@'
+
+def get_impl_name():
+    return '@API_IMPL_NAME@'
+
+def get_default_subscription_qos():
+    return rclpy.qos.QoSProfile(
+        depth=@PY_QOS_SUBSCRIBE_DEPTH@,
+        reliability=rclpy.qos.ReliabilityPolicy.@PY_QOS_SUBSCRIBE_REL@,
+        durability=rclpy.qos.DurabilityPolicy.@PY_QOS_SUBSCRIBE_DUR@,
+    )
+
+def get_default_publisher_qos():
+    return rclpy.qos.QoSProfile(
+        depth=@PY_QOS_PUBLISH_DEPTH@,
+        reliability=rclpy.qos.ReliabilityPolicy.@PY_QOS_PUBLISH_REL@,
+        durability=rclpy.qos.DurabilityPolicy.@PY_QOS_PUBLISH_DUR@,
+    )
+
+def create_subscription(node, callback):
+    return node.create_subscription(
+        MessageType,
+        get_impl_name(),
+        callback,
+        get_default_subscription_qos(),
+    )
+
+def create_publisher(node):
+    return node.create_publisher(
+        MessageType,
+        get_impl_name(),
+        get_default_publisher_qos(),
+    )
