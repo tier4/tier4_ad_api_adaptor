@@ -1,0 +1,9 @@
+library-cpp:
+  service:
+    header: autoware_api_utils/autoware_api_utils.hpp
+    service: autoware_api_utils::Service
+    client: autoware_api_utils::Client
+  topic:
+    header: rclcpp/rclcpp.hpp
+    subscription: rclcpp::Subscription
+    publisher: rclcpp::Publisher

@@ -1,0 +1,9 @@
+library-cpp:
+  service:
+    header: rclcpp/rclcpp.hpp
+    service: rclcpp::Service
+    client: rclcpp::Client
+  topic:
+    header: rclcpp/rclcpp.hpp
+    subscription: rclcpp::Subscription
+    publisher: rclcpp::Publisher

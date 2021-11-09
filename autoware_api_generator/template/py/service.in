@@ -1,0 +1,15 @@
+import rclpy
+import rclpy.qos
+from @PY_TYPE_IMPORT@ import @PY_TYPE_NAME@ as ServiceType
+
+def get_spec_name():
+    return '@API_SPEC_NAME@'
+
+def get_impl_name():
+    return '@API_IMPL_NAME@'
+
+def create_service(node, callback):
+    return node.create_service(ServiceType, get_impl_name(), callback)
+
+def create_client(node):
+    return node.create_client(ServiceType, get_impl_name())

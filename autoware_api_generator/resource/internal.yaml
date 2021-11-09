@@ -1,0 +1,107 @@
+internal/set/engage:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/Engage
+internal/get/engage:
+  category: mandatory
+  behavior: topic
+  type: autoware_vehicle_msgs/msg/Engage
+  default-qos:
+    pub: {depth: 5, reliability: default, durability: default}
+    sub: {depth: 1, reliability: default, durability: default}
+internal/set/start_request:
+  category: mandatory
+  behavior: service
+  type: std_srvs/srv/Trigger
+internal/get/start_accepted:
+  category: mandatory
+  behavior: topic
+  type: autoware_debug_msgs/msg/BoolStamped
+internal/set/emergency:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetEmergency
+internal/set/initialize_pose:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/InitializePose
+internal/set/initialize_pose_auto:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/InitializePoseAuto
+internal/set/route:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetRoute
+internal/get/route:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Route
+internal/set/clear_route:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/ClearRoute
+internal/set/goal:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetPose
+internal/set/checkpoint:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetPose
+internal/set/operator:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetOperator
+internal/get/operator:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Operator
+internal/set/observer:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetObserver
+internal/get/observer:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/Observer
+internal/get/map/info/hash:
+  category: mandatory
+  behavior: topic
+  type: autoware_external_api_msgs/msg/MapHash
+internal/set/pause_driving:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/PauseDriving
+internal/set/velocity_limit:
+  category: mandatory
+  behavior: service
+  type: autoware_external_api_msgs/srv/SetVelocityLimit
+internal/get/velocity_limit:
+  category: mandatory
+  behavior: topic
+  type: autoware_planning_msgs/msg/VelocityLimit
+internal/set/traffic_light_states:
+  category: mandatory
+  behavior: topic
+  type: autoware_perception_msgs/msg/TrafficLightStateArray
+internal/set/crosswalk_states:
+  category: mandatory
+  behavior: topic
+  type: autoware_api_msgs/msg/CrosswalkStatus
+internal/set/intersection_states:
+  category: mandatory
+  behavior: topic
+  type: autoware_api_msgs/msg/IntersectionStatus
+#/set/slow_stop:
+#  behavior: service
+#/set/safety_stop:
+#  behavior: service
+#/set/start:
+#  behavior: service
+#/set/stop:
+#  behavior: service
+#/get/status/planning:
+#  behavior: topic
+#/get/status/driving:
+#  behavior: topic
