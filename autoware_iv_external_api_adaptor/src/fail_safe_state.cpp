@@ -23,9 +23,9 @@ FailSafeState::FailSafeState(const rclcpp::NodeOptions & options)
 {
   pub_state_ = create_publisher<autoware_external_api_msgs::msg::FailSafeStateStamped>(
     "/api/external/get/fail_safe/state", rclcpp::QoS(1));
-  sub_state_ = create_subscription<autoware_system_msgs::msg::EmergencyStateStamped>(
+  sub_state_ = create_subscription<autoware_auto_system_msgs::msg::EmergencyState>(
     "/system/emergency/emergency_state", rclcpp::QoS(1),
-    [this](const autoware_system_msgs::msg::EmergencyStateStamped::ConstSharedPtr msg)
+    [this](const autoware_auto_system_msgs::msg::EmergencyState::ConstSharedPtr msg)
     {
       pub_state_->publish(converter::to_external(*msg));
     });

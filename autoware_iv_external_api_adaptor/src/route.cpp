@@ -44,7 +44,7 @@ Route::Route(const rclcpp::NodeOptions & options)
   sub_get_route_ = create_subscription<autoware_external_api_msgs::msg::Route>(
     "/api/autoware/get/route", rclcpp::QoS(1).transient_local(),
     std::bind(&Route::onRoute, this, _1));
-  sub_autoware_state_ = create_subscription<autoware_system_msgs::msg::AutowareState>(
+  sub_autoware_state_ = create_subscription<autoware_auto_system_msgs::msg::AutowareState>(
     "/autoware/state", rclcpp::QoS(1),
     std::bind(&Route::onAutowareState, this, _1));
 
@@ -88,9 +88,9 @@ void Route::onRoute(
 }
 
 void Route::onAutowareState(
-  const autoware_system_msgs::msg::AutowareState::SharedPtr message)
+  const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message)
 {
-  using autoware_system_msgs::msg::AutowareState;
+  using autoware_auto_system_msgs::msg::AutowareState;
   waiting_for_route_ = (message->state == AutowareState::WAITING_FOR_ROUTE);
 }
 

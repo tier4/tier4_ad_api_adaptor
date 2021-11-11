@@ -17,10 +17,10 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
+#include "autoware_auto_system_msgs/msg/autoware_state.hpp"
 #include "autoware_external_api_msgs/srv/set_route.hpp"
 #include "autoware_external_api_msgs/srv/clear_route.hpp"
 #include "autoware_external_api_msgs/msg/route.hpp"
-#include "autoware_system_msgs/msg/autoware_state.hpp"
 
 namespace external_api
 {
@@ -34,7 +34,7 @@ private:
   using SetRoute = autoware_external_api_msgs::srv::SetRoute;
   using ClearRoute = autoware_external_api_msgs::srv::ClearRoute;
   using RouteMsg = autoware_external_api_msgs::msg::Route;
-  using AutowareState = autoware_system_msgs::msg::AutowareState;
+  using AutowareState = autoware_auto_system_msgs::msg::AutowareState;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
@@ -59,7 +59,7 @@ private:
   void onRoute(
     const autoware_external_api_msgs::msg::Route::ConstSharedPtr message);
   void onAutowareState(
-    const autoware_system_msgs::msg::AutowareState::SharedPtr message);
+    const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message);
 };
 
 }  // namespace external_api

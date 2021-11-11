@@ -12,27 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FAIL_SAFE_STATE_HPP_
-#define FAIL_SAFE_STATE_HPP_
-
-#include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
-#include "autoware_auto_system_msgs/msg/emergency_state.hpp"
-#include "autoware_external_api_msgs/msg/fail_safe_state_stamped.hpp"
 
-namespace external_api
+#include <rclcpp/rclcpp.hpp>
+
+#include <gtest/gtest.h>
+
+TEST(autoware_api_utils, instantiate)
 {
+  rclcpp::Node node("autoware_api_utils_test");
+  autoware_api_utils::ServiceProxyNodeInterface proxy(&node);
+}
 
-class FailSafeState : public rclcpp::Node
+int main(int argc, char ** argv)
 {
-public:
-  explicit FailSafeState(const rclcpp::NodeOptions & options);
-
-private:
-  rclcpp::Publisher<autoware_external_api_msgs::msg::FailSafeStateStamped>::SharedPtr pub_state_;
-  rclcpp::Subscription<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr sub_state_;
-};
-
-}  // namespace external_api
-
-#endif  // FAIL_SAFE_STATE_HPP_
+  testing::InitGoogleTest(&argc, argv);
+  rclcpp::init(argc, argv);
+  bool result = RUN_ALL_TESTS();
+  rclcpp::shutdown();
+  return result;
+}

@@ -17,10 +17,10 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
+#include "autoware_auto_system_msgs/msg/autoware_state.hpp"
+#include "autoware_auto_vehicle_msgs/msg/engage.hpp"
 #include "autoware_external_api_msgs/srv/engage.hpp"
 #include "autoware_external_api_msgs/msg/engage_status.hpp"
-#include "autoware_vehicle_msgs/msg/engage.hpp"
-#include "autoware_system_msgs/msg/autoware_state.hpp"
 
 namespace external_api
 {
@@ -33,8 +33,8 @@ public:
 private:
   using ExternalEngage = autoware_external_api_msgs::srv::Engage;
   using ExternalEngageStatus = autoware_external_api_msgs::msg::EngageStatus;
-  using VehicleEngageStatus = autoware_vehicle_msgs::msg::Engage;
-  using AutowareState = autoware_system_msgs::msg::AutowareState;
+  using VehicleEngageStatus = autoware_auto_vehicle_msgs::msg::Engage;
+  using AutowareState = autoware_auto_system_msgs::msg::AutowareState;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
@@ -52,9 +52,9 @@ private:
     const autoware_external_api_msgs::srv::Engage::Request::SharedPtr request,
     const autoware_external_api_msgs::srv::Engage::Response::SharedPtr response);
   void onEngageStatus(
-    const autoware_vehicle_msgs::msg::Engage::SharedPtr message);
+    const autoware_auto_vehicle_msgs::msg::Engage::SharedPtr message);
   void onAutowareState(
-    const autoware_system_msgs::msg::AutowareState::SharedPtr message);
+    const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message);
 };
 
 }  // namespace external_api

@@ -15,20 +15,18 @@
 #ifndef CONVERTER__FAIL_SAFE_STATE_HPP_
 #define CONVERTER__FAIL_SAFE_STATE_HPP_
 
+#include "autoware_auto_system_msgs/msg/emergency_state.hpp"
 #include "autoware_external_api_msgs/msg/fail_safe_state.hpp"
 #include "autoware_external_api_msgs/msg/fail_safe_state_stamped.hpp"
-#include "autoware_system_msgs/msg/emergency_state.hpp"
-#include "autoware_system_msgs/msg/emergency_state_stamped.hpp"
 
 namespace external_api::converter
 {
 
-using ExternalFailSafeState = autoware_external_api_msgs::msg::FailSafeState;
-using InternalFailSafeState = autoware_system_msgs::msg::EmergencyState;
 using ExternalFailSafeStateStamped = autoware_external_api_msgs::msg::FailSafeStateStamped;
-using InternalFailSafeStateStamped = autoware_system_msgs::msg::EmergencyStateStamped;
+using ExternalFailSafeState = autoware_external_api_msgs::msg::FailSafeState;
+using InternalFailSafeState = autoware_auto_system_msgs::msg::EmergencyState;
 
-ExternalFailSafeState to_external(const InternalFailSafeState & msg)
+ExternalFailSafeState to_external_state(const InternalFailSafeState & msg)
 {
   using External = ExternalFailSafeState;
   using Internal = InternalFailSafeState;
@@ -49,10 +47,10 @@ ExternalFailSafeState to_external(const InternalFailSafeState & msg)
   throw std::out_of_range("fail_safe_state=" + std::to_string(msg.state));
 }
 
-ExternalFailSafeStateStamped to_external(const InternalFailSafeStateStamped & msg)
+ExternalFailSafeStateStamped to_external(const InternalFailSafeState & msg)
 {
   return autoware_external_api_msgs::build<ExternalFailSafeStateStamped>()
-         .stamp(msg.stamp).state(to_external(msg.state));
+         .stamp(msg.stamp).state(to_external_state(msg));
 }
 
 }  // namespace external_api::converter
