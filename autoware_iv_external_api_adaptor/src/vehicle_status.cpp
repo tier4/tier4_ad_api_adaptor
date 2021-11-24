@@ -80,32 +80,32 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
   timer_ = rclcpp::create_timer(
     this, get_clock(), 200ms, std::bind(&VehicleStatus::onTimer, this));
 
-  sub_twist_ = create_subscription<geometry_msgs::msg::TwistStamped>(
-    "/vehicle/status/twist", rclcpp::QoS(1),
-    [this](const geometry_msgs::msg::TwistStamped::ConstSharedPtr msg)
+  sub_velocity_ = create_subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>(
+    "/vehicle/status/velocity_status", rclcpp::QoS(1),
+    [this](const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg)
     {
-      twist_ = msg;
+      velocity_ = msg;
     });
   sub_steering_ = create_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
-    "/vehicle/status/steering", rclcpp::QoS(1),
+    "/vehicle/status/steering_status", rclcpp::QoS(1),
     [this](const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg)
     {
       steering_ = msg;
     });
   sub_turn_indicators_ = create_subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>(
-    "/vehicle/status/turn_indicators", rclcpp::QoS(1),
+    "/vehicle/status/turn_indicators_status", rclcpp::QoS(1),
     [this](const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg)
     {
       turn_indicators_ = msg;
     });
   sub_hazard_lights_ = create_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsReport>(
-    "/vehicle/status/hazard_lights", rclcpp::QoS(1),
+    "/vehicle/status/hazard_lights_status", rclcpp::QoS(1),
     [this](const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr msg)
     {
       hazard_lights_ = msg;
     });
   sub_gear_shift_ = create_subscription<autoware_auto_vehicle_msgs::msg::GearReport>(
-    "/vehicle/status/gear", rclcpp::QoS(1),
+    "/vehicle/status/gear_status", rclcpp::QoS(1),
     [this](const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr msg)
     {
       gear_shift_ = msg;
@@ -114,7 +114,7 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
   pub_cmd_ = create_publisher<autoware_external_api_msgs::msg::VehicleCommandStamped>(
     "/api/external/get/command/selected/vehicle", rclcpp::QoS(1));
   sub_cmd_ = create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
-    "/control/command/ackermann_control_command", rclcpp::QoS(1),
+    "/control/command/control_cmd", rclcpp::QoS(1),
     [this](const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg)
     {
       autoware_external_api_msgs::msg::VehicleCommandStamped cmd;
@@ -128,7 +128,7 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
 void VehicleStatus::onTimer()
 {
   const auto subscriptions = {
-    std::make_pair(std::static_pointer_cast<const void>(twist_), "twist"),
+    std::make_pair(std::static_pointer_cast<const void>(velocity_), "velocity"),
     std::make_pair(std::static_pointer_cast<const void>(steering_), "steering"),
     std::make_pair(std::static_pointer_cast<const void>(turn_indicators_), "turn_indicators"),
     std::make_pair(std::static_pointer_cast<const void>(hazard_lights_), "hazard_lights_"),
@@ -147,7 +147,9 @@ void VehicleStatus::onTimer()
   try {
     autoware_external_api_msgs::msg::VehicleStatusStamped msg;
     msg.stamp = now();
-    msg.status.twist = twist_->twist;
+    msg.status.twist.linear.x = velocity_->longitudinal_velocity;
+    msg.status.twist.linear.y = velocity_->lateral_velocity;
+    msg.status.twist.angular.z = velocity_->heading_rate;
     msg.status.steering.data = convert(*steering_).data;
     msg.status.turn_signal = convert(convert(*turn_indicators_, *hazard_lights_));
     msg.status.gear_shift = convert(convert(*gear_shift_).shift);
