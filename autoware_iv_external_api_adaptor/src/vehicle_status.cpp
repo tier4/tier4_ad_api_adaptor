@@ -114,7 +114,7 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
   pub_cmd_ = create_publisher<autoware_external_api_msgs::msg::VehicleCommandStamped>(
     "/api/external/get/command/selected/vehicle", rclcpp::QoS(1));
   sub_cmd_ = create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
-    "/control/command/ackermann_control_command", rclcpp::QoS(1),
+    "/control/command/control_cmd", rclcpp::QoS(1),
     [this](const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg)
     {
       autoware_external_api_msgs::msg::VehicleCommandStamped cmd;
