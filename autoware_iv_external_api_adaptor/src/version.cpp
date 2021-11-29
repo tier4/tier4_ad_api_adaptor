@@ -34,7 +34,7 @@ void Version::getVersion(
   const autoware_external_api_msgs::srv::GetVersion::Request::SharedPtr,
   const autoware_external_api_msgs::srv::GetVersion::Response::SharedPtr response)
 {
-  response->version = "0.1.0";
+  response->version = "0.2.0";
   response->status = autoware_api_utils::response_success();
 }
 
