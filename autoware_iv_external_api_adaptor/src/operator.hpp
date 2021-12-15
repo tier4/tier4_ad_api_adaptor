@@ -16,7 +16,7 @@
 #define OPERATOR_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "autoware_external_api_msgs/srv/set_operator.hpp"
 #include "autoware_external_api_msgs/srv/set_observer.hpp"
 #include "autoware_external_api_msgs/msg/operator.hpp"
@@ -38,10 +38,10 @@ private:
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<SetOperator>::SharedPtr srv_set_operator_;
-  autoware_api_utils::Service<SetObserver>::SharedPtr srv_set_observer_;
-  autoware_api_utils::Client<SetOperator>::SharedPtr cli_set_operator_;
-  autoware_api_utils::Client<SetObserver>::SharedPtr cli_set_observer_;
+  tier4_api_utils::Service<SetOperator>::SharedPtr srv_set_operator_;
+  tier4_api_utils::Service<SetObserver>::SharedPtr srv_set_observer_;
+  tier4_api_utils::Client<SetOperator>::SharedPtr cli_set_operator_;
+  tier4_api_utils::Client<SetObserver>::SharedPtr cli_set_observer_;
   rclcpp::Publisher<GetOperator>::SharedPtr pub_get_operator_;
   rclcpp::Publisher<GetObserver>::SharedPtr pub_get_observer_;
   rclcpp::Subscription<GetOperator>::SharedPtr sub_get_operator_;

@@ -16,7 +16,7 @@
 #define ROUTE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "autoware_auto_system_msgs/msg/autoware_state.hpp"
 #include "autoware_external_api_msgs/srv/set_route.hpp"
 #include "autoware_external_api_msgs/srv/clear_route.hpp"
@@ -38,10 +38,10 @@ private:
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<SetRoute>::SharedPtr srv_set_route_;
-  autoware_api_utils::Client<SetRoute>::SharedPtr cli_set_route_;
-  autoware_api_utils::Service<ClearRoute>::SharedPtr srv_clear_route_;
-  autoware_api_utils::Client<ClearRoute>::SharedPtr cli_clear_route_;
+  tier4_api_utils::Service<SetRoute>::SharedPtr srv_set_route_;
+  tier4_api_utils::Client<SetRoute>::SharedPtr cli_set_route_;
+  tier4_api_utils::Service<ClearRoute>::SharedPtr srv_clear_route_;
+  tier4_api_utils::Client<ClearRoute>::SharedPtr cli_clear_route_;
   rclcpp::Publisher<RouteMsg>::SharedPtr pub_get_route_;
   rclcpp::Subscription<RouteMsg>::SharedPtr sub_get_route_;
   rclcpp::Subscription<AutowareState>::SharedPtr sub_autoware_state_;

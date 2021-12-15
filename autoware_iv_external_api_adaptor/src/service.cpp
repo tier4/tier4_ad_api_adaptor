@@ -21,7 +21,7 @@ Service::Service(const rclcpp::NodeOptions & options)
 : Node("external_api_service", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   srv_set_service_ = proxy.create_service<autoware_external_api_msgs::srv::SetService>(
     "/api/external/set/service",
@@ -39,7 +39,7 @@ void Service::setService(
   const autoware_external_api_msgs::srv::SetService::Response::SharedPtr response)
 {
   pub_get_service_->publish(request->mode);
-  response->status = autoware_api_utils::response_success();
+  response->status = tier4_api_utils::response_success();
 }
 
 }  // namespace external_api

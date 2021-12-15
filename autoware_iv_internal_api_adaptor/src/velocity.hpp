@@ -15,14 +15,15 @@
 #ifndef VELOCITY_HPP_
 #define VELOCITY_HPP_
 
-#include "rclcpp/rclcpp.hpp"
-#include "tier4_api_utils/tier4_api_utils.hpp"
-#include "autoware_external_api_msgs/srv/pause_driving.hpp"
-#include "autoware_external_api_msgs/srv/set_velocity_limit.hpp"
+#include <tier4_api_utils/tier4_api_utils.hpp>
+#include <rclcpp/rclcpp.hpp>
 
-namespace external_api
+#include <autoware_external_api_msgs/srv/pause_driving.hpp>
+#include <autoware_external_api_msgs/srv/set_velocity_limit.hpp>
+#include <autoware_planning_msgs/msg/velocity_limit.hpp>
+
+namespace internal_api
 {
-
 class Velocity : public rclcpp::Node
 {
 public:
@@ -31,13 +32,21 @@ public:
 private:
   using PauseDriving = autoware_external_api_msgs::srv::PauseDriving;
   using SetVelocityLimit = autoware_external_api_msgs::srv::SetVelocityLimit;
+  using VelocityLimit = autoware_planning_msgs::msg::VelocityLimit;
 
   // ros interface
-  rclcpp::CallbackGroup::SharedPtr group_;
   tier4_api_utils::Service<PauseDriving>::SharedPtr srv_pause_;
-  tier4_api_utils::Client<PauseDriving>::SharedPtr cli_pause_;
   tier4_api_utils::Service<SetVelocityLimit>::SharedPtr srv_velocity_;
-  tier4_api_utils::Client<SetVelocityLimit>::SharedPtr cli_velocity_;
+  rclcpp::Publisher<VelocityLimit>::SharedPtr pub_api_velocity_;
+  rclcpp::Publisher<VelocityLimit>::SharedPtr pub_planning_velocity_;
+  rclcpp::Subscription<VelocityLimit>::SharedPtr sub_planning_velocity_;
+
+  // class constants
+  static constexpr double kVelocityEpsilon = 1e-5;
+
+  // class state
+  bool is_ready_;
+  double velocity_limit_;
 
   // ros callback
   void setPauseDriving(
@@ -46,8 +55,13 @@ private:
   void setVelocityLimit(
     const autoware_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
     const autoware_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response);
+  void onVelocityLimit(const autoware_planning_msgs::msg::VelocityLimit::SharedPtr msg);
+
+  // class method
+  void publishApiVelocity(double velocity);
+  void publishPlanningVelocity(double velocity);
 };
 
-}  // namespace external_api
+}  // namespace internal_api
 
 #endif  // VELOCITY_HPP_

@@ -22,7 +22,7 @@ InitialPose::InitialPose(const rclcpp::NodeOptions & options)
 : Node("external_api_initial_pose", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_initialize_pose_ = proxy.create_service<InitializePose>(
@@ -46,7 +46,7 @@ void InitialPose::setInitializePose(
   const autoware_external_api_msgs::srv::InitializePose::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_initialize_pose_->call(request);
-  if (!autoware_api_utils::is_success(status)) {
+  if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
   }
@@ -58,7 +58,7 @@ void InitialPose::setInitializePoseAuto(
   const autoware_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_initialize_pose_auto_->call(request);
-  if (!autoware_api_utils::is_success(status)) {
+  if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
   }

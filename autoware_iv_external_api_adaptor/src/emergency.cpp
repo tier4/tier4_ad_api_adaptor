@@ -22,7 +22,7 @@ Emergency::Emergency(const rclcpp::NodeOptions & options)
 : Node("external_api_emergency", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<autoware_external_api_msgs::srv::SetEmergency>(
@@ -44,7 +44,7 @@ void Emergency::setEmergency(
   const autoware_external_api_msgs::srv::SetEmergency::Response::SharedPtr response)
 {
   auto [status, resp] = cli_->call(request);
-  if (!autoware_api_utils::is_success(status)) {
+  if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
   }

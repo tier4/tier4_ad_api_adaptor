@@ -16,7 +16,7 @@
 #define SERVICE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "autoware_external_api_msgs/srv/set_service.hpp"
 #include "autoware_external_api_msgs/msg/service.hpp"
 
@@ -33,7 +33,7 @@ private:
   using ServiceMsg = autoware_external_api_msgs::msg::Service;
 
   // ros interface
-  autoware_api_utils::Service<SetService>::SharedPtr srv_set_service_;
+  tier4_api_utils::Service<SetService>::SharedPtr srv_set_service_;
   rclcpp::Publisher<ServiceMsg>::SharedPtr pub_get_service_;
 
   // ros callback
