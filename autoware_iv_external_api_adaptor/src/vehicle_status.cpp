@@ -16,7 +16,7 @@
 #include <utility>
 #include "autoware_external_api_msgs/msg/turn_signal.hpp"
 #include "autoware_external_api_msgs/msg/gear_shift.hpp"
-#include "autoware_iv_auto_msgs_converter/autoware_iv_auto_msgs_converter.hpp"
+#include "tier4_auto_msgs_converter/tier4_auto_msgs_converter.hpp"
 #include "autoware_vehicle_msgs/msg/shift.hpp"
 #include "autoware_vehicle_msgs/msg/turn_signal.hpp"
 
@@ -143,7 +143,7 @@ void VehicleStatus::onTimer()
     }
   }
 
-  using namespace autoware_iv_auto_msgs_converter;
+  using namespace tier4_auto_msgs_converter;
   try {
     autoware_external_api_msgs::msg::VehicleStatusStamped msg;
     msg.stamp = now();
