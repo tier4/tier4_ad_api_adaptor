@@ -25,14 +25,14 @@ Engage::Engage(const rclcpp::NodeOptions & options)
   autoware_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_engage_ = proxy.create_service<autoware_external_api_msgs::srv::Engage>(
+  srv_engage_ = proxy.create_service<tier4_external_api_msgs::srv::Engage>(
     "/api/external/set/engage",
     std::bind(&Engage::setEngage, this, _1, _2),
     rmw_qos_profile_services_default, group_);
-  cli_engage_ = proxy.create_client<autoware_external_api_msgs::srv::Engage>(
+  cli_engage_ = proxy.create_client<tier4_external_api_msgs::srv::Engage>(
     "/api/autoware/set/engage",
     rmw_qos_profile_services_default);
-  pub_engage_status_ = create_publisher<autoware_external_api_msgs::msg::EngageStatus>(
+  pub_engage_status_ = create_publisher<tier4_external_api_msgs::msg::EngageStatus>(
     "/api/external/get/engage", rclcpp::QoS(1));
   sub_engage_status_ = create_subscription<autoware_auto_vehicle_msgs::msg::Engage>(
     "/api/autoware/get/engage", rclcpp::QoS(1),
@@ -45,8 +45,8 @@ Engage::Engage(const rclcpp::NodeOptions & options)
 }
 
 void Engage::setEngage(
-  const autoware_external_api_msgs::srv::Engage::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::Engage::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::Engage::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::Engage::Response::SharedPtr response)
 {
   if (request->engage && !waiting_for_engage_) {
     response->status = autoware_api_utils::response_error("It is not ready to engage.");
@@ -64,7 +64,7 @@ void Engage::setEngage(
 void Engage::onEngageStatus(
   const autoware_auto_vehicle_msgs::msg::Engage::SharedPtr message)
 {
-  auto msg = autoware_external_api_msgs::build<autoware_external_api_msgs::msg::EngageStatus>()
+  auto msg = tier4_external_api_msgs::build<tier4_external_api_msgs::msg::EngageStatus>()
     .stamp(message->stamp).engage(message->engage);
   pub_engage_status_->publish(msg);
 }

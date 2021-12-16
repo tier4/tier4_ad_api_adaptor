@@ -25,23 +25,23 @@ Route::Route(const rclcpp::NodeOptions & options)
   autoware_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_set_route_ = proxy.create_service<autoware_external_api_msgs::srv::SetRoute>(
+  srv_set_route_ = proxy.create_service<tier4_external_api_msgs::srv::SetRoute>(
     "/api/external/set/route",
     std::bind(&Route::setRoute, this, _1, _2),
     rmw_qos_profile_services_default, group_);
-  srv_clear_route_ = proxy.create_service<autoware_external_api_msgs::srv::ClearRoute>(
+  srv_clear_route_ = proxy.create_service<tier4_external_api_msgs::srv::ClearRoute>(
     "/api/external/set/clear_route",
     std::bind(&Route::clearRoute, this, _1, _2),
     rmw_qos_profile_services_default, group_);
 
-  cli_set_route_ = proxy.create_client<autoware_external_api_msgs::srv::SetRoute>(
+  cli_set_route_ = proxy.create_client<tier4_external_api_msgs::srv::SetRoute>(
     "/api/autoware/set/route");
-  cli_clear_route_ = proxy.create_client<autoware_external_api_msgs::srv::ClearRoute>(
+  cli_clear_route_ = proxy.create_client<tier4_external_api_msgs::srv::ClearRoute>(
     "/api/autoware/set/clear_route");
 
-  pub_get_route_ = create_publisher<autoware_external_api_msgs::msg::Route>(
+  pub_get_route_ = create_publisher<tier4_external_api_msgs::msg::Route>(
     "/api/external/get/route", rclcpp::QoS(1).transient_local());
-  sub_get_route_ = create_subscription<autoware_external_api_msgs::msg::Route>(
+  sub_get_route_ = create_subscription<tier4_external_api_msgs::msg::Route>(
     "/api/autoware/get/route", rclcpp::QoS(1).transient_local(),
     std::bind(&Route::onRoute, this, _1));
   sub_autoware_state_ = create_subscription<autoware_auto_system_msgs::msg::AutowareState>(
@@ -52,8 +52,8 @@ Route::Route(const rclcpp::NodeOptions & options)
 }
 
 void Route::setRoute(
-  const autoware_external_api_msgs::srv::SetRoute::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetRoute::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetRoute::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetRoute::Response::SharedPtr response)
 {
   if (!waiting_for_route_) {
     response->status = autoware_api_utils::response_error("It is not ready to set route.");
@@ -69,8 +69,8 @@ void Route::setRoute(
 }
 
 void Route::clearRoute(
-  const autoware_external_api_msgs::srv::ClearRoute::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::ClearRoute::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::ClearRoute::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::ClearRoute::Response::SharedPtr response)
 {
   // TODO(Takagi, Isamu): add a check after changing the state transition
   auto [status, resp] = cli_clear_route_->call(request);
@@ -82,7 +82,7 @@ void Route::clearRoute(
 }
 
 void Route::onRoute(
-  const autoware_external_api_msgs::msg::Route::ConstSharedPtr message)
+  const tier4_external_api_msgs::msg::Route::ConstSharedPtr message)
 {
   pub_get_route_->publish(*message);
 }

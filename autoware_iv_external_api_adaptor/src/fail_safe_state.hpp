@@ -18,7 +18,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
 #include "autoware_auto_system_msgs/msg/emergency_state.hpp"
-#include "autoware_external_api_msgs/msg/fail_safe_state_stamped.hpp"
+#include "tier4_external_api_msgs/msg/fail_safe_state_stamped.hpp"
 
 namespace external_api
 {
@@ -29,7 +29,7 @@ public:
   explicit FailSafeState(const rclcpp::NodeOptions & options);
 
 private:
-  rclcpp::Publisher<autoware_external_api_msgs::msg::FailSafeStateStamped>::SharedPtr pub_state_;
+  rclcpp::Publisher<tier4_external_api_msgs::msg::FailSafeStateStamped>::SharedPtr pub_state_;
   rclcpp::Subscription<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr sub_state_;
 };
 

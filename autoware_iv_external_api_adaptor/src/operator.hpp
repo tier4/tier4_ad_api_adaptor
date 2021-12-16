@@ -17,10 +17,10 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
-#include "autoware_external_api_msgs/srv/set_operator.hpp"
-#include "autoware_external_api_msgs/srv/set_observer.hpp"
-#include "autoware_external_api_msgs/msg/operator.hpp"
-#include "autoware_external_api_msgs/msg/observer.hpp"
+#include "tier4_external_api_msgs/srv/set_operator.hpp"
+#include "tier4_external_api_msgs/srv/set_observer.hpp"
+#include "tier4_external_api_msgs/msg/operator.hpp"
+#include "tier4_external_api_msgs/msg/observer.hpp"
 
 namespace external_api
 {
@@ -31,10 +31,10 @@ public:
   explicit Operator(const rclcpp::NodeOptions & options);
 
 private:
-  using SetOperator = autoware_external_api_msgs::srv::SetOperator;
-  using SetObserver = autoware_external_api_msgs::srv::SetObserver;
-  using GetOperator = autoware_external_api_msgs::msg::Operator;
-  using GetObserver = autoware_external_api_msgs::msg::Observer;
+  using SetOperator = tier4_external_api_msgs::srv::SetOperator;
+  using SetObserver = tier4_external_api_msgs::srv::SetObserver;
+  using GetOperator = tier4_external_api_msgs::msg::Operator;
+  using GetObserver = tier4_external_api_msgs::msg::Observer;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
@@ -49,15 +49,15 @@ private:
 
   // ros callback
   void setOperator(
-    const autoware_external_api_msgs::srv::SetOperator::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetOperator::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetOperator::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetOperator::Response::SharedPtr response);
   void setObserver(
-    const autoware_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetObserver::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetObserver::Response::SharedPtr response);
   void onOperator(
-    const autoware_external_api_msgs::msg::Operator::ConstSharedPtr message);
+    const tier4_external_api_msgs::msg::Operator::ConstSharedPtr message);
   void onObserver(
-    const autoware_external_api_msgs::msg::Observer::ConstSharedPtr message);
+    const tier4_external_api_msgs::msg::Observer::ConstSharedPtr message);
 };
 
 }  // namespace external_api

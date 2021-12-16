@@ -42,8 +42,8 @@ InitialPose::InitialPose(const rclcpp::NodeOptions & options)
 }
 
 void InitialPose::setInitializePose(
-  const autoware_external_api_msgs::srv::InitializePose::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::InitializePose::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::InitializePose::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::InitializePose::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_initialize_pose_->call(request);
   if (!autoware_api_utils::is_success(status)) {
@@ -54,8 +54,8 @@ void InitialPose::setInitializePose(
 }
 
 void InitialPose::setInitializePoseAuto(
-  const autoware_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_initialize_pose_auto_->call(request);
   if (!autoware_api_utils::is_success(status)) {

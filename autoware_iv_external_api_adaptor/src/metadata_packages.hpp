@@ -17,7 +17,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
-#include "autoware_external_api_msgs/srv/get_metadata_packages.hpp"
+#include "tier4_external_api_msgs/srv/get_metadata_packages.hpp"
 
 namespace external_api
 {
@@ -30,15 +30,15 @@ public:
 private:
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<autoware_external_api_msgs::srv::GetMetadataPackages>::SharedPtr srv_;
+  autoware_api_utils::Service<tier4_external_api_msgs::srv::GetMetadataPackages>::SharedPtr srv_;
 
   // ros callback
   void getVersions(
-    const autoware_external_api_msgs::srv::GetMetadataPackages::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::GetMetadataPackages::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::GetMetadataPackages::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::GetMetadataPackages::Response::SharedPtr response);
 
   // data
-  autoware_external_api_msgs::msg::MetadataPackages metadata_;
+  tier4_external_api_msgs::msg::MetadataPackages metadata_;
 };
 
 }  // namespace external_api

@@ -18,9 +18,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
 #include "autoware_auto_system_msgs/msg/autoware_state.hpp"
-#include "autoware_external_api_msgs/srv/set_route.hpp"
-#include "autoware_external_api_msgs/srv/clear_route.hpp"
-#include "autoware_external_api_msgs/msg/route.hpp"
+#include "tier4_external_api_msgs/srv/set_route.hpp"
+#include "tier4_external_api_msgs/srv/clear_route.hpp"
+#include "tier4_external_api_msgs/msg/route.hpp"
 
 namespace external_api
 {
@@ -31,9 +31,9 @@ public:
   explicit Route(const rclcpp::NodeOptions & options);
 
 private:
-  using SetRoute = autoware_external_api_msgs::srv::SetRoute;
-  using ClearRoute = autoware_external_api_msgs::srv::ClearRoute;
-  using RouteMsg = autoware_external_api_msgs::msg::Route;
+  using SetRoute = tier4_external_api_msgs::srv::SetRoute;
+  using ClearRoute = tier4_external_api_msgs::srv::ClearRoute;
+  using RouteMsg = tier4_external_api_msgs::msg::Route;
   using AutowareState = autoware_auto_system_msgs::msg::AutowareState;
 
   // ros interface
@@ -51,13 +51,13 @@ private:
 
   // ros callback
   void setRoute(
-    const autoware_external_api_msgs::srv::SetRoute::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetRoute::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetRoute::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetRoute::Response::SharedPtr response);
   void clearRoute(
-    const autoware_external_api_msgs::srv::ClearRoute::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::ClearRoute::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::ClearRoute::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::ClearRoute::Response::SharedPtr response);
   void onRoute(
-    const autoware_external_api_msgs::msg::Route::ConstSharedPtr message);
+    const tier4_external_api_msgs::msg::Route::ConstSharedPtr message);
   void onAutowareState(
     const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message);
 };

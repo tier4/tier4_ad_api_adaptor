@@ -14,8 +14,8 @@
 
 #include "vehicle_status.hpp"
 #include <utility>
-#include "autoware_external_api_msgs/msg/turn_signal.hpp"
-#include "autoware_external_api_msgs/msg/gear_shift.hpp"
+#include "tier4_external_api_msgs/msg/turn_signal.hpp"
+#include "tier4_external_api_msgs/msg/gear_shift.hpp"
 #include "tier4_auto_msgs_converter/tier4_auto_msgs_converter.hpp"
 #include "autoware_vehicle_msgs/msg/shift.hpp"
 #include "autoware_vehicle_msgs/msg/turn_signal.hpp"
@@ -23,44 +23,44 @@
 namespace
 {
 
-autoware_external_api_msgs::msg::TurnSignal convert(
+tier4_external_api_msgs::msg::TurnSignal convert(
   const autoware_vehicle_msgs::msg::TurnSignal & msg)
 {
-  using External = autoware_external_api_msgs::msg::TurnSignal;
+  using External = tier4_external_api_msgs::msg::TurnSignal;
   using Internal = autoware_vehicle_msgs::msg::TurnSignal;
 
   switch (msg.data) {
     case Internal::NONE:
-      return autoware_external_api_msgs::build<External>().data(External::NONE);
+      return tier4_external_api_msgs::build<External>().data(External::NONE);
     case Internal::LEFT:
-      return autoware_external_api_msgs::build<External>().data(External::LEFT);
+      return tier4_external_api_msgs::build<External>().data(External::LEFT);
     case Internal::RIGHT:
-      return autoware_external_api_msgs::build<External>().data(External::RIGHT);
+      return tier4_external_api_msgs::build<External>().data(External::RIGHT);
     case Internal::HAZARD:
-      return autoware_external_api_msgs::build<External>().data(External::HAZARD);
+      return tier4_external_api_msgs::build<External>().data(External::HAZARD);
   }
   throw std::out_of_range("turn_signal=" + std::to_string(msg.data));
 }
 
-autoware_external_api_msgs::msg::GearShift convert(
+tier4_external_api_msgs::msg::GearShift convert(
   const autoware_vehicle_msgs::msg::Shift & msg)
 {
-  using External = autoware_external_api_msgs::msg::GearShift;
+  using External = tier4_external_api_msgs::msg::GearShift;
   using Internal = autoware_vehicle_msgs::msg::Shift;
 
   switch (msg.data) {
     case Internal::NONE:
-      return autoware_external_api_msgs::build<External>().data(External::NONE);
+      return tier4_external_api_msgs::build<External>().data(External::NONE);
     case Internal::PARKING:
-      return autoware_external_api_msgs::build<External>().data(External::PARKING);
+      return tier4_external_api_msgs::build<External>().data(External::PARKING);
     case Internal::REVERSE:
-      return autoware_external_api_msgs::build<External>().data(External::REVERSE);
+      return tier4_external_api_msgs::build<External>().data(External::REVERSE);
     case Internal::NEUTRAL:
-      return autoware_external_api_msgs::build<External>().data(External::NEUTRAL);
+      return tier4_external_api_msgs::build<External>().data(External::NEUTRAL);
     case Internal::DRIVE:
-      return autoware_external_api_msgs::build<External>().data(External::DRIVE);
+      return tier4_external_api_msgs::build<External>().data(External::DRIVE);
     case Internal::LOW:
-      return autoware_external_api_msgs::build<External>().data(External::LOW);
+      return tier4_external_api_msgs::build<External>().data(External::LOW);
   }
   throw std::out_of_range("gear_shift=" + std::to_string(msg.data));
 }
@@ -75,7 +75,7 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
 {
   using namespace std::literals::chrono_literals;
 
-  pub_status_ = create_publisher<autoware_external_api_msgs::msg::VehicleStatusStamped>(
+  pub_status_ = create_publisher<tier4_external_api_msgs::msg::VehicleStatusStamped>(
     "/api/external/get/vehicle/status", rclcpp::QoS(1));
   timer_ = rclcpp::create_timer(
     this, get_clock(), 200ms, std::bind(&VehicleStatus::onTimer, this));
@@ -111,13 +111,13 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
       gear_shift_ = msg;
     });
 
-  pub_cmd_ = create_publisher<autoware_external_api_msgs::msg::VehicleCommandStamped>(
+  pub_cmd_ = create_publisher<tier4_external_api_msgs::msg::VehicleCommandStamped>(
     "/api/external/get/command/selected/vehicle", rclcpp::QoS(1));
   sub_cmd_ = create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
     "/control/command/control_cmd", rclcpp::QoS(1),
     [this](const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg)
     {
-      autoware_external_api_msgs::msg::VehicleCommandStamped cmd;
+      tier4_external_api_msgs::msg::VehicleCommandStamped cmd;
       cmd.stamp = msg->stamp;
       cmd.command.velocity = msg->longitudinal.speed;
       cmd.command.acceleration = msg->longitudinal.acceleration;
@@ -145,7 +145,7 @@ void VehicleStatus::onTimer()
 
   using namespace tier4_auto_msgs_converter;
   try {
-    autoware_external_api_msgs::msg::VehicleStatusStamped msg;
+    tier4_external_api_msgs::msg::VehicleStatusStamped msg;
     msg.stamp = now();
     msg.status.twist.linear.x = velocity_->longitudinal_velocity;
     msg.status.twist.linear.y = velocity_->lateral_velocity;

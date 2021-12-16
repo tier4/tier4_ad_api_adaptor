@@ -17,8 +17,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_api_utils/autoware_api_utils.hpp"
-#include "autoware_external_api_msgs/srv/get_text_file.hpp"
-#include "autoware_external_api_msgs/msg/map_hash.hpp"
+#include "tier4_external_api_msgs/srv/get_text_file.hpp"
+#include "tier4_external_api_msgs/msg/map_hash.hpp"
 
 namespace external_api
 {
@@ -29,8 +29,8 @@ public:
   explicit Map(const rclcpp::NodeOptions & options);
 
 private:
-  using GetTextFile = autoware_external_api_msgs::srv::GetTextFile;
-  using MapHash = autoware_external_api_msgs::msg::MapHash;
+  using GetTextFile = tier4_external_api_msgs::srv::GetTextFile;
+  using MapHash = tier4_external_api_msgs::msg::MapHash;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
@@ -40,10 +40,10 @@ private:
   rclcpp::Subscription<MapHash>::SharedPtr sub_map_info_;
 
   // ros callback
-  void getMapHash(const autoware_external_api_msgs::msg::MapHash::SharedPtr message);
+  void getMapHash(const tier4_external_api_msgs::msg::MapHash::SharedPtr message);
   void getLaneletXml(
-    const autoware_external_api_msgs::srv::GetTextFile::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::GetTextFile::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::GetTextFile::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::GetTextFile::Response::SharedPtr response);
 };
 
 }  // namespace external_api

@@ -39,15 +39,15 @@ MetadataPackages::MetadataPackages(const rclcpp::NodeOptions & options)
   metadata_.json = json.dump();
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_ = proxy.create_service<autoware_external_api_msgs::srv::GetMetadataPackages>(
+  srv_ = proxy.create_service<tier4_external_api_msgs::srv::GetMetadataPackages>(
     "/api/external/get/metadata/packages",
     std::bind(&MetadataPackages::getVersions, this, _1, _2),
     rmw_qos_profile_services_default, group_);
 }
 
 void MetadataPackages::getVersions(
-  const autoware_external_api_msgs::srv::GetMetadataPackages::Request::SharedPtr,
-  const autoware_external_api_msgs::srv::GetMetadataPackages::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::GetMetadataPackages::Request::SharedPtr,
+  const tier4_external_api_msgs::srv::GetMetadataPackages::Response::SharedPtr response)
 {
   response->metadata = metadata_;
   response->status = autoware_api_utils::response_success();

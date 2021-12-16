@@ -24,25 +24,25 @@ Velocity::Velocity(const rclcpp::NodeOptions & options)
   autoware_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_pause_ = proxy.create_service<autoware_external_api_msgs::srv::PauseDriving>(
+  srv_pause_ = proxy.create_service<tier4_external_api_msgs::srv::PauseDriving>(
     "/api/external/set/pause_driving",
     std::bind(&Velocity::setPauseDriving, this, _1, _2),
     rmw_qos_profile_services_default, group_);
-  cli_pause_ = proxy.create_client<autoware_external_api_msgs::srv::PauseDriving>(
+  cli_pause_ = proxy.create_client<tier4_external_api_msgs::srv::PauseDriving>(
     "/api/autoware/set/pause_driving",
     rmw_qos_profile_services_default);
-  srv_velocity_ = proxy.create_service<autoware_external_api_msgs::srv::SetVelocityLimit>(
+  srv_velocity_ = proxy.create_service<tier4_external_api_msgs::srv::SetVelocityLimit>(
     "/api/external/set/velocity_limit",
     std::bind(&Velocity::setVelocityLimit, this, _1, _2),
     rmw_qos_profile_services_default, group_);
-  cli_velocity_ = proxy.create_client<autoware_external_api_msgs::srv::SetVelocityLimit>(
+  cli_velocity_ = proxy.create_client<tier4_external_api_msgs::srv::SetVelocityLimit>(
     "/api/autoware/set/velocity_limit",
     rmw_qos_profile_services_default);
 }
 
 void Velocity::setPauseDriving(
-  const autoware_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::PauseDriving::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::PauseDriving::Response::SharedPtr response)
 {
   auto [status, resp] = cli_pause_->call(request);
   if (!autoware_api_utils::is_success(status)) {
@@ -53,8 +53,8 @@ void Velocity::setPauseDriving(
 }
 
 void Velocity::setVelocityLimit(
-  const autoware_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response)
 {
   auto [status, resp] = cli_velocity_->call(request);
   if (!autoware_api_utils::is_success(status)) {

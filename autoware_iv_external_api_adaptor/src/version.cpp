@@ -24,15 +24,15 @@ Version::Version(const rclcpp::NodeOptions & options)
   autoware_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_ = proxy.create_service<autoware_external_api_msgs::srv::GetVersion>(
+  srv_ = proxy.create_service<tier4_external_api_msgs::srv::GetVersion>(
     "/api/external/get/version",
     std::bind(&Version::getVersion, this, _1, _2),
     rmw_qos_profile_services_default, group_);
 }
 
 void Version::getVersion(
-  const autoware_external_api_msgs::srv::GetVersion::Request::SharedPtr,
-  const autoware_external_api_msgs::srv::GetVersion::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::GetVersion::Request::SharedPtr,
+  const tier4_external_api_msgs::srv::GetVersion::Response::SharedPtr response)
 {
   response->version = "0.2.0";
   response->status = autoware_api_utils::response_success();
