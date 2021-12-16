@@ -17,17 +17,17 @@
 #include "tier4_external_api_msgs/msg/turn_signal.hpp"
 #include "tier4_external_api_msgs/msg/gear_shift.hpp"
 #include "tier4_auto_msgs_converter/tier4_auto_msgs_converter.hpp"
-#include "autoware_vehicle_msgs/msg/shift.hpp"
-#include "autoware_vehicle_msgs/msg/turn_signal.hpp"
+#include "tier4_vehicle_msgs/msg/shift.hpp"
+#include "tier4_vehicle_msgs/msg/turn_signal.hpp"
 
 namespace
 {
 
 tier4_external_api_msgs::msg::TurnSignal convert(
-  const autoware_vehicle_msgs::msg::TurnSignal & msg)
+  const tier4_vehicle_msgs::msg::TurnSignal & msg)
 {
   using External = tier4_external_api_msgs::msg::TurnSignal;
-  using Internal = autoware_vehicle_msgs::msg::TurnSignal;
+  using Internal = tier4_vehicle_msgs::msg::TurnSignal;
 
   switch (msg.data) {
     case Internal::NONE:
@@ -43,10 +43,10 @@ tier4_external_api_msgs::msg::TurnSignal convert(
 }
 
 tier4_external_api_msgs::msg::GearShift convert(
-  const autoware_vehicle_msgs::msg::Shift & msg)
+  const tier4_vehicle_msgs::msg::Shift & msg)
 {
   using External = tier4_external_api_msgs::msg::GearShift;
-  using Internal = autoware_vehicle_msgs::msg::Shift;
+  using Internal = tier4_vehicle_msgs::msg::Shift;
 
   switch (msg.data) {
     case Internal::NONE:
