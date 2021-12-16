@@ -16,7 +16,7 @@
 #define START_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "tier4_api_utils/tier4_api_utils.hpp"
+#include "autoware_api_utils/autoware_api_utils.hpp"
 #include "std_srvs/srv/trigger.hpp"
 
 namespace external_api
@@ -31,7 +31,7 @@ private:
   using Trigger = std_srvs::srv::Trigger;
 
   // ros interface
-  tier4_api_utils::Service<Trigger>::SharedPtr srv_set_request_start_;
+  autoware_api_utils::Service<Trigger>::SharedPtr srv_set_request_start_;
 
   // ros callback
   void setRequestStart(

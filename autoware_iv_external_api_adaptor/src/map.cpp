@@ -21,7 +21,7 @@ Map::Map(const rclcpp::NodeOptions & options)
 : Node("external_api_map", options)
 {
   using namespace std::placeholders;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_lanelet_xml_ = proxy.create_service<autoware_external_api_msgs::srv::GetTextFile>(
@@ -49,7 +49,7 @@ void Map::getLaneletXml(
   const autoware_external_api_msgs::srv::GetTextFile::Response::SharedPtr response)
 {
   auto [status, resp] = cli_lanelet_xml_->call(request);
-  if (!tier4_api_utils::is_success(status)) {
+  if (!autoware_api_utils::is_success(status)) {
     response->status = status;
     return;
   }

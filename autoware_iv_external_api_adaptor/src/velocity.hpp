@@ -16,7 +16,7 @@
 #define VELOCITY_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "tier4_api_utils/tier4_api_utils.hpp"
+#include "autoware_api_utils/autoware_api_utils.hpp"
 #include "autoware_external_api_msgs/srv/pause_driving.hpp"
 #include "autoware_external_api_msgs/srv/set_velocity_limit.hpp"
 
@@ -34,10 +34,10 @@ private:
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  tier4_api_utils::Service<PauseDriving>::SharedPtr srv_pause_;
-  tier4_api_utils::Client<PauseDriving>::SharedPtr cli_pause_;
-  tier4_api_utils::Service<SetVelocityLimit>::SharedPtr srv_velocity_;
-  tier4_api_utils::Client<SetVelocityLimit>::SharedPtr cli_velocity_;
+  autoware_api_utils::Service<PauseDriving>::SharedPtr srv_pause_;
+  autoware_api_utils::Client<PauseDriving>::SharedPtr cli_pause_;
+  autoware_api_utils::Service<SetVelocityLimit>::SharedPtr srv_velocity_;
+  autoware_api_utils::Client<SetVelocityLimit>::SharedPtr cli_velocity_;
 
   // ros callback
   void setPauseDriving(

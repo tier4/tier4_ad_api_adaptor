@@ -22,7 +22,7 @@ Engage::Engage(const rclcpp::NodeOptions & options)
 : Node("external_api_engage", options)
 {
   using namespace std::placeholders;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_engage_ = proxy.create_service<autoware_external_api_msgs::srv::Engage>(
@@ -49,12 +49,12 @@ void Engage::setEngage(
   const autoware_external_api_msgs::srv::Engage::Response::SharedPtr response)
 {
   if (request->engage && !waiting_for_engage_) {
-    response->status = tier4_api_utils::response_error("It is not ready to engage.");
+    response->status = autoware_api_utils::response_error("It is not ready to engage.");
     return;
   }
 
   auto [status, resp] = cli_engage_->call(request);
-  if (!tier4_api_utils::is_success(status)) {
+  if (!autoware_api_utils::is_success(status)) {
     response->status = status;
     return;
   }

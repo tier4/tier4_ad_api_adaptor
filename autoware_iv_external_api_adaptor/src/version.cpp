@@ -21,7 +21,7 @@ Version::Version(const rclcpp::NodeOptions & options)
 : Node("external_api_version", options)
 {
   using namespace std::placeholders;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<autoware_external_api_msgs::srv::GetVersion>(
@@ -35,7 +35,7 @@ void Version::getVersion(
   const autoware_external_api_msgs::srv::GetVersion::Response::SharedPtr response)
 {
   response->version = "0.2.0";
-  response->status = tier4_api_utils::response_success();
+  response->status = autoware_api_utils::response_success();
 }
 
 }  // namespace external_api
