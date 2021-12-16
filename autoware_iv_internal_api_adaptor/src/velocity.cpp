@@ -22,9 +22,9 @@ Velocity::Velocity(const rclcpp::NodeOptions & options) : Node("external_api_vel
   using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
-  srv_pause_ = proxy.create_service<autoware_external_api_msgs::srv::PauseDriving>(
+  srv_pause_ = proxy.create_service<tier4_external_api_msgs::srv::PauseDriving>(
     "/api/autoware/set/pause_driving", std::bind(&Velocity::setPauseDriving, this, _1, _2));
-  srv_velocity_ = proxy.create_service<autoware_external_api_msgs::srv::SetVelocityLimit>(
+  srv_velocity_ = proxy.create_service<tier4_external_api_msgs::srv::SetVelocityLimit>(
     "/api/autoware/set/velocity_limit", std::bind(&Velocity::setVelocityLimit, this, _1, _2));
 
   pub_api_velocity_ = create_publisher<tier4_planning_msgs::msg::VelocityLimit>(
@@ -40,8 +40,8 @@ Velocity::Velocity(const rclcpp::NodeOptions & options) : Node("external_api_vel
 }
 
 void Velocity::setPauseDriving(
-  const autoware_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::PauseDriving::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::PauseDriving::Response::SharedPtr response)
 {
   if (!is_ready_) {
     response->status = tier4_api_utils::response_error("It is not ready to set velocity.");
@@ -52,8 +52,8 @@ void Velocity::setPauseDriving(
 }
 
 void Velocity::setVelocityLimit(
-  const autoware_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response)
 {
   if (!is_ready_) {
     response->status = tier4_api_utils::response_error("It is not ready to set velocity.");

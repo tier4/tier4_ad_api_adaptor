@@ -26,10 +26,10 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_set_operator_ = proxy.create_service<autoware_external_api_msgs::srv::SetOperator>(
+  srv_set_operator_ = proxy.create_service<tier4_external_api_msgs::srv::SetOperator>(
     "/api/autoware/set/operator", std::bind(&Operator::setOperator, this, _1, _2),
     rmw_qos_profile_services_default, group_);
-  srv_set_observer_ = proxy.create_service<autoware_external_api_msgs::srv::SetObserver>(
+  srv_set_observer_ = proxy.create_service<tier4_external_api_msgs::srv::SetObserver>(
     "/api/autoware/set/observer", std::bind(&Operator::setObserver, this, _1, _2),
     rmw_qos_profile_services_default, group_);
 
@@ -40,9 +40,9 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
   pub_vehicle_engage_ =
     create_publisher<autoware_auto_vehicle_msgs::msg::Engage>("/vehicle/engage", rclcpp::QoS(1));
 
-  pub_operator_ = create_publisher<autoware_external_api_msgs::msg::Operator>(
+  pub_operator_ = create_publisher<tier4_external_api_msgs::msg::Operator>(
     "/api/autoware/get/operator", rclcpp::QoS(1));
-  pub_observer_ = create_publisher<autoware_external_api_msgs::msg::Observer>(
+  pub_observer_ = create_publisher<tier4_external_api_msgs::msg::Observer>(
     "/api/autoware/get/observer", rclcpp::QoS(1));
 
   sub_external_select_ =
@@ -60,22 +60,22 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
 }
 
 void Operator::setOperator(
-  const autoware_external_api_msgs::srv::SetOperator::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetOperator::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetOperator::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetOperator::Response::SharedPtr response)
 {
   switch (request->mode.mode) {
-    case autoware_external_api_msgs::msg::Operator::DRIVER:
+    case tier4_external_api_msgs::msg::Operator::DRIVER:
       setVehicleEngage(false);
       response->status = tier4_api_utils::response_success();
       return;
 
-    case autoware_external_api_msgs::msg::Operator::AUTONOMOUS:
+    case tier4_external_api_msgs::msg::Operator::AUTONOMOUS:
       setGateMode(tier4_control_msgs::msg::GateMode::AUTO);
       setVehicleEngage(true);
       response->status = tier4_api_utils::response_success();
       return;
 
-    case autoware_external_api_msgs::msg::Operator::OBSERVER:
+    case tier4_external_api_msgs::msg::Operator::OBSERVER:
       // TODO(Takagi, Isamu): prohibit transition when none observer type is added
       setGateMode(tier4_control_msgs::msg::GateMode::EXTERNAL);
       setVehicleEngage(true);
@@ -89,17 +89,17 @@ void Operator::setOperator(
 }
 
 void Operator::setObserver(
-  const autoware_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetObserver::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetObserver::Response::SharedPtr response)
 {
   using ExternalCommandSelectorMode = tier4_control_msgs::msg::ExternalCommandSelectorMode;
 
   switch (request->mode.mode) {
-    case autoware_external_api_msgs::msg::Observer::LOCAL:
+    case tier4_external_api_msgs::msg::Observer::LOCAL:
       response->status = setExternalSelect(ExternalCommandSelectorMode::LOCAL);
       return;
 
-    case autoware_external_api_msgs::msg::Observer::REMOTE:
+    case tier4_external_api_msgs::msg::Observer::REMOTE:
       response->status = setExternalSelect(ExternalCommandSelectorMode::REMOTE);
       return;
 
@@ -134,8 +134,8 @@ void Operator::onTimer()
 
 void Operator::publishOperator()
 {
-  using OperatorMsg = autoware_external_api_msgs::msg::Operator;
-  using autoware_external_api_msgs::build;
+  using OperatorMsg = tier4_external_api_msgs::msg::Operator;
+  using tier4_external_api_msgs::build;
 
   if (!vehicle_control_mode_ || !gate_mode_) {
     return;
@@ -159,8 +159,8 @@ void Operator::publishOperator()
 
 void Operator::publishObserver()
 {
-  using ObserverMsg = autoware_external_api_msgs::msg::Observer;
-  using autoware_external_api_msgs::build;
+  using ObserverMsg = tier4_external_api_msgs::msg::Observer;
+  using tier4_external_api_msgs::build;
 
   if (!external_select_) {
     return;

@@ -18,8 +18,8 @@
 #include <tier4_api_utils/tier4_api_utils.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include <autoware_external_api_msgs/srv/pause_driving.hpp>
-#include <autoware_external_api_msgs/srv/set_velocity_limit.hpp>
+#include <tier4_external_api_msgs/srv/pause_driving.hpp>
+#include <tier4_external_api_msgs/srv/set_velocity_limit.hpp>
 #include <tier4_planning_msgs/msg/velocity_limit.hpp>
 
 namespace internal_api
@@ -30,8 +30,8 @@ public:
   explicit Velocity(const rclcpp::NodeOptions & options);
 
 private:
-  using PauseDriving = autoware_external_api_msgs::srv::PauseDriving;
-  using SetVelocityLimit = autoware_external_api_msgs::srv::SetVelocityLimit;
+  using PauseDriving = tier4_external_api_msgs::srv::PauseDriving;
+  using SetVelocityLimit = tier4_external_api_msgs::srv::SetVelocityLimit;
   using VelocityLimit = tier4_planning_msgs::msg::VelocityLimit;
 
   // ros interface
@@ -50,11 +50,11 @@ private:
 
   // ros callback
   void setPauseDriving(
-    const autoware_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::PauseDriving::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::PauseDriving::Response::SharedPtr response);
   void setVelocityLimit(
-    const autoware_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response);
   void onVelocityLimit(const tier4_planning_msgs::msg::VelocityLimit::SharedPtr msg);
 
   // class method

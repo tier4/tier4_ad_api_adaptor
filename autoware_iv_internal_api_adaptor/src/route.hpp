@@ -20,10 +20,10 @@
 #include <std_srvs/srv/trigger.hpp>
 
 #include <autoware_auto_planning_msgs/msg/had_map_route.hpp>
-#include <autoware_external_api_msgs/msg/route.hpp>
-#include <autoware_external_api_msgs/srv/clear_route.hpp>
-#include <autoware_external_api_msgs/srv/set_pose.hpp>
-#include <autoware_external_api_msgs/srv/set_route.hpp>
+#include <tier4_external_api_msgs/msg/route.hpp>
+#include <tier4_external_api_msgs/srv/clear_route.hpp>
+#include <tier4_external_api_msgs/srv/set_pose.hpp>
+#include <tier4_external_api_msgs/srv/set_route.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
 namespace internal_api
@@ -34,9 +34,9 @@ public:
   explicit Route(const rclcpp::NodeOptions & options);
 
 private:
-  using ClearRoute = autoware_external_api_msgs::srv::ClearRoute;
-  using SetRoute = autoware_external_api_msgs::srv::SetRoute;
-  using SetPose = autoware_external_api_msgs::srv::SetPose;
+  using ClearRoute = tier4_external_api_msgs::srv::ClearRoute;
+  using SetRoute = tier4_external_api_msgs::srv::SetRoute;
+  using SetPose = tier4_external_api_msgs::srv::SetPose;
   using HADMapRoute = autoware_auto_planning_msgs::msg::HADMapRoute;
 
   // ros interface
@@ -50,21 +50,21 @@ private:
   rclcpp::Publisher<HADMapRoute>::SharedPtr pub_planning_route_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_planning_goal_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_planning_checkpoint_;
-  rclcpp::Publisher<autoware_external_api_msgs::msg::Route>::SharedPtr pub_get_route_;
+  rclcpp::Publisher<tier4_external_api_msgs::msg::Route>::SharedPtr pub_get_route_;
 
   // ros callback
   void clearRoute(
-    const autoware_external_api_msgs::srv::ClearRoute::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::ClearRoute::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::ClearRoute::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::ClearRoute::Response::SharedPtr response);
   void setRoute(
-    const autoware_external_api_msgs::srv::SetRoute::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetRoute::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetRoute::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetRoute::Response::SharedPtr response);
   void setGoal(
-    const autoware_external_api_msgs::srv::SetPose::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetPose::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetPose::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetPose::Response::SharedPtr response);
   void setCheckpoint(
-    const autoware_external_api_msgs::srv::SetPose::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetPose::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetPose::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetPose::Response::SharedPtr response);
 
   void onRoute(const autoware_auto_planning_msgs::msg::HADMapRoute::ConstSharedPtr message);
 };

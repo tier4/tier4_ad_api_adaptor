@@ -23,10 +23,10 @@
 #include <tier4_control_msgs/msg/external_command_selector_mode.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_control_msgs/srv/external_command_select.hpp>
-#include <autoware_external_api_msgs/msg/observer.hpp>
-#include <autoware_external_api_msgs/msg/operator.hpp>
-#include <autoware_external_api_msgs/srv/set_observer.hpp>
-#include <autoware_external_api_msgs/srv/set_operator.hpp>
+#include <tier4_external_api_msgs/msg/observer.hpp>
+#include <tier4_external_api_msgs/msg/operator.hpp>
+#include <tier4_external_api_msgs/srv/set_observer.hpp>
+#include <tier4_external_api_msgs/srv/set_operator.hpp>
 
 namespace internal_api
 {
@@ -36,10 +36,10 @@ public:
   explicit Operator(const rclcpp::NodeOptions & options);
 
 private:
-  using SetOperator = autoware_external_api_msgs::srv::SetOperator;
-  using SetObserver = autoware_external_api_msgs::srv::SetObserver;
-  using GetOperator = autoware_external_api_msgs::msg::Operator;
-  using GetObserver = autoware_external_api_msgs::msg::Observer;
+  using SetOperator = tier4_external_api_msgs::srv::SetOperator;
+  using SetObserver = tier4_external_api_msgs::srv::SetObserver;
+  using GetOperator = tier4_external_api_msgs::msg::Operator;
+  using GetObserver = tier4_external_api_msgs::msg::Observer;
   using ExternalCommandSelect = tier4_control_msgs::srv::ExternalCommandSelect;
   using ExternalCommandSelectorMode = tier4_control_msgs::msg::ExternalCommandSelectorMode;
   using GateMode = tier4_control_msgs::msg::GateMode;
@@ -62,11 +62,11 @@ private:
 
   // ros callback
   void setOperator(
-    const autoware_external_api_msgs::srv::SetOperator::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetOperator::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetOperator::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetOperator::Response::SharedPtr response);
   void setObserver(
-    const autoware_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetObserver::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetObserver::Response::SharedPtr response);
   void onExternalSelect(
     const tier4_control_msgs::msg::ExternalCommandSelectorMode::ConstSharedPtr message);
   void onGateMode(const tier4_control_msgs::msg::GateMode::ConstSharedPtr message);
