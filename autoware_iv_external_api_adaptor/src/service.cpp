@@ -21,25 +21,25 @@ Service::Service(const rclcpp::NodeOptions & options)
 : Node("external_api_service", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
-  srv_set_service_ = proxy.create_service<autoware_external_api_msgs::srv::SetService>(
+  srv_set_service_ = proxy.create_service<tier4_external_api_msgs::srv::SetService>(
     "/api/external/set/service",
     std::bind(&Service::setService, this, _1, _2));
-  pub_get_service_ = create_publisher<autoware_external_api_msgs::msg::Service>(
+  pub_get_service_ = create_publisher<tier4_external_api_msgs::msg::Service>(
     "/api/external/get/service", rclcpp::QoS(1).transient_local());
 
   pub_get_service_->publish(
-    autoware_external_api_msgs::build<autoware_external_api_msgs::msg::Service>()
-    .mode(autoware_external_api_msgs::msg::Service::NOT_IN_SERVICE));
+    tier4_external_api_msgs::build<tier4_external_api_msgs::msg::Service>()
+    .mode(tier4_external_api_msgs::msg::Service::NOT_IN_SERVICE));
 }
 
 void Service::setService(
-  const autoware_external_api_msgs::srv::SetService::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetService::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetService::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetService::Response::SharedPtr response)
 {
   pub_get_service_->publish(request->mode);
-  response->status = autoware_api_utils::response_success();
+  response->status = tier4_api_utils::response_success();
 }
 
 }  // namespace external_api

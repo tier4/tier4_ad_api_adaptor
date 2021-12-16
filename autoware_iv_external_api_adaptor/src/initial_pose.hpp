@@ -16,9 +16,9 @@
 #define INITIAL_POSE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
-#include "autoware_external_api_msgs/srv/initialize_pose.hpp"
-#include "autoware_external_api_msgs/srv/initialize_pose_auto.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
+#include "tier4_external_api_msgs/srv/initialize_pose.hpp"
+#include "tier4_external_api_msgs/srv/initialize_pose_auto.hpp"
 
 namespace external_api
 {
@@ -29,23 +29,23 @@ public:
   explicit InitialPose(const rclcpp::NodeOptions & options);
 
 private:
-  using InitializePose = autoware_external_api_msgs::srv::InitializePose;
-  using InitializePoseAuto = autoware_external_api_msgs::srv::InitializePoseAuto;
+  using InitializePose = tier4_external_api_msgs::srv::InitializePose;
+  using InitializePoseAuto = tier4_external_api_msgs::srv::InitializePoseAuto;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<InitializePose>::SharedPtr srv_set_initialize_pose_;
-  autoware_api_utils::Service<InitializePoseAuto>::SharedPtr srv_set_initialize_pose_auto_;
-  autoware_api_utils::Client<InitializePose>::SharedPtr cli_set_initialize_pose_;
-  autoware_api_utils::Client<InitializePoseAuto>::SharedPtr cli_set_initialize_pose_auto_;
+  tier4_api_utils::Service<InitializePose>::SharedPtr srv_set_initialize_pose_;
+  tier4_api_utils::Service<InitializePoseAuto>::SharedPtr srv_set_initialize_pose_auto_;
+  tier4_api_utils::Client<InitializePose>::SharedPtr cli_set_initialize_pose_;
+  tier4_api_utils::Client<InitializePoseAuto>::SharedPtr cli_set_initialize_pose_auto_;
 
   // ros callback
   void setInitializePose(
-    const autoware_external_api_msgs::srv::InitializePose::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::InitializePose::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::InitializePose::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::InitializePose::Response::SharedPtr response);
   void setInitializePoseAuto(
-    const autoware_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response);
 };
 
 }  // namespace external_api

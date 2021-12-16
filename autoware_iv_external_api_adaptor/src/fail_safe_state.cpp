@@ -21,7 +21,7 @@ namespace external_api
 FailSafeState::FailSafeState(const rclcpp::NodeOptions & options)
 : Node("external_api_fail_safe_state", options)
 {
-  pub_state_ = create_publisher<autoware_external_api_msgs::msg::FailSafeStateStamped>(
+  pub_state_ = create_publisher<tier4_external_api_msgs::msg::FailSafeStateStamped>(
     "/api/external/get/fail_safe/state", rclcpp::QoS(1));
   sub_state_ = create_subscription<autoware_auto_system_msgs::msg::EmergencyState>(
     "/system/emergency/emergency_state", rclcpp::QoS(1),

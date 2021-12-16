@@ -21,42 +21,42 @@ Operator::Operator(const rclcpp::NodeOptions & options)
 : Node("external_api_operator", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_set_operator_ = proxy.create_service<autoware_external_api_msgs::srv::SetOperator>(
+  srv_set_operator_ = proxy.create_service<tier4_external_api_msgs::srv::SetOperator>(
     "/api/external/set/operator",
     std::bind(&Operator::setOperator, this, _1, _2),
     rmw_qos_profile_services_default, group_);
-  srv_set_observer_ = proxy.create_service<autoware_external_api_msgs::srv::SetObserver>(
+  srv_set_observer_ = proxy.create_service<tier4_external_api_msgs::srv::SetObserver>(
     "/api/external/set/observer",
     std::bind(&Operator::setObserver, this, _1, _2),
     rmw_qos_profile_services_default, group_);
-  cli_set_operator_ = proxy.create_client<autoware_external_api_msgs::srv::SetOperator>(
+  cli_set_operator_ = proxy.create_client<tier4_external_api_msgs::srv::SetOperator>(
     "/api/autoware/set/operator",
     rmw_qos_profile_services_default);
-  cli_set_observer_ = proxy.create_client<autoware_external_api_msgs::srv::SetObserver>(
+  cli_set_observer_ = proxy.create_client<tier4_external_api_msgs::srv::SetObserver>(
     "/api/autoware/set/observer",
     rmw_qos_profile_services_default);
 
-  pub_get_operator_ = create_publisher<autoware_external_api_msgs::msg::Operator>(
+  pub_get_operator_ = create_publisher<tier4_external_api_msgs::msg::Operator>(
     "/api/external/get/operator", rclcpp::QoS(1));
-  pub_get_observer_ = create_publisher<autoware_external_api_msgs::msg::Observer>(
+  pub_get_observer_ = create_publisher<tier4_external_api_msgs::msg::Observer>(
     "/api/external/get/observer", rclcpp::QoS(1));
-  sub_get_operator_ = create_subscription<autoware_external_api_msgs::msg::Operator>(
+  sub_get_operator_ = create_subscription<tier4_external_api_msgs::msg::Operator>(
     "/api/autoware/get/operator", rclcpp::QoS(1),
     std::bind(&Operator::onOperator, this, _1));
-  sub_get_observer_ = create_subscription<autoware_external_api_msgs::msg::Observer>(
+  sub_get_observer_ = create_subscription<tier4_external_api_msgs::msg::Observer>(
     "/api/autoware/get/observer", rclcpp::QoS(1),
     std::bind(&Operator::onObserver, this, _1));
 }
 
 void Operator::setOperator(
-  const autoware_external_api_msgs::srv::SetOperator::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetOperator::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetOperator::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetOperator::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_operator_->call(request);
-  if (!autoware_api_utils::is_success(status)) {
+  if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
   }
@@ -64,11 +64,11 @@ void Operator::setOperator(
 }
 
 void Operator::setObserver(
-  const autoware_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetObserver::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetObserver::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_observer_->call(request);
-  if (!autoware_api_utils::is_success(status)) {
+  if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
   }
@@ -76,13 +76,13 @@ void Operator::setObserver(
 }
 
 void Operator::onOperator(
-  const autoware_external_api_msgs::msg::Operator::ConstSharedPtr message)
+  const tier4_external_api_msgs::msg::Operator::ConstSharedPtr message)
 {
   pub_get_operator_->publish(*message);
 }
 
 void Operator::onObserver(
-  const autoware_external_api_msgs::msg::Observer::ConstSharedPtr message)
+  const tier4_external_api_msgs::msg::Observer::ConstSharedPtr message)
 {
   pub_get_observer_->publish(*message);
 }

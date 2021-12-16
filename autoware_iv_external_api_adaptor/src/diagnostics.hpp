@@ -16,8 +16,8 @@
 #define DIAGNOSTICS_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
-#include "autoware_external_api_msgs/msg/classified_diagnostics.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
+#include "tier4_external_api_msgs/msg/classified_diagnostics.hpp"
 
 namespace external_api
 {
@@ -29,7 +29,7 @@ public:
 
 private:
   // ros interface
-  rclcpp::Publisher<autoware_external_api_msgs::msg::ClassifiedDiagnostics>::SharedPtr pub_;
+  rclcpp::Publisher<tier4_external_api_msgs::msg::ClassifiedDiagnostics>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   // ros callback
