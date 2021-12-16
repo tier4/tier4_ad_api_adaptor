@@ -22,7 +22,7 @@ Route::Route(const rclcpp::NodeOptions & options)
 : Node("external_api_route", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_route_ = proxy.create_service<tier4_external_api_msgs::srv::SetRoute>(
@@ -56,12 +56,12 @@ void Route::setRoute(
   const tier4_external_api_msgs::srv::SetRoute::Response::SharedPtr response)
 {
   if (!waiting_for_route_) {
-    response->status = autoware_api_utils::response_error("It is not ready to set route.");
+    response->status = tier4_api_utils::response_error("It is not ready to set route.");
     return;
   }
 
   auto [status, resp] = cli_set_route_->call(request);
-  if (!autoware_api_utils::is_success(status)) {
+  if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
   }
@@ -74,7 +74,7 @@ void Route::clearRoute(
 {
   // TODO(Takagi, Isamu): add a check after changing the state transition
   auto [status, resp] = cli_clear_route_->call(request);
-  if (!autoware_api_utils::is_success(status)) {
+  if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
   }

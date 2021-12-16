@@ -16,7 +16,7 @@
 #define INITIAL_POSE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "tier4_external_api_msgs/srv/initialize_pose.hpp"
 #include "tier4_external_api_msgs/srv/initialize_pose_auto.hpp"
 
@@ -34,10 +34,10 @@ private:
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<InitializePose>::SharedPtr srv_set_initialize_pose_;
-  autoware_api_utils::Service<InitializePoseAuto>::SharedPtr srv_set_initialize_pose_auto_;
-  autoware_api_utils::Client<InitializePose>::SharedPtr cli_set_initialize_pose_;
-  autoware_api_utils::Client<InitializePoseAuto>::SharedPtr cli_set_initialize_pose_auto_;
+  tier4_api_utils::Service<InitializePose>::SharedPtr srv_set_initialize_pose_;
+  tier4_api_utils::Service<InitializePoseAuto>::SharedPtr srv_set_initialize_pose_auto_;
+  tier4_api_utils::Client<InitializePose>::SharedPtr cli_set_initialize_pose_;
+  tier4_api_utils::Client<InitializePoseAuto>::SharedPtr cli_set_initialize_pose_auto_;
 
   // ros callback
   void setInitializePose(

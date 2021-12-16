@@ -16,7 +16,7 @@
 #define VEHICLE_STATUS_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "tier4_external_api_msgs/msg/vehicle_command_stamped.hpp"
 #include "tier4_external_api_msgs/msg/vehicle_status_stamped.hpp"
 #include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"

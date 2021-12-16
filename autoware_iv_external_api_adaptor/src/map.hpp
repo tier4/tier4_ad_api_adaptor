@@ -16,7 +16,7 @@
 #define MAP_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "tier4_external_api_msgs/srv/get_text_file.hpp"
 #include "tier4_external_api_msgs/msg/map_hash.hpp"
 
@@ -34,8 +34,8 @@ private:
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<GetTextFile>::SharedPtr srv_lanelet_xml_;
-  autoware_api_utils::Client<GetTextFile>::SharedPtr cli_lanelet_xml_;
+  tier4_api_utils::Service<GetTextFile>::SharedPtr srv_lanelet_xml_;
+  tier4_api_utils::Client<GetTextFile>::SharedPtr cli_lanelet_xml_;
   rclcpp::Publisher<MapHash>::SharedPtr pub_map_info_;
   rclcpp::Subscription<MapHash>::SharedPtr sub_map_info_;
 

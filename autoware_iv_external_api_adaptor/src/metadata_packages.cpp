@@ -25,7 +25,7 @@ MetadataPackages::MetadataPackages(const rclcpp::NodeOptions & options)
 : Node("external_api_metadata_packages", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   const auto resources = ament_index_cpp::get_resources("autoware_metadata_packages");
   nlohmann::json json = nlohmann::json::object();
@@ -50,7 +50,7 @@ void MetadataPackages::getVersions(
   const tier4_external_api_msgs::srv::GetMetadataPackages::Response::SharedPtr response)
 {
   response->metadata = metadata_;
-  response->status = autoware_api_utils::response_success();
+  response->status = tier4_api_utils::response_success();
 }
 
 }  // namespace external_api

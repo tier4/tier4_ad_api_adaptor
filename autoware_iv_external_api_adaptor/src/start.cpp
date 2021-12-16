@@ -21,7 +21,7 @@ Start::Start(const rclcpp::NodeOptions & options)
 : Node("external_api_start", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   srv_set_request_start_ = proxy.create_service<std_srvs::srv::Trigger>(
     "/api/autoware/set/start_request",

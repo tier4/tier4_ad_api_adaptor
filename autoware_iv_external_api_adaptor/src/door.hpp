@@ -16,7 +16,7 @@
 #define DOOR_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "tier4_external_api_msgs/srv/set_door.hpp"
 
 namespace external_api
@@ -30,8 +30,8 @@ public:
 private:
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<tier4_external_api_msgs::srv::SetDoor>::SharedPtr srv_;
-  autoware_api_utils::Client<tier4_external_api_msgs::srv::SetDoor>::SharedPtr cli_;
+  tier4_api_utils::Service<tier4_external_api_msgs::srv::SetDoor>::SharedPtr srv_;
+  tier4_api_utils::Client<tier4_external_api_msgs::srv::SetDoor>::SharedPtr cli_;
 
   // ros callback
   void setDoor(

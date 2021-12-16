@@ -16,7 +16,7 @@
 #define PACKAGE_VERSIONS_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "tier4_external_api_msgs/srv/get_metadata_packages.hpp"
 
 namespace external_api
@@ -30,7 +30,7 @@ public:
 private:
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<tier4_external_api_msgs::srv::GetMetadataPackages>::SharedPtr srv_;
+  tier4_api_utils::Service<tier4_external_api_msgs::srv::GetMetadataPackages>::SharedPtr srv_;
 
   // ros callback
   void getVersions(

@@ -16,7 +16,7 @@
 #define EMERGENCY_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "tier4_external_api_msgs/srv/set_emergency.hpp"
 #include "tier4_external_api_msgs/msg/emergency.hpp"
 
@@ -31,8 +31,8 @@ public:
 private:
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr srv_;
-  autoware_api_utils::Client<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr cli_;
+  tier4_api_utils::Service<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr srv_;
+  tier4_api_utils::Client<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr cli_;
   rclcpp::Publisher<tier4_external_api_msgs::msg::Emergency>::SharedPtr pub_emergency_;
   rclcpp::Subscription<tier4_external_api_msgs::msg::Emergency>::SharedPtr sub_emergency_;
 
