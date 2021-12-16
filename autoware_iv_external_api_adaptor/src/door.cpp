@@ -21,24 +21,24 @@ Door::Door(const rclcpp::NodeOptions & options)
 : Node("external_api_door", options)
 {
   using namespace std::placeholders;
-  autoware_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_ = proxy.create_service<autoware_external_api_msgs::srv::SetDoor>(
+  srv_ = proxy.create_service<tier4_external_api_msgs::srv::SetDoor>(
     "/api/external/set/door",
     std::bind(&Door::setDoor, this, _1, _2),
     rmw_qos_profile_services_default, group_);
-  cli_ = proxy.create_client<autoware_external_api_msgs::srv::SetDoor>(
+  cli_ = proxy.create_client<tier4_external_api_msgs::srv::SetDoor>(
     "/api/vehicle/set/door",
     rmw_qos_profile_services_default);
 }
 
 void Door::setDoor(
-  const autoware_external_api_msgs::srv::SetDoor::Request::SharedPtr request,
-  const autoware_external_api_msgs::srv::SetDoor::Response::SharedPtr response)
+  const tier4_external_api_msgs::srv::SetDoor::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::SetDoor::Response::SharedPtr response)
 {
   auto [status, resp] = cli_->call(request);
-  if (!autoware_api_utils::is_success(status)) {
+  if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
   }

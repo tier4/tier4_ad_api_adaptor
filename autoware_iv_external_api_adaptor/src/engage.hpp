@@ -16,11 +16,11 @@
 #define ENGAGE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
 #include "autoware_auto_system_msgs/msg/autoware_state.hpp"
 #include "autoware_auto_vehicle_msgs/msg/engage.hpp"
-#include "autoware_external_api_msgs/srv/engage.hpp"
-#include "autoware_external_api_msgs/msg/engage_status.hpp"
+#include "tier4_external_api_msgs/srv/engage.hpp"
+#include "tier4_external_api_msgs/msg/engage_status.hpp"
 
 namespace external_api
 {
@@ -31,15 +31,15 @@ public:
   explicit Engage(const rclcpp::NodeOptions & options);
 
 private:
-  using ExternalEngage = autoware_external_api_msgs::srv::Engage;
-  using ExternalEngageStatus = autoware_external_api_msgs::msg::EngageStatus;
+  using ExternalEngage = tier4_external_api_msgs::srv::Engage;
+  using ExternalEngageStatus = tier4_external_api_msgs::msg::EngageStatus;
   using VehicleEngageStatus = autoware_auto_vehicle_msgs::msg::Engage;
   using AutowareState = autoware_auto_system_msgs::msg::AutowareState;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<ExternalEngage>::SharedPtr srv_engage_;
-  autoware_api_utils::Client<ExternalEngage>::SharedPtr cli_engage_;
+  tier4_api_utils::Service<ExternalEngage>::SharedPtr srv_engage_;
+  tier4_api_utils::Client<ExternalEngage>::SharedPtr cli_engage_;
   rclcpp::Publisher<ExternalEngageStatus>::SharedPtr pub_engage_status_;
   rclcpp::Subscription<VehicleEngageStatus>::SharedPtr sub_engage_status_;
   rclcpp::Subscription<AutowareState>::SharedPtr sub_autoware_state_;
@@ -49,8 +49,8 @@ private:
 
   // ros callback
   void setEngage(
-    const autoware_external_api_msgs::srv::Engage::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::Engage::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::Engage::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::Engage::Response::SharedPtr response);
   void onEngageStatus(
     const autoware_auto_vehicle_msgs::msg::Engage::SharedPtr message);
   void onAutowareState(

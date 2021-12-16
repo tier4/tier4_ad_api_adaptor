@@ -22,7 +22,7 @@ Diagnostics::Diagnostics(const rclcpp::NodeOptions & options)
 {
   using namespace std::literals::chrono_literals;
 
-  pub_ = create_publisher<autoware_external_api_msgs::msg::ClassifiedDiagnostics>(
+  pub_ = create_publisher<tier4_external_api_msgs::msg::ClassifiedDiagnostics>(
     "/api/external/get/diagnostics", rclcpp::QoS(1));
   timer_ = rclcpp::create_timer(
     this, get_clock(), 200ms, std::bind(&Diagnostics::onTimer, this));
@@ -30,7 +30,7 @@ Diagnostics::Diagnostics(const rclcpp::NodeOptions & options)
 
 void Diagnostics::onTimer()
 {
-  autoware_external_api_msgs::msg::ClassifiedDiagnostics msg;
+  tier4_external_api_msgs::msg::ClassifiedDiagnostics msg;
   msg.stamp = now();
   pub_->publish(msg);
 }

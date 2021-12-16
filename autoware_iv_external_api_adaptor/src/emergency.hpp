@@ -16,9 +16,9 @@
 #define EMERGENCY_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
-#include "autoware_external_api_msgs/srv/set_emergency.hpp"
-#include "autoware_external_api_msgs/msg/emergency.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
+#include "tier4_external_api_msgs/srv/set_emergency.hpp"
+#include "tier4_external_api_msgs/msg/emergency.hpp"
 
 namespace external_api
 {
@@ -31,17 +31,17 @@ public:
 private:
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<autoware_external_api_msgs::srv::SetEmergency>::SharedPtr srv_;
-  autoware_api_utils::Client<autoware_external_api_msgs::srv::SetEmergency>::SharedPtr cli_;
-  rclcpp::Publisher<autoware_external_api_msgs::msg::Emergency>::SharedPtr pub_emergency_;
-  rclcpp::Subscription<autoware_external_api_msgs::msg::Emergency>::SharedPtr sub_emergency_;
+  tier4_api_utils::Service<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr srv_;
+  tier4_api_utils::Client<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr cli_;
+  rclcpp::Publisher<tier4_external_api_msgs::msg::Emergency>::SharedPtr pub_emergency_;
+  rclcpp::Subscription<tier4_external_api_msgs::msg::Emergency>::SharedPtr sub_emergency_;
 
   // ros callback
   void setEmergency(
-    const autoware_external_api_msgs::srv::SetEmergency::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetEmergency::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetEmergency::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetEmergency::Response::SharedPtr response);
   void getEmergency(
-    const autoware_external_api_msgs::msg::Emergency::SharedPtr message);
+    const tier4_external_api_msgs::msg::Emergency::SharedPtr message);
 };
 
 }  // namespace external_api

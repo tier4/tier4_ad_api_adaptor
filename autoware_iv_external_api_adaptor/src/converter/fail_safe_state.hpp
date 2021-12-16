@@ -16,14 +16,14 @@
 #define CONVERTER__FAIL_SAFE_STATE_HPP_
 
 #include "autoware_auto_system_msgs/msg/emergency_state.hpp"
-#include "autoware_external_api_msgs/msg/fail_safe_state.hpp"
-#include "autoware_external_api_msgs/msg/fail_safe_state_stamped.hpp"
+#include "tier4_external_api_msgs/msg/fail_safe_state.hpp"
+#include "tier4_external_api_msgs/msg/fail_safe_state_stamped.hpp"
 
 namespace external_api::converter
 {
 
-using ExternalFailSafeStateStamped = autoware_external_api_msgs::msg::FailSafeStateStamped;
-using ExternalFailSafeState = autoware_external_api_msgs::msg::FailSafeState;
+using ExternalFailSafeStateStamped = tier4_external_api_msgs::msg::FailSafeStateStamped;
+using ExternalFailSafeState = tier4_external_api_msgs::msg::FailSafeState;
 using InternalFailSafeState = autoware_auto_system_msgs::msg::EmergencyState;
 
 ExternalFailSafeState to_external_state(const InternalFailSafeState & msg)
@@ -31,7 +31,7 @@ ExternalFailSafeState to_external_state(const InternalFailSafeState & msg)
   using External = ExternalFailSafeState;
   using Internal = InternalFailSafeState;
 
-  auto builder = autoware_external_api_msgs::build<External>();
+  auto builder = tier4_external_api_msgs::build<External>();
   switch (msg.state) {
     case Internal::NORMAL:
       return builder.state(External::NORMAL);
@@ -49,7 +49,7 @@ ExternalFailSafeState to_external_state(const InternalFailSafeState & msg)
 
 ExternalFailSafeStateStamped to_external(const InternalFailSafeState & msg)
 {
-  return autoware_external_api_msgs::build<ExternalFailSafeStateStamped>()
+  return tier4_external_api_msgs::build<ExternalFailSafeStateStamped>()
          .stamp(msg.stamp).state(to_external_state(msg));
 }
 

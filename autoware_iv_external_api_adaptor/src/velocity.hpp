@@ -16,9 +16,9 @@
 #define VELOCITY_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "autoware_api_utils/autoware_api_utils.hpp"
-#include "autoware_external_api_msgs/srv/pause_driving.hpp"
-#include "autoware_external_api_msgs/srv/set_velocity_limit.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
+#include "tier4_external_api_msgs/srv/pause_driving.hpp"
+#include "tier4_external_api_msgs/srv/set_velocity_limit.hpp"
 
 namespace external_api
 {
@@ -29,23 +29,23 @@ public:
   explicit Velocity(const rclcpp::NodeOptions & options);
 
 private:
-  using PauseDriving = autoware_external_api_msgs::srv::PauseDriving;
-  using SetVelocityLimit = autoware_external_api_msgs::srv::SetVelocityLimit;
+  using PauseDriving = tier4_external_api_msgs::srv::PauseDriving;
+  using SetVelocityLimit = tier4_external_api_msgs::srv::SetVelocityLimit;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  autoware_api_utils::Service<PauseDriving>::SharedPtr srv_pause_;
-  autoware_api_utils::Client<PauseDriving>::SharedPtr cli_pause_;
-  autoware_api_utils::Service<SetVelocityLimit>::SharedPtr srv_velocity_;
-  autoware_api_utils::Client<SetVelocityLimit>::SharedPtr cli_velocity_;
+  tier4_api_utils::Service<PauseDriving>::SharedPtr srv_pause_;
+  tier4_api_utils::Client<PauseDriving>::SharedPtr cli_pause_;
+  tier4_api_utils::Service<SetVelocityLimit>::SharedPtr srv_velocity_;
+  tier4_api_utils::Client<SetVelocityLimit>::SharedPtr cli_velocity_;
 
   // ros callback
   void setPauseDriving(
-    const autoware_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::PauseDriving::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::PauseDriving::Response::SharedPtr response);
   void setVelocityLimit(
-    const autoware_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
-    const autoware_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response);
+    const tier4_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
+    const tier4_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response);
 };
 
 }  // namespace external_api
