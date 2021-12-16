@@ -27,11 +27,11 @@ Velocity::Velocity(const rclcpp::NodeOptions & options) : Node("external_api_vel
   srv_velocity_ = proxy.create_service<autoware_external_api_msgs::srv::SetVelocityLimit>(
     "/api/autoware/set/velocity_limit", std::bind(&Velocity::setVelocityLimit, this, _1, _2));
 
-  pub_api_velocity_ = create_publisher<autoware_planning_msgs::msg::VelocityLimit>(
+  pub_api_velocity_ = create_publisher<tier4_planning_msgs::msg::VelocityLimit>(
     "/api/autoware/get/velocity_limit", rclcpp::QoS(1).transient_local());
-  pub_planning_velocity_ = create_publisher<autoware_planning_msgs::msg::VelocityLimit>(
+  pub_planning_velocity_ = create_publisher<tier4_planning_msgs::msg::VelocityLimit>(
     "/planning/scenario_planning/max_velocity_default", rclcpp::QoS(1).transient_local());
-  sub_planning_velocity_ = create_subscription<autoware_planning_msgs::msg::VelocityLimit>(
+  sub_planning_velocity_ = create_subscription<tier4_planning_msgs::msg::VelocityLimit>(
     "/planning/scenario_planning/current_max_velocity", rclcpp::QoS(1).transient_local(),
     std::bind(&Velocity::onVelocityLimit, this, _1));
 
@@ -63,7 +63,7 @@ void Velocity::setVelocityLimit(
   response->status = tier4_api_utils::response_success();
 }
 
-void Velocity::onVelocityLimit(const autoware_planning_msgs::msg::VelocityLimit::SharedPtr msg)
+void Velocity::onVelocityLimit(const tier4_planning_msgs::msg::VelocityLimit::SharedPtr msg)
 {
   // store the velocity for releasing the stop
   if (kVelocityEpsilon < msg->max_velocity) {
@@ -75,7 +75,7 @@ void Velocity::onVelocityLimit(const autoware_planning_msgs::msg::VelocityLimit:
 
 void Velocity::publishApiVelocity(double velocity)
 {
-  autoware_planning_msgs::msg::VelocityLimit msg;
+  tier4_planning_msgs::msg::VelocityLimit msg;
   msg.stamp = now();
   msg.max_velocity = velocity;
   pub_api_velocity_->publish(msg);
@@ -83,7 +83,7 @@ void Velocity::publishApiVelocity(double velocity)
 
 void Velocity::publishPlanningVelocity(double velocity)
 {
-  autoware_planning_msgs::msg::VelocityLimit msg;
+  tier4_planning_msgs::msg::VelocityLimit msg;
   msg.stamp = now();
   msg.max_velocity = velocity;
   pub_planning_velocity_->publish(msg);

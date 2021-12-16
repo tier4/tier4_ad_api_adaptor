@@ -20,7 +20,7 @@
 
 #include <autoware_external_api_msgs/srv/pause_driving.hpp>
 #include <autoware_external_api_msgs/srv/set_velocity_limit.hpp>
-#include <autoware_planning_msgs/msg/velocity_limit.hpp>
+#include <tier4_planning_msgs/msg/velocity_limit.hpp>
 
 namespace internal_api
 {
@@ -32,7 +32,7 @@ public:
 private:
   using PauseDriving = autoware_external_api_msgs::srv::PauseDriving;
   using SetVelocityLimit = autoware_external_api_msgs::srv::SetVelocityLimit;
-  using VelocityLimit = autoware_planning_msgs::msg::VelocityLimit;
+  using VelocityLimit = tier4_planning_msgs::msg::VelocityLimit;
 
   // ros interface
   tier4_api_utils::Service<PauseDriving>::SharedPtr srv_pause_;
@@ -55,7 +55,7 @@ private:
   void setVelocityLimit(
     const autoware_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
     const autoware_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response);
-  void onVelocityLimit(const autoware_planning_msgs::msg::VelocityLimit::SharedPtr msg);
+  void onVelocityLimit(const tier4_planning_msgs::msg::VelocityLimit::SharedPtr msg);
 
   // class method
   void publishApiVelocity(double velocity);

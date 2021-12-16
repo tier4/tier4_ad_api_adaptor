@@ -14,7 +14,7 @@
 
 #include "iv_msgs.hpp"
 
-#include <autoware_iv_auto_msgs_converter/autoware_iv_auto_msgs_converter.hpp>
+#include <tier4_auto_msgs_converter/tier4_auto_msgs_converter.hpp>
 
 namespace internal_api
 {
@@ -48,7 +48,7 @@ IVMsgs::IVMsgs(const rclcpp::NodeOptions & options) : Node("external_api_iv_msgs
 
 void IVMsgs::onState(const AutowareStateAuto::ConstSharedPtr message)
 {
-  auto state = autoware_iv_auto_msgs_converter::convert(*message);
+  auto state = tier4_auto_msgs_converter::convert(*message);
   if (emergency_) {
     switch (emergency_->state) {
       case EmergencyStateAuto::MRM_OPERATING:
@@ -65,17 +65,17 @@ void IVMsgs::onEmergency(const EmergencyStateAuto::ConstSharedPtr message) { eme
 
 void IVMsgs::onControlMode(const ControlModeAuto::ConstSharedPtr message)
 {
-  pub_control_mode_->publish(autoware_iv_auto_msgs_converter::convert(*message));
+  pub_control_mode_->publish(tier4_auto_msgs_converter::convert(*message));
 }
 
 void IVMsgs::onTrajectory(const TrajectoryAuto::ConstSharedPtr message)
 {
-  pub_trajectory_->publish(autoware_iv_auto_msgs_converter::convert(*message));
+  pub_trajectory_->publish(tier4_auto_msgs_converter::convert(*message));
 }
 
 void IVMsgs::onTrackedObjects(const TrackedObjectsAuto::ConstSharedPtr message)
 {
-  pub_dynamic_objects_->publish(autoware_iv_auto_msgs_converter::convert(*message));
+  pub_dynamic_objects_->publish(tier4_auto_msgs_converter::convert(*message));
 }
 
 }  // namespace internal_api
