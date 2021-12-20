@@ -15,6 +15,7 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  msg/ResponseStatus.msg
   srv/GetVersion.srv
   DEPENDENCIES
     tier4_external_api_msgs
