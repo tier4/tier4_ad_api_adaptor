@@ -30,7 +30,6 @@
 #include <autoware_auto_control_msgs/msg/ackermann_control_command.hpp>
 #include <autoware_auto_planning_msgs/msg/path.hpp>
 #include <autoware_auto_planning_msgs/msg/trajectory.hpp>
-#include <autoware_auto_system_msgs/msg/autoware_state.hpp>
 #include <autoware_auto_system_msgs/msg/emergency_state.hpp>
 #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
 #include <autoware_auto_vehicle_msgs/msg/gear_report.hpp>
@@ -43,6 +42,7 @@
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_planning_msgs/msg/stop_reason_array.hpp>
+#include <tier4_system_msgs/msg/autoware_state.hpp>
 #include <tier4_v2x_msgs/msg/infrastructure_command_array.hpp>
 #include <tier4_v2x_msgs/msg/virtual_traffic_light_state_array.hpp>
 
@@ -71,7 +71,7 @@ private:
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::GearReport>::SharedPtr sub_gear_;
   rclcpp::Subscription<tier4_vehicle_msgs::msg::BatteryStatus>::SharedPtr sub_battery_;
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr sub_nav_sat_;
-  rclcpp::Subscription<autoware_auto_system_msgs::msg::AutowareState>::SharedPtr
+  rclcpp::Subscription<tier4_system_msgs::msg::AutowareState>::SharedPtr
     sub_autoware_state_;
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>::SharedPtr
     sub_control_mode_;
@@ -129,7 +129,7 @@ private:
   void callbackBattery(const tier4_vehicle_msgs::msg::BatteryStatus::ConstSharedPtr msg_ptr);
   void callbackNavSat(const sensor_msgs::msg::NavSatFix::ConstSharedPtr msg_ptr);
   void callbackAutowareState(
-    const autoware_auto_system_msgs::msg::AutowareState::ConstSharedPtr msg_ptr);
+    const tier4_system_msgs::msg::AutowareState::ConstSharedPtr msg_ptr);
   void callbackControlMode(
     const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr msg_ptr);
   void callbackGateMode(const tier4_control_msgs::msg::GateMode::ConstSharedPtr msg_ptr);

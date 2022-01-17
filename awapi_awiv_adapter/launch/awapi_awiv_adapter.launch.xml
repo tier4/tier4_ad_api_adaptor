@@ -13,7 +13,7 @@
   <arg name="input_gear" default="/vehicle/status/gear_status" />
   <arg name="input_battery" default="/vehicle/status/battery_charge" />
   <arg name="input_nav_sat" default="/sensing/gnss/ublox/nav_sat_fix" />
-  <arg name="input_autoware_state" default="/autoware/state" />
+  <arg name="input_autoware_state" default="/api/iv_msgs/autoware/state" />
   <arg name="input_control_mode" default="/vehicle/status/control_mode" />
   <arg name="input_gate_mode" default="/control/current_gate_mode" />
   <arg name="input_emergency_state" default="/system/emergency/emergency_state" />

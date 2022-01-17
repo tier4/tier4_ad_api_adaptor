@@ -58,7 +58,7 @@ void AutowareIvAutowareStatePublisher::statePublisher(const AutowareInfo & aw_in
 }
 
 void AutowareIvAutowareStatePublisher::getAutowareStateInfo(
-  const autoware_auto_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state_ptr,
+  const tier4_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state_ptr,
   tier4_api_msgs::msg::AwapiAutowareStatus * status)
 {
   if (!autoware_state_ptr) {
@@ -68,7 +68,7 @@ void AutowareIvAutowareStatePublisher::getAutowareStateInfo(
 
   // get autoware_state
   using tier4_auto_msgs_converter::convert;
-  status->autoware_state = convert(*autoware_state_ptr).state;
+  status->autoware_state = autoware_state_ptr->state;
   status->arrived_goal = isGoal(autoware_state_ptr);
 }
 
@@ -199,7 +199,7 @@ void AutowareIvAutowareStatePublisher::getDiagInfo(
 void AutowareIvAutowareStatePublisher::getErrorDiagInfo(
   const AutowareInfo & aw_info, tier4_api_msgs::msg::AwapiAutowareStatus * status)
 {
-  using autoware_auto_system_msgs::msg::AutowareState;
+  using tier4_system_msgs::msg::AutowareState;
   using autoware_auto_vehicle_msgs::msg::ControlModeReport;
 
   if (!aw_info.autoware_state_ptr) {
@@ -274,22 +274,22 @@ void AutowareIvAutowareStatePublisher::getGlobalRptInfo(
 }
 
 bool AutowareIvAutowareStatePublisher::isGoal(
-  const autoware_auto_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state)
+  const tier4_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state)
 {
   // rename
   const auto & aw_state = autoware_state->state;
 
-  if (aw_state == autoware_auto_system_msgs::msg::AutowareState::ARRIVED_GOAL) {
+  if (aw_state == tier4_system_msgs::msg::AutowareState::ARRIVAL_GOAL) {
     arrived_goal_ = true;
   } else if (  // NOLINT
-    prev_state_ == autoware_auto_system_msgs::msg::AutowareState::DRIVING &&
-    aw_state == autoware_auto_system_msgs::msg::AutowareState::WAITING_FOR_ROUTE) {
+    prev_state_ == tier4_system_msgs::msg::AutowareState::DRIVING &&
+    aw_state == tier4_system_msgs::msg::AutowareState::WAITING_FOR_ROUTE) {
     arrived_goal_ = true;
   }
 
   if (
-    aw_state == autoware_auto_system_msgs::msg::AutowareState::WAITING_FOR_ENGAGE ||
-    aw_state == autoware_auto_system_msgs::msg::AutowareState::DRIVING) {
+    aw_state == tier4_system_msgs::msg::AutowareState::WAITING_FOR_ENGAGE ||
+    aw_state == tier4_system_msgs::msg::AutowareState::DRIVING) {
     // cancel goal state
     arrived_goal_ = false;
   }
