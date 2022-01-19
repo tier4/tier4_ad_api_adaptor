@@ -20,6 +20,7 @@
 #include "autoware_auto_system_msgs/msg/autoware_state.hpp"
 #include "autoware_auto_vehicle_msgs/msg/engage.hpp"
 #include "tier4_external_api_msgs/srv/engage.hpp"
+#include "tier4_external_api_msgs/srv/set_operator.hpp"
 #include "tier4_external_api_msgs/msg/engage_status.hpp"
 
 namespace external_api
@@ -33,6 +34,7 @@ public:
 private:
   using ExternalEngage = tier4_external_api_msgs::srv::Engage;
   using ExternalEngageStatus = tier4_external_api_msgs::msg::EngageStatus;
+  using SetOperator = tier4_external_api_msgs::srv::SetOperator;
   using VehicleEngageStatus = autoware_auto_vehicle_msgs::msg::Engage;
   using AutowareState = autoware_auto_system_msgs::msg::AutowareState;
 
@@ -40,12 +42,14 @@ private:
   rclcpp::CallbackGroup::SharedPtr group_;
   tier4_api_utils::Service<ExternalEngage>::SharedPtr srv_engage_;
   tier4_api_utils::Client<ExternalEngage>::SharedPtr cli_engage_;
+  tier4_api_utils::Client<SetOperator>::SharedPtr cli_set_operator_;
   rclcpp::Publisher<ExternalEngageStatus>::SharedPtr pub_engage_status_;
   rclcpp::Subscription<VehicleEngageStatus>::SharedPtr sub_engage_status_;
   rclcpp::Subscription<AutowareState>::SharedPtr sub_autoware_state_;
 
   // class state
   bool waiting_for_engage_;
+  bool auto_operator_change_;
 
   // ros callback
   void setEngage(

@@ -32,6 +32,9 @@ Engage::Engage(const rclcpp::NodeOptions & options)
   cli_engage_ = proxy.create_client<tier4_external_api_msgs::srv::Engage>(
     "/api/autoware/set/engage",
     rmw_qos_profile_services_default);
+  cli_set_operator_ = proxy.create_client<tier4_external_api_msgs::srv::SetOperator>(
+    "/api/autoware/set/operator",
+    rmw_qos_profile_services_default);
   pub_engage_status_ = create_publisher<tier4_external_api_msgs::msg::EngageStatus>(
     "/api/external/get/engage", rclcpp::QoS(1));
   sub_engage_status_ = create_subscription<autoware_auto_vehicle_msgs::msg::Engage>(
@@ -42,6 +45,7 @@ Engage::Engage(const rclcpp::NodeOptions & options)
     std::bind(&Engage::onAutowareState, this, _1));
 
   waiting_for_engage_ = false;
+  auto_operator_change_ = declare_parameter("auto_operator_change", false);
 }
 
 void Engage::setEngage(
@@ -51,6 +55,17 @@ void Engage::setEngage(
   if (request->engage && !waiting_for_engage_) {
     response->status = tier4_api_utils::response_error("It is not ready to engage.");
     return;
+  }
+
+  if (auto_operator_change_) {
+    using tier4_external_api_msgs::msg::Operator;
+    auto req = std::make_shared<tier4_external_api_msgs::srv::SetOperator::Request>();
+    req->mode.mode = request->engage ? Operator::AUTONOMOUS : Operator::DRIVER;
+    auto [status, resp] = cli_set_operator_->call(req);
+    if (!tier4_api_utils::is_success(status)) {
+      response->status = status;
+      return;
+    }
   }
 
   auto [status, resp] = cli_engage_->call(request);
