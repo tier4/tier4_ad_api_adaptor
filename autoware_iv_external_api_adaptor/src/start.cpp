@@ -26,6 +26,10 @@ Start::Start(const rclcpp::NodeOptions & options)
   srv_set_request_start_ = proxy.create_service<std_srvs::srv::Trigger>(
     "/api/autoware/set/start_request",
     std::bind(&Start::setRequestStart, this, _1, _2));
+
+  sub_get_operator_ = create_subscription<tier4_external_api_msgs::msg::Operator>(
+    "/api/external/get/operator", rclcpp::QoS(1),
+    std::bind(&Start::getOperator, this, _1));
 }
 
 void Start::setRequestStart(
@@ -33,9 +37,17 @@ void Start::setRequestStart(
   const std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   using namespace std::chrono_literals;
-  rclcpp::Rate rate(5000ms);
-  rate.sleep();
+
+  if (operator_ && operator_->mode == Operator::AUTONOMOUS) {
+    rclcpp::Rate rate(5000ms);
+    rate.sleep();
+  }
   response->success = true;
+}
+
+void Start::getOperator(const tier4_external_api_msgs::msg::Operator::ConstSharedPtr message)
+{
+  operator_ = message;
 }
 
 }  // namespace external_api
