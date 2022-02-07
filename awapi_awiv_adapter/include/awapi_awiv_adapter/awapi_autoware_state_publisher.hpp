@@ -43,10 +43,10 @@ private:
 
   /* parameter for judging goal now */
   bool arrived_goal_;
-  autoware_auto_system_msgs::msg::AutowareState::_state_type prev_state_;
+  tier4_system_msgs::msg::AutowareState::_state_type prev_state_;
 
   void getAutowareStateInfo(
-    const autoware_auto_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state_ptr,
+    const tier4_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state_ptr,
     tier4_api_msgs::msg::AwapiAutowareStatus * status);
   void getControlModeInfo(
     const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr & control_mode_ptr,
@@ -72,7 +72,7 @@ private:
     const pacmod3_msgs::msg::GlobalRpt::ConstSharedPtr & global_rpt_ptr,
     tier4_api_msgs::msg::AwapiAutowareStatus * status);
 
-  bool isGoal(const autoware_auto_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state);
+  bool isGoal(const tier4_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state);
 };
 
 }  // namespace autoware_api
