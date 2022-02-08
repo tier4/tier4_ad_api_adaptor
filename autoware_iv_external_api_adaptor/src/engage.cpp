@@ -44,6 +44,14 @@ Engage::Engage(const rclcpp::NodeOptions & options)
     "/autoware/state", rclcpp::QoS(1),
     std::bind(&Engage::onAutowareState, this, _1));
 
+  // For restart announce from signage and vehicle_voice
+  cli_announce_ = proxy.create_client<tier4_hmi_msgs::srv::Announce>(
+    "/api/signage/set/announce",
+    rmw_qos_profile_services_default);
+  cli_vehicle_voice_announce_ = proxy.create_client<tier4_hmi_msgs::srv::Announce>(
+    "/api/vehicle_voice/set/announce",
+    rmw_qos_profile_services_default);
+
   waiting_for_engage_ = false;
   auto_operator_change_ = declare_parameter("auto_operator_change", false);
 }
@@ -67,6 +75,15 @@ void Engage::setEngage(
       return;
     }
   }
+  
+  // announce start message
+  auto announce_request = std::make_shared<tier4_hmi_msgs::srv::Announce::Request>();
+  announce_request->kind = tier4_hmi_msgs::srv::Announce::Request::ENGAGE;
+  cli_announce_->call(announce_request);
+
+  auto vehicle_announce_request = std::make_shared<tier4_hmi_msgs::srv::Announce::Request>();
+  vehicle_announce_request->kind = tier4_hmi_msgs::srv::Announce::Request::ENGAGE;
+  cli_vehicle_voice_announce_->call(vehicle_announce_request);
 
   auto [status, resp] = cli_engage_->call(request);
   if (!tier4_api_utils::is_success(status)) {

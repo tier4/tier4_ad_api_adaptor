@@ -17,6 +17,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
+#include "tier4_external_api_msgs/msg/operator.hpp"
+#include "tier4_hmi_msgs/srv/announce.hpp"
 #include "std_srvs/srv/trigger.hpp"
 
 namespace external_api
@@ -29,14 +31,23 @@ public:
 
 private:
   using Trigger = std_srvs::srv::Trigger;
+  using Operator = tier4_external_api_msgs::msg::Operator;
+  using MultimediaAnnounce = tier4_hmi_msgs::srv::Announce;
 
   // ros interface
   tier4_api_utils::Service<Trigger>::SharedPtr srv_set_request_start_;
+  rclcpp::Subscription<Operator>::SharedPtr sub_get_operator_;
+  rclcpp::Client<MultimediaAnnounce>::SharedPtr cli_signage_announce_;
+  rclcpp::Client<MultimediaAnnounce>::SharedPtr cli_vehicle_voice_announce_;
 
   // ros callback
   void setRequestStart(
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     const std_srvs::srv::Trigger::Response::SharedPtr response);
+  void getOperator(const tier4_external_api_msgs::msg::Operator::ConstSharedPtr message);
+
+  // class state
+  tier4_external_api_msgs::msg::Operator::ConstSharedPtr operator_;
 };
 
 }  // namespace external_api
