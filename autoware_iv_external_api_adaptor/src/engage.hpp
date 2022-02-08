@@ -16,6 +16,7 @@
 #define ENGAGE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
+#include "tier4_hmi_msgs/srv/announce.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 #include "autoware_auto_system_msgs/msg/autoware_state.hpp"
 #include "autoware_auto_vehicle_msgs/msg/engage.hpp"
@@ -37,6 +38,7 @@ private:
   using SetOperator = tier4_external_api_msgs::srv::SetOperator;
   using VehicleEngageStatus = autoware_auto_vehicle_msgs::msg::Engage;
   using AutowareState = autoware_auto_system_msgs::msg::AutowareState;
+  using MultimediaAnnounce = tier4_hmi_msgs::srv::Announce;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
@@ -46,6 +48,9 @@ private:
   rclcpp::Publisher<ExternalEngageStatus>::SharedPtr pub_engage_status_;
   rclcpp::Subscription<VehicleEngageStatus>::SharedPtr sub_engage_status_;
   rclcpp::Subscription<AutowareState>::SharedPtr sub_autoware_state_;
+
+  tier4_api_utils::Client<MultimediaAnnounce>::SharedPtr cli_announce_;
+  tier4_api_utils::Client<MultimediaAnnounce>::SharedPtr cli_vehicle_voice_announce_;
 
   // class state
   bool waiting_for_engage_;
