@@ -54,6 +54,7 @@ void Door::getDoorStatus(
   const tier4_api_msgs::msg::DoorStatus::SharedPtr message)
 {
   tier4_external_api_msgs::msg::DoorStatus msg;
+  msg.stamp = now();
   msg.status = message->status;
   pub_door_status_->publish(msg);
 }
