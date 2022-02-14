@@ -29,6 +29,10 @@ Door::Door(const rclcpp::NodeOptions & options) : Node("external_api_door", opti
     rmw_qos_profile_services_default, group_);
   cli_ = proxy.create_client<tier4_external_api_msgs::srv::SetDoor>(
     "/api/vehicle/set/door", rmw_qos_profile_services_default);
+  pub_door_status_ = create_publisher<tier4_external_api_msgs::msg::DoorStatus>(
+    "/api/external/get/door", rclcpp::QoS(1));
+  sub_door_status_ = create_subscription<tier4_api_msgs::msg::DoorStatus>(
+    "/vehicle/status/door_status", rclcpp::QoS(1), std::bind(&Door::getDoorStatus, this, _1));
 }
 
 void Door::setDoor(
@@ -41,6 +45,14 @@ void Door::setDoor(
     return;
   }
   response->status = resp->status;
+}
+
+void Door::getDoorStatus(const tier4_api_msgs::msg::DoorStatus::SharedPtr message)
+{
+  tier4_external_api_msgs::msg::DoorStatus msg;
+  msg.stamp = now();
+  msg.status = message->status;
+  pub_door_status_->publish(msg);
 }
 
 }  // namespace external_api

@@ -18,6 +18,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>std_srvs</depend>
+  <depend>tier4_api_msgs</depend>
   <depend>tier4_api_utils</depend>
   <depend>tier4_auto_msgs_converter</depend>
   <depend>tier4_external_api_msgs</depend>
