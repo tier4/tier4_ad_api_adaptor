@@ -18,6 +18,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 #include "tier4_external_api_msgs/srv/set_door.hpp"
+#include "tier4_api_msgs/msg/door_status.hpp"
+#include "tier4_external_api_msgs/msg/door_status.hpp"
 
 namespace external_api
 {
@@ -32,11 +34,16 @@ private:
   rclcpp::CallbackGroup::SharedPtr group_;
   tier4_api_utils::Service<tier4_external_api_msgs::srv::SetDoor>::SharedPtr srv_;
   tier4_api_utils::Client<tier4_external_api_msgs::srv::SetDoor>::SharedPtr cli_;
+  rclcpp::Publisher<tier4_external_api_msgs::msg::DoorStatus>::SharedPtr pub_door_status_;
+  rclcpp::Subscription<tier4_api_msgs::msg::DoorStatus>::SharedPtr sub_door_status_;
 
   // ros callback
   void setDoor(
     const tier4_external_api_msgs::srv::SetDoor::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::SetDoor::Response::SharedPtr response);
+
+  void getDoorStatus(
+    const tier4_api_msgs::msg::DoorStatus::SharedPtr message);
 };
 
 }  // namespace external_api
