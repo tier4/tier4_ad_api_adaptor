@@ -136,7 +136,7 @@ void VehicleStatus::onTimer()
     }
   }
 
-  using namespace tier4_auto_msgs_converter;  // NOLINT
+  using namespace tier4_auto_msgs_converter;  // NOLINT (for overload)
   try {
     tier4_external_api_msgs::msg::VehicleStatusStamped msg;
     msg.stamp = now();
