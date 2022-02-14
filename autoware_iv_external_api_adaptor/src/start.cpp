@@ -30,6 +30,11 @@ Start::Start(const rclcpp::NodeOptions & options)
   sub_get_operator_ = create_subscription<tier4_external_api_msgs::msg::Operator>(
     "/api/external/get/operator", rclcpp::QoS(1),
     std::bind(&Start::getOperator, this, _1));
+
+  cli_signage_announce_ = this->create_client<tier4_hmi_msgs::srv::Announce>(
+    "/api/signage/set/announce");
+  cli_vehicle_voice_announce_ = this->create_client<tier4_hmi_msgs::srv::Announce>(
+    "/api/vehicle_voice/set/announce");    
 }
 
 void Start::setRequestStart(
