@@ -17,11 +17,12 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
+
 #include "autoware_auto_system_msgs/msg/autoware_state.hpp"
 #include "autoware_auto_vehicle_msgs/msg/engage.hpp"
+#include "tier4_external_api_msgs/msg/engage_status.hpp"
 #include "tier4_external_api_msgs/srv/engage.hpp"
 #include "tier4_external_api_msgs/srv/set_operator.hpp"
-#include "tier4_external_api_msgs/msg/engage_status.hpp"
 
 namespace external_api
 {
@@ -55,10 +56,8 @@ private:
   void setEngage(
     const tier4_external_api_msgs::srv::Engage::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::Engage::Response::SharedPtr response);
-  void onEngageStatus(
-    const autoware_auto_vehicle_msgs::msg::Engage::SharedPtr message);
-  void onAutowareState(
-    const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message);
+  void onEngageStatus(const autoware_auto_vehicle_msgs::msg::Engage::SharedPtr message);
+  void onAutowareState(const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message);
 };
 
 }  // namespace external_api

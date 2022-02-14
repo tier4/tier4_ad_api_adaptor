@@ -35,8 +35,8 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
 
   cli_external_select_ = proxy.create_client<tier4_control_msgs::srv::ExternalCommandSelect>(
     "/control/external_cmd_selector/select_external_command");
-  pub_gate_mode_ = create_publisher<tier4_control_msgs::msg::GateMode>(
-    "/control/gate_mode_cmd", rclcpp::QoS(1));
+  pub_gate_mode_ =
+    create_publisher<tier4_control_msgs::msg::GateMode>("/control/gate_mode_cmd", rclcpp::QoS(1));
   pub_vehicle_engage_ =
     create_publisher<autoware_auto_vehicle_msgs::msg::Engage>("/vehicle/engage", rclcpp::QoS(1));
 
@@ -45,10 +45,9 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
   pub_observer_ = create_publisher<tier4_external_api_msgs::msg::Observer>(
     "/api/autoware/get/observer", rclcpp::QoS(1));
 
-  sub_external_select_ =
-    create_subscription<tier4_control_msgs::msg::ExternalCommandSelectorMode>(
-      "/control/external_cmd_selector/current_selector_mode", rclcpp::QoS(1),
-      std::bind(&Operator::onExternalSelect, this, _1));
+  sub_external_select_ = create_subscription<tier4_control_msgs::msg::ExternalCommandSelectorMode>(
+    "/control/external_cmd_selector/current_selector_mode", rclcpp::QoS(1),
+    std::bind(&Operator::onExternalSelect, this, _1));
   sub_gate_mode_ = create_subscription<tier4_control_msgs::msg::GateMode>(
     "/control/current_gate_mode", rclcpp::QoS(1), std::bind(&Operator::onGateMode, this, _1));
   sub_vehicle_control_mode_ =

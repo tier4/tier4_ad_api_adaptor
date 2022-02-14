@@ -199,8 +199,8 @@ void AutowareIvAutowareStatePublisher::getDiagInfo(
 void AutowareIvAutowareStatePublisher::getErrorDiagInfo(
   const AutowareInfo & aw_info, tier4_api_msgs::msg::AwapiAutowareStatus * status)
 {
-  using tier4_system_msgs::msg::AutowareState;
   using autoware_auto_vehicle_msgs::msg::ControlModeReport;
+  using tier4_system_msgs::msg::AutowareState;
 
   if (!aw_info.autoware_state_ptr) {
     RCLCPP_DEBUG_STREAM_THROTTLE(

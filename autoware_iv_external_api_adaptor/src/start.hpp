@@ -16,9 +16,10 @@
 #define START_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "tier4_api_utils/tier4_api_utils.hpp"
-#include "tier4_external_api_msgs/msg/operator.hpp"
 #include "std_srvs/srv/trigger.hpp"
+#include "tier4_api_utils/tier4_api_utils.hpp"
+
+#include "tier4_external_api_msgs/msg/operator.hpp"
 
 namespace external_api
 {

@@ -15,8 +15,8 @@
 #ifndef OPERATOR_HPP_
 #define OPERATOR_HPP_
 
-#include <tier4_api_utils/tier4_api_utils.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <tier4_api_utils/tier4_api_utils.hpp>
 
 #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
 #include <autoware_auto_vehicle_msgs/msg/engage.hpp>

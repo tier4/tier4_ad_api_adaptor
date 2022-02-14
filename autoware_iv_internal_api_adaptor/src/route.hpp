@@ -15,16 +15,16 @@
 #ifndef ROUTE_HPP_
 #define ROUTE_HPP_
 
-#include <tier4_api_utils/tier4_api_utils.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include <tier4_api_utils/tier4_api_utils.hpp>
 
 #include <autoware_auto_planning_msgs/msg/had_map_route.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <tier4_external_api_msgs/msg/route.hpp>
 #include <tier4_external_api_msgs/srv/clear_route.hpp>
 #include <tier4_external_api_msgs/srv/set_pose.hpp>
 #include <tier4_external_api_msgs/srv/set_route.hpp>
-#include <geometry_msgs/msg/pose_stamped.hpp>
 
 namespace internal_api
 {

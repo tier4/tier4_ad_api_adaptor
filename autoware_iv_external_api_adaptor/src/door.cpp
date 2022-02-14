@@ -17,20 +17,18 @@
 namespace external_api
 {
 
-Door::Door(const rclcpp::NodeOptions & options)
-: Node("external_api_door", options)
+Door::Door(const rclcpp::NodeOptions & options) : Node("external_api_door", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<tier4_external_api_msgs::srv::SetDoor>(
-    "/api/external/set/door",
-    std::bind(&Door::setDoor, this, _1, _2),
+    "/api/external/set/door", std::bind(&Door::setDoor, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   cli_ = proxy.create_client<tier4_external_api_msgs::srv::SetDoor>(
-    "/api/vehicle/set/door",
-    rmw_qos_profile_services_default);
+    "/api/vehicle/set/door", rmw_qos_profile_services_default);
 }
 
 void Door::setDoor(
