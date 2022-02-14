@@ -17,6 +17,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
+
 #include "autoware_external_api_msgs/srv/get_version.hpp"
 
 namespace external_api

@@ -17,10 +17,11 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
+
 #include "autoware_auto_system_msgs/msg/autoware_state.hpp"
-#include "tier4_external_api_msgs/srv/set_route.hpp"
-#include "tier4_external_api_msgs/srv/clear_route.hpp"
 #include "tier4_external_api_msgs/msg/route.hpp"
+#include "tier4_external_api_msgs/srv/clear_route.hpp"
+#include "tier4_external_api_msgs/srv/set_route.hpp"
 
 namespace external_api
 {
@@ -56,10 +57,8 @@ private:
   void clearRoute(
     const tier4_external_api_msgs::srv::ClearRoute::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::ClearRoute::Response::SharedPtr response);
-  void onRoute(
-    const tier4_external_api_msgs::msg::Route::ConstSharedPtr message);
-  void onAutowareState(
-    const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message);
+  void onRoute(const tier4_external_api_msgs::msg::Route::ConstSharedPtr message);
+  void onAutowareState(const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message);
 };
 
 }  // namespace external_api

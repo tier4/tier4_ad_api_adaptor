@@ -17,8 +17,9 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
-#include "tier4_external_api_msgs/srv/set_emergency.hpp"
+
 #include "tier4_external_api_msgs/msg/emergency.hpp"
+#include "tier4_external_api_msgs/srv/set_emergency.hpp"
 
 namespace external_api
 {
@@ -40,8 +41,7 @@ private:
   void setEmergency(
     const tier4_external_api_msgs::srv::SetEmergency::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::SetEmergency::Response::SharedPtr response);
-  void getEmergency(
-    const tier4_external_api_msgs::msg::Emergency::SharedPtr message);
+  void getEmergency(const tier4_external_api_msgs::msg::Emergency::SharedPtr message);
 };
 
 }  // namespace external_api

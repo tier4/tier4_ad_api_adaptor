@@ -13,18 +13,20 @@
 // limitations under the License.
 
 #include "vehicle_status.hpp"
-#include <utility>
-#include "tier4_external_api_msgs/msg/turn_signal.hpp"
-#include "tier4_external_api_msgs/msg/gear_shift.hpp"
+
 #include "tier4_auto_msgs_converter/tier4_auto_msgs_converter.hpp"
+
+#include "tier4_external_api_msgs/msg/gear_shift.hpp"
+#include "tier4_external_api_msgs/msg/turn_signal.hpp"
 #include "tier4_vehicle_msgs/msg/shift.hpp"
 #include "tier4_vehicle_msgs/msg/turn_signal.hpp"
+
+#include <utility>
 
 namespace
 {
 
-tier4_external_api_msgs::msg::TurnSignal convert(
-  const tier4_vehicle_msgs::msg::TurnSignal & msg)
+tier4_external_api_msgs::msg::TurnSignal convert(const tier4_vehicle_msgs::msg::TurnSignal & msg)
 {
   using External = tier4_external_api_msgs::msg::TurnSignal;
   using Internal = tier4_vehicle_msgs::msg::TurnSignal;
@@ -42,8 +44,7 @@ tier4_external_api_msgs::msg::TurnSignal convert(
   throw std::out_of_range("turn_signal=" + std::to_string(msg.data));
 }
 
-tier4_external_api_msgs::msg::GearShift convert(
-  const tier4_vehicle_msgs::msg::Shift & msg)
+tier4_external_api_msgs::msg::GearShift convert(const tier4_vehicle_msgs::msg::Shift & msg)
 {
   using External = tier4_external_api_msgs::msg::GearShift;
   using Internal = tier4_vehicle_msgs::msg::Shift;
@@ -77,37 +78,31 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
 
   pub_status_ = create_publisher<tier4_external_api_msgs::msg::VehicleStatusStamped>(
     "/api/external/get/vehicle/status", rclcpp::QoS(1));
-  timer_ = rclcpp::create_timer(
-    this, get_clock(), 200ms, std::bind(&VehicleStatus::onTimer, this));
+  timer_ = rclcpp::create_timer(this, get_clock(), 200ms, std::bind(&VehicleStatus::onTimer, this));
 
   sub_velocity_ = create_subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>(
     "/vehicle/status/velocity_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg)
-    {
+    [this](const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg) {
       velocity_ = msg;
     });
   sub_steering_ = create_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
     "/vehicle/status/steering_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg)
-    {
+    [this](const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg) {
       steering_ = msg;
     });
   sub_turn_indicators_ = create_subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>(
     "/vehicle/status/turn_indicators_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg)
-    {
+    [this](const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg) {
       turn_indicators_ = msg;
     });
   sub_hazard_lights_ = create_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsReport>(
     "/vehicle/status/hazard_lights_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr msg)
-    {
+    [this](const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr msg) {
       hazard_lights_ = msg;
     });
   sub_gear_shift_ = create_subscription<autoware_auto_vehicle_msgs::msg::GearReport>(
     "/vehicle/status/gear_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr msg)
-    {
+    [this](const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr msg) {
       gear_shift_ = msg;
     });
 
@@ -115,8 +110,7 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
     "/api/external/get/command/selected/vehicle", rclcpp::QoS(1));
   sub_cmd_ = create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
     "/control/command/control_cmd", rclcpp::QoS(1),
-    [this](const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg)
-    {
+    [this](const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg) {
       tier4_external_api_msgs::msg::VehicleCommandStamped cmd;
       cmd.stamp = msg->stamp;
       cmd.command.velocity = msg->longitudinal.speed;
@@ -132,8 +126,7 @@ void VehicleStatus::onTimer()
     std::make_pair(std::static_pointer_cast<const void>(steering_), "steering"),
     std::make_pair(std::static_pointer_cast<const void>(turn_indicators_), "turn_indicators"),
     std::make_pair(std::static_pointer_cast<const void>(hazard_lights_), "hazard_lights_"),
-    std::make_pair(std::static_pointer_cast<const void>(gear_shift_), "gear_shift")
-  };
+    std::make_pair(std::static_pointer_cast<const void>(gear_shift_), "gear_shift")};
 
   for (const auto & [pointer, topic] : subscriptions) {
     if (!pointer) {
@@ -143,7 +136,7 @@ void VehicleStatus::onTimer()
     }
   }
 
-  using namespace tier4_auto_msgs_converter;
+  using namespace tier4_auto_msgs_converter;  // NOLINT (for overload)
   try {
     tier4_external_api_msgs::msg::VehicleStatusStamped msg;
     msg.stamp = now();

@@ -13,10 +13,12 @@
 // limitations under the License.
 
 #include "metadata_packages.hpp"
-#include <string>
-#include "ament_index_cpp/get_resources.hpp"
+
 #include "ament_index_cpp/get_resource.hpp"
+#include "ament_index_cpp/get_resources.hpp"
 #include "nlohmann/json.hpp"
+
+#include <string>
 
 namespace external_api
 {
@@ -24,7 +26,8 @@ namespace external_api
 MetadataPackages::MetadataPackages(const rclcpp::NodeOptions & options)
 : Node("external_api_metadata_packages", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   const auto resources = ament_index_cpp::get_resources("autoware_metadata_packages");
@@ -40,8 +43,7 @@ MetadataPackages::MetadataPackages(const rclcpp::NodeOptions & options)
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<tier4_external_api_msgs::srv::GetMetadataPackages>(
-    "/api/external/get/metadata/packages",
-    std::bind(&MetadataPackages::getVersions, this, _1, _2),
+    "/api/external/get/metadata/packages", std::bind(&MetadataPackages::getVersions, this, _1, _2),
     rmw_qos_profile_services_default, group_);
 }
 
