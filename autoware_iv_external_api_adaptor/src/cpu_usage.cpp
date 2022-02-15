@@ -13,20 +13,19 @@
 // limitations under the License.
 
 #include "cpu_usage.hpp"
+
 #include <memory>
 
 namespace external_api
 {
 
-CpuUsage::CpuUsage(const rclcpp::NodeOptions & options)
-: Node("cpu_usage", options)
+CpuUsage::CpuUsage(const rclcpp::NodeOptions & options) : Node("cpu_usage", options)
 {
   pub_cpu_usage_ = create_publisher<tier4_external_api_msgs::msg::CpuUsage>(
     "/api/external/get/cpu_usage", rclcpp::QoS(1));
   sub_cpu_usage_ = create_subscription<tier4_external_api_msgs::msg::CpuUsage>(
     "/system/system_monitor/cpu_monitor/cpu_usage", rclcpp::QoS(1),
-    [this](const tier4_external_api_msgs::msg::CpuUsage::SharedPtr msg)
-    {
+    [this](const tier4_external_api_msgs::msg::CpuUsage::SharedPtr msg) {
       pub_cpu_usage_->publish(*msg);
     });
 }
