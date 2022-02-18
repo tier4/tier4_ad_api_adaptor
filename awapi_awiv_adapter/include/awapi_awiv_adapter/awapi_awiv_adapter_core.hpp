@@ -20,7 +20,6 @@
 #include "awapi_awiv_adapter/awapi_lane_change_state_publisher.hpp"
 #include "awapi_awiv_adapter/awapi_max_velocity_publisher.hpp"
 #include "awapi_awiv_adapter/awapi_obstacle_avoidance_state_publisher.hpp"
-#include "awapi_awiv_adapter/awapi_pacmod_util.hpp"
 #include "awapi_awiv_adapter/awapi_stop_reason_aggregator.hpp"
 #include "awapi_awiv_adapter/awapi_v2x_aggregator.hpp"
 #include "awapi_awiv_adapter/awapi_vehicle_state_publisher.hpp"
@@ -38,7 +37,6 @@
 #include <autoware_auto_vehicle_msgs/msg/turn_indicators_report.hpp>
 #include <diagnostic_msgs/msg/diagnostic_array.hpp>
 #include <nav_msgs/msg/odometry.hpp>
-#include <pacmod3_msgs/msg/global_rpt.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_planning_msgs/msg/stop_reason_array.hpp>
@@ -83,7 +81,6 @@ private:
   rclcpp::Subscription<tier4_v2x_msgs::msg::VirtualTrafficLightStateArray>::SharedPtr
     sub_v2x_state_;
   rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr sub_diagnostics_;
-  rclcpp::Subscription<pacmod3_msgs::msg::GlobalRpt>::SharedPtr sub_global_rpt_;
   rclcpp::Subscription<tier4_planning_msgs::msg::LaneChangeStatus>::SharedPtr
     sub_lane_change_available_;
   rclcpp::Subscription<tier4_planning_msgs::msg::LaneChangeStatus>::SharedPtr
@@ -99,12 +96,8 @@ private:
     sub_current_max_velocity_;
   rclcpp::Subscription<tier4_api_msgs::msg::StopCommand>::SharedPtr sub_temporary_stop_;
   rclcpp::Subscription<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr sub_autoware_traj_;
-  rclcpp::Subscription<tier4_api_msgs::msg::DoorControlCommand>::SharedPtr sub_door_control_;
-  rclcpp::Subscription<pacmod3_msgs::msg::SystemRptInt>::SharedPtr sub_door_status_;
 
   // publisher
-  rclcpp::Publisher<pacmod3_msgs::msg::SystemCmdInt>::SharedPtr pub_door_control_;
-  rclcpp::Publisher<tier4_api_msgs::msg::DoorStatus>::SharedPtr pub_door_status_;
   rclcpp::Publisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>::SharedPtr pub_v2x_command_;
   rclcpp::Publisher<tier4_v2x_msgs::msg::VirtualTrafficLightStateArray>::SharedPtr pub_v2x_state_;
 
@@ -141,7 +134,6 @@ private:
   void callbackV2XState(
     const tier4_v2x_msgs::msg::VirtualTrafficLightStateArray::ConstSharedPtr msg_ptr);
   void callbackDiagnostics(const diagnostic_msgs::msg::DiagnosticArray::ConstSharedPtr msg_ptr);
-  void callbackGlobalRpt(const pacmod3_msgs::msg::GlobalRpt::ConstSharedPtr msg_ptr);
   void callbackLaneChangeAvailable(
     const tier4_planning_msgs::msg::LaneChangeStatus::ConstSharedPtr msg_ptr);
   void callbackLaneChangeReady(
@@ -158,8 +150,6 @@ private:
   void callbackTemporaryStop(const tier4_api_msgs::msg::StopCommand::ConstSharedPtr msg_ptr);
   void callbackAutowareTrajectory(
     const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr);
-  void callbackDoorControl(const tier4_api_msgs::msg::DoorControlCommand::ConstSharedPtr msg_ptr);
-  void callbackDoorStatus(const pacmod3_msgs::msg::SystemRptInt::ConstSharedPtr msg_ptr);
 
   // timer function
   void timerCallback();
