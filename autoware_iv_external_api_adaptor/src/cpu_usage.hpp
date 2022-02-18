@@ -36,4 +36,4 @@ private:
 
 }  // namespace external_api
 
-#endif  // FAIL_SAFE_STATE_HPP_
+#endif  // CPU_USAGE_HPP_
