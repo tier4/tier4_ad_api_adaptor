@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FAIL_SAFE_STATE_HPP_
-#define FAIL_SAFE_STATE_HPP_
+#ifndef CPU_USAGE_HPP_
+#define CPU_USAGE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
