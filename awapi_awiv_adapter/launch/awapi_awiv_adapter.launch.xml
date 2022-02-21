@@ -116,7 +116,6 @@
       <remap from="input/v2x_command" to="$(var input_v2x_command)" />
       <remap from="input/v2x_state" to="$(var input_v2x_state)" />
       <remap from="input/diagnostics" to="$(var input_diagnostics)" />
-      <remap from="input/global_rpt" to="$(var input_global_rpt)" />
       <remap from="input/lane_change_available" to="$(var input_lane_change_available)" />
       <remap from="input/lane_change_ready" to="$(var input_lane_change_ready)" />
       <remap from="input/lane_change_candidate_path" to="$(var input_lane_change_candidate_path)" />
