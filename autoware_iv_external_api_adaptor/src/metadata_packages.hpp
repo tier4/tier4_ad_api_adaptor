@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PACKAGE_VERSIONS_HPP_
-#define PACKAGE_VERSIONS_HPP_
+#ifndef METADATA_PACKAGES_HPP_
+#define METADATA_PACKAGES_HPP_
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
@@ -44,4 +44,4 @@ private:
 
 }  // namespace external_api
 
-#endif  // PACKAGE_VERSIONS_HPP_
+#endif  // METADATA_PACKAGES_HPP_
