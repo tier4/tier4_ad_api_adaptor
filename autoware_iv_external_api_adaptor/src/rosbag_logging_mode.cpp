@@ -25,16 +25,21 @@ RosbagLoggingMode::RosbagLoggingMode(const rclcpp::NodeOptions & options)
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  srv_set_rosbag_logging_mode_ = proxy.create_service<tier4_external_api_msgs::srv::SetRosbagLoggingMode>(
-    "/api/external/set/rosbag_logging_mode", std::bind(&RosbagLoggingMode::setRosbagLoggingMode, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
-  cli_set_rosbag_logging_mode_ = proxy.create_client<tier4_external_api_msgs::srv::SetRosbagLoggingMode>(
-    "/api/autoware/set/rosbag_logging_mode", rmw_qos_profile_services_default);
-  pub_get_rosbag_logging_mode_ = create_publisher<tier4_external_api_msgs::msg::RosbagLoggingMode>(
-    "/api/external/get/rosbag_logging_mode", rclcpp::QoS(1));
-  sub_get_rosbag_logging_mode_ = create_subscription<tier4_external_api_msgs::msg::RosbagLoggingMode>(
-    "/api/autoware/get/rosbag_logging_mode", rclcpp::QoS(1),
-    std::bind(&RosbagLoggingMode::onRosbagLoggingMode, this, _1));
+  srv_set_rosbag_logging_mode_ =
+    proxy.create_service<tier4_external_api_msgs::srv::SetRosbagLoggingMode>(
+      "/api/external/set/rosbag_logging_mode",
+      std::bind(&RosbagLoggingMode::setRosbagLoggingMode, this, _1, _2),
+      rmw_qos_profile_services_default, group_);
+  cli_set_rosbag_logging_mode_ =
+    proxy.create_client<tier4_external_api_msgs::srv::SetRosbagLoggingMode>(
+      "/api/autoware/set/rosbag_logging_mode", rmw_qos_profile_services_default);
+  pub_get_rosbag_logging_mode_ =
+    create_publisher<tier4_external_api_msgs::msg::RosbagLoggingMode>(
+      "/api/external/get/rosbag_logging_mode", rclcpp::QoS(1));
+  sub_get_rosbag_logging_mode_ =
+    create_subscription<tier4_external_api_msgs::msg::RosbagLoggingMode>(
+      "/api/autoware/get/rosbag_logging_mode", rclcpp::QoS(1),
+      std::bind(&RosbagLoggingMode::onRosbagLoggingMode, this, _1));
 }
 
 void RosbagLoggingMode::setRosbagLoggingMode(
