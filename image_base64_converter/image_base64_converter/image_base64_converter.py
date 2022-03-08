@@ -18,7 +18,7 @@ from rclpy.node import Node
 import base64
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 
-from autoware_external_api_msgs.msg import Base64Image
+from tier4_external_api_msgs.msg import Base64Image
 from sensor_msgs.msg import CompressedImage
 
 
