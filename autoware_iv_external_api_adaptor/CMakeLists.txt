@@ -25,6 +25,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/map.cpp
   src/metadata_packages.cpp
   src/operator.cpp
+  src/rosbag_logging_mode.cpp
   src/route.cpp
   src/service.cpp
   src/start.cpp
@@ -40,8 +41,9 @@ rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Engage")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::FailSafeState")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::InitialPose")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Map")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Operator")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::MetadataPackages")
+rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Operator")
+rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::RosbagLoggingMode")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Route")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Service")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Start")
