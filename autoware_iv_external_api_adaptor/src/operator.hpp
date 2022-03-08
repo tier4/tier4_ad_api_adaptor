@@ -17,10 +17,11 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
-#include "tier4_external_api_msgs/srv/set_operator.hpp"
-#include "tier4_external_api_msgs/srv/set_observer.hpp"
-#include "tier4_external_api_msgs/msg/operator.hpp"
+
 #include "tier4_external_api_msgs/msg/observer.hpp"
+#include "tier4_external_api_msgs/msg/operator.hpp"
+#include "tier4_external_api_msgs/srv/set_observer.hpp"
+#include "tier4_external_api_msgs/srv/set_operator.hpp"
 
 namespace external_api
 {
@@ -54,10 +55,8 @@ private:
   void setObserver(
     const tier4_external_api_msgs::srv::SetObserver::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::SetObserver::Response::SharedPtr response);
-  void onOperator(
-    const tier4_external_api_msgs::msg::Operator::ConstSharedPtr message);
-  void onObserver(
-    const tier4_external_api_msgs::msg::Observer::ConstSharedPtr message);
+  void onOperator(const tier4_external_api_msgs::msg::Operator::ConstSharedPtr message);
+  void onObserver(const tier4_external_api_msgs::msg::Observer::ConstSharedPtr message);
 };
 
 }  // namespace external_api

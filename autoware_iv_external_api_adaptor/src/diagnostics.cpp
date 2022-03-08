@@ -24,8 +24,7 @@ Diagnostics::Diagnostics(const rclcpp::NodeOptions & options)
 
   pub_ = create_publisher<tier4_external_api_msgs::msg::ClassifiedDiagnostics>(
     "/api/external/get/diagnostics", rclcpp::QoS(1));
-  timer_ = rclcpp::create_timer(
-    this, get_clock(), 200ms, std::bind(&Diagnostics::onTimer, this));
+  timer_ = rclcpp::create_timer(this, get_clock(), 200ms, std::bind(&Diagnostics::onTimer, this));
 }
 
 void Diagnostics::onTimer()

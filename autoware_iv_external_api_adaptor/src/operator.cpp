@@ -17,38 +17,32 @@
 namespace external_api
 {
 
-Operator::Operator(const rclcpp::NodeOptions & options)
-: Node("external_api_operator", options)
+Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_operator", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_operator_ = proxy.create_service<tier4_external_api_msgs::srv::SetOperator>(
-    "/api/external/set/operator",
-    std::bind(&Operator::setOperator, this, _1, _2),
+    "/api/external/set/operator", std::bind(&Operator::setOperator, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   srv_set_observer_ = proxy.create_service<tier4_external_api_msgs::srv::SetObserver>(
-    "/api/external/set/observer",
-    std::bind(&Operator::setObserver, this, _1, _2),
+    "/api/external/set/observer", std::bind(&Operator::setObserver, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   cli_set_operator_ = proxy.create_client<tier4_external_api_msgs::srv::SetOperator>(
-    "/api/autoware/set/operator",
-    rmw_qos_profile_services_default);
+    "/api/autoware/set/operator", rmw_qos_profile_services_default);
   cli_set_observer_ = proxy.create_client<tier4_external_api_msgs::srv::SetObserver>(
-    "/api/autoware/set/observer",
-    rmw_qos_profile_services_default);
+    "/api/autoware/set/observer", rmw_qos_profile_services_default);
 
   pub_get_operator_ = create_publisher<tier4_external_api_msgs::msg::Operator>(
     "/api/external/get/operator", rclcpp::QoS(1));
   pub_get_observer_ = create_publisher<tier4_external_api_msgs::msg::Observer>(
     "/api/external/get/observer", rclcpp::QoS(1));
   sub_get_operator_ = create_subscription<tier4_external_api_msgs::msg::Operator>(
-    "/api/autoware/get/operator", rclcpp::QoS(1),
-    std::bind(&Operator::onOperator, this, _1));
+    "/api/autoware/get/operator", rclcpp::QoS(1), std::bind(&Operator::onOperator, this, _1));
   sub_get_observer_ = create_subscription<tier4_external_api_msgs::msg::Observer>(
-    "/api/autoware/get/observer", rclcpp::QoS(1),
-    std::bind(&Operator::onObserver, this, _1));
+    "/api/autoware/get/observer", rclcpp::QoS(1), std::bind(&Operator::onObserver, this, _1));
 }
 
 void Operator::setOperator(
@@ -75,14 +69,12 @@ void Operator::setObserver(
   response->status = resp->status;
 }
 
-void Operator::onOperator(
-  const tier4_external_api_msgs::msg::Operator::ConstSharedPtr message)
+void Operator::onOperator(const tier4_external_api_msgs::msg::Operator::ConstSharedPtr message)
 {
   pub_get_operator_->publish(*message);
 }
 
-void Operator::onObserver(
-  const tier4_external_api_msgs::msg::Observer::ConstSharedPtr message)
+void Operator::onObserver(const tier4_external_api_msgs::msg::Observer::ConstSharedPtr message)
 {
   pub_get_observer_->publish(*message);
 }

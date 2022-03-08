@@ -68,9 +68,6 @@ private:
   void getDiagInfo(const AutowareInfo & aw_info, tier4_api_msgs::msg::AwapiAutowareStatus * status);
   void getErrorDiagInfo(
     const AutowareInfo & aw_info, tier4_api_msgs::msg::AwapiAutowareStatus * status);
-  void getGlobalRptInfo(
-    const pacmod3_msgs::msg::GlobalRpt::ConstSharedPtr & global_rpt_ptr,
-    tier4_api_msgs::msg::AwapiAutowareStatus * status);
 
   bool isGoal(const tier4_system_msgs::msg::AutowareState::ConstSharedPtr & autoware_state);
 };

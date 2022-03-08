@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef IV_STATE_HPP_
-#define IV_STATE_HPP_
+#ifndef IV_MSGS_HPP_
+#define IV_MSGS_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -68,4 +68,4 @@ private:
 
 }  // namespace internal_api
 
-#endif  // IV_STATE_HPP_
+#endif  // IV_MSGS_HPP_

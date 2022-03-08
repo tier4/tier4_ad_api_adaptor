@@ -15,13 +15,13 @@
 #ifndef INITIAL_POSE_HPP_
 #define INITIAL_POSE_HPP_
 
-#include <tier4_api_utils/tier4_api_utils.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <tier4_api_utils/tier4_api_utils.hpp>
 
+#include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 #include <tier4_external_api_msgs/srv/initialize_pose.hpp>
 #include <tier4_external_api_msgs/srv/initialize_pose_auto.hpp>
 #include <tier4_localization_msgs/srv/pose_with_covariance_stamped.hpp>
-#include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 
 namespace internal_api
 {

@@ -13,36 +13,32 @@
 // limitations under the License.
 
 #include "engage.hpp"
+
 #include <memory>
 
 namespace external_api
 {
 
-Engage::Engage(const rclcpp::NodeOptions & options)
-: Node("external_api_engage", options)
+Engage::Engage(const rclcpp::NodeOptions & options) : Node("external_api_engage", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_engage_ = proxy.create_service<tier4_external_api_msgs::srv::Engage>(
-    "/api/external/set/engage",
-    std::bind(&Engage::setEngage, this, _1, _2),
+    "/api/external/set/engage", std::bind(&Engage::setEngage, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   cli_engage_ = proxy.create_client<tier4_external_api_msgs::srv::Engage>(
-    "/api/autoware/set/engage",
-    rmw_qos_profile_services_default);
+    "/api/autoware/set/engage", rmw_qos_profile_services_default);
   cli_set_operator_ = proxy.create_client<tier4_external_api_msgs::srv::SetOperator>(
-    "/api/autoware/set/operator",
-    rmw_qos_profile_services_default);
+    "/api/autoware/set/operator", rmw_qos_profile_services_default);
   pub_engage_status_ = create_publisher<tier4_external_api_msgs::msg::EngageStatus>(
     "/api/external/get/engage", rclcpp::QoS(1));
   sub_engage_status_ = create_subscription<autoware_auto_vehicle_msgs::msg::Engage>(
-    "/api/autoware/get/engage", rclcpp::QoS(1),
-    std::bind(&Engage::onEngageStatus, this, _1));
+    "/api/autoware/get/engage", rclcpp::QoS(1), std::bind(&Engage::onEngageStatus, this, _1));
   sub_autoware_state_ = create_subscription<autoware_auto_system_msgs::msg::AutowareState>(
-    "/autoware/state", rclcpp::QoS(1),
-    std::bind(&Engage::onAutowareState, this, _1));
+    "/autoware/state", rclcpp::QoS(1), std::bind(&Engage::onAutowareState, this, _1));
 
   // For restart announce from signage and vehicle_voice
   cli_announce_ = proxy.create_client<tier4_hmi_msgs::srv::Announce>(
@@ -93,16 +89,15 @@ void Engage::setEngage(
   response->status = resp->status;
 }
 
-void Engage::onEngageStatus(
-  const autoware_auto_vehicle_msgs::msg::Engage::SharedPtr message)
+void Engage::onEngageStatus(const autoware_auto_vehicle_msgs::msg::Engage::SharedPtr message)
 {
   auto msg = tier4_external_api_msgs::build<tier4_external_api_msgs::msg::EngageStatus>()
-    .stamp(message->stamp).engage(message->engage);
+               .stamp(message->stamp)
+               .engage(message->engage);
   pub_engage_status_->publish(msg);
 }
 
-void Engage::onAutowareState(
-  const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message)
+void Engage::onAutowareState(const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message)
 {
   using autoware_auto_system_msgs::msg::AutowareState;
   waiting_for_engage_ = (message->state == AutowareState::WAITING_FOR_ENGAGE);

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "initial_pose.hpp"
+
 #include <memory>
 
 namespace external_api
@@ -21,24 +22,22 @@ namespace external_api
 InitialPose::InitialPose(const rclcpp::NodeOptions & options)
 : Node("external_api_initial_pose", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_initialize_pose_ = proxy.create_service<InitializePose>(
-    "/api/external/set/initialize_pose",
-    std::bind(&InitialPose::setInitializePose, this, _1, _2),
+    "/api/external/set/initialize_pose", std::bind(&InitialPose::setInitializePose, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   srv_set_initialize_pose_auto_ = proxy.create_service<InitializePoseAuto>(
     "/api/external/set/initialize_pose_auto",
-    std::bind(&InitialPose::setInitializePoseAuto, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    std::bind(&InitialPose::setInitializePoseAuto, this, _1, _2), rmw_qos_profile_services_default,
+    group_);
   cli_set_initialize_pose_ = proxy.create_client<InitializePose>(
-    "/api/autoware/set/initialize_pose",
-    rmw_qos_profile_services_default);
+    "/api/autoware/set/initialize_pose", rmw_qos_profile_services_default);
   cli_set_initialize_pose_auto_ = proxy.create_client<InitializePoseAuto>(
-    "/api/autoware/set/initialize_pose_auto",
-    rmw_qos_profile_services_default);
+    "/api/autoware/set/initialize_pose_auto", rmw_qos_profile_services_default);
 }
 
 void InitialPose::setInitializePose(
