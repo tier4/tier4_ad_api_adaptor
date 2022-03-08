@@ -132,19 +132,6 @@
 |     | autoware_auto_perception_msgs/TrafficSignal | signal |                      | traffic light color/arrow                                      |
 |     | uint8                                       | judge  | 0:NONE, 1:STOP, 2:GO | go/stop judgment based on the color/arrow of the traffic light |
 
-### /awapi/vehicle/get/door
-
-- get door status
-- MessageType: tier4_api_msgs/DoorStatus.msg
-
-| ✓   | type                      | name   | unit                                                                                     | note                                        |
-| --- | :------------------------ | :----- | :--------------------------------------------------------------------------------------- | :------------------------------------------ |
-|     | tier4_api_msgs/DoorStatus | status | 0:UNKNOWN, 1:DOOR_OPENED, 2:DOOR_CLOSED 3:DOOR_OPENING, 4:DOOR_CLOSING, 5:NOT_APPLICABLE | available only for the vehicle using pacmod |
-
-- Now, available status is following: (0:UNKNOWN, 1:DOOR_OPENED, 2:DOOR_CLOSED, 5:NOT_APPLICABLE ).
-- 5 (NOT_APPLICABLE) is published if the pacmod is not used
-- Due to the specifications of pacmod, the last door open / close command is published as the status.
-- The status is 0 (UNKNOWN) until the door open / close command is published once.
 
 ## put topic
 
@@ -253,17 +240,6 @@
 | ✓   | type                                             | name | unit | note |
 | --- | :----------------------------------------------- | :--- | :--- | :--- |
 |     | autoware_auto_perception_msgs/TrafficSignalArray |      |      |      |
-
-### /awapi/vehicle/put/door
-
-- send door command
-- MessageType: tier4_api_msgs/DoorCommand
-  - send True: open door
-  - send False: close door
-
-| ✓   | type                       | name | unit | note                                        |
-| --- | :------------------------- | :--- | :--- | :------------------------------------------ |
-|     | tier4_api_msgs/DoorCommand |      |      | available only for the vehicle using pacmod |
 
 ### /awapi/autoware/put/crosswalk_states
 

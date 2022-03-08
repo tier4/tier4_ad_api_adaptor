@@ -49,8 +49,8 @@ ExternalFailSafeState to_external_state(const InternalFailSafeState & msg)
 
 ExternalFailSafeStateStamped to_external(const InternalFailSafeState & msg)
 {
-  return tier4_external_api_msgs::build<ExternalFailSafeStateStamped>()
-         .stamp(msg.stamp).state(to_external_state(msg));
+  return tier4_external_api_msgs::build<ExternalFailSafeStateStamped>().stamp(msg.stamp).state(
+    to_external_state(msg));
 }
 
 }  // namespace external_api::converter

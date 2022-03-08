@@ -13,31 +13,30 @@
 // limitations under the License.
 
 #include "route.hpp"
+
 #include <memory>
 
 namespace external_api
 {
 
-Route::Route(const rclcpp::NodeOptions & options)
-: Node("external_api_route", options)
+Route::Route(const rclcpp::NodeOptions & options) : Node("external_api_route", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_route_ = proxy.create_service<tier4_external_api_msgs::srv::SetRoute>(
-    "/api/external/set/route",
-    std::bind(&Route::setRoute, this, _1, _2),
+    "/api/external/set/route", std::bind(&Route::setRoute, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   srv_clear_route_ = proxy.create_service<tier4_external_api_msgs::srv::ClearRoute>(
-    "/api/external/set/clear_route",
-    std::bind(&Route::clearRoute, this, _1, _2),
+    "/api/external/set/clear_route", std::bind(&Route::clearRoute, this, _1, _2),
     rmw_qos_profile_services_default, group_);
 
-  cli_set_route_ = proxy.create_client<tier4_external_api_msgs::srv::SetRoute>(
-    "/api/autoware/set/route");
-  cli_clear_route_ = proxy.create_client<tier4_external_api_msgs::srv::ClearRoute>(
-    "/api/autoware/set/clear_route");
+  cli_set_route_ =
+    proxy.create_client<tier4_external_api_msgs::srv::SetRoute>("/api/autoware/set/route");
+  cli_clear_route_ =
+    proxy.create_client<tier4_external_api_msgs::srv::ClearRoute>("/api/autoware/set/clear_route");
 
   pub_get_route_ = create_publisher<tier4_external_api_msgs::msg::Route>(
     "/api/external/get/route", rclcpp::QoS(1).transient_local());
@@ -45,8 +44,7 @@ Route::Route(const rclcpp::NodeOptions & options)
     "/api/autoware/get/route", rclcpp::QoS(1).transient_local(),
     std::bind(&Route::onRoute, this, _1));
   sub_autoware_state_ = create_subscription<autoware_auto_system_msgs::msg::AutowareState>(
-    "/autoware/state", rclcpp::QoS(1),
-    std::bind(&Route::onAutowareState, this, _1));
+    "/autoware/state", rclcpp::QoS(1), std::bind(&Route::onAutowareState, this, _1));
 
   waiting_for_route_ = false;
 }
@@ -81,14 +79,12 @@ void Route::clearRoute(
   response->status = resp->status;
 }
 
-void Route::onRoute(
-  const tier4_external_api_msgs::msg::Route::ConstSharedPtr message)
+void Route::onRoute(const tier4_external_api_msgs::msg::Route::ConstSharedPtr message)
 {
   pub_get_route_->publish(*message);
 }
 
-void Route::onAutowareState(
-  const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message)
+void Route::onAutowareState(const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message)
 {
   using autoware_auto_system_msgs::msg::AutowareState;
   waiting_for_route_ = (message->state == AutowareState::WAITING_FOR_ROUTE);

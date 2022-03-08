@@ -17,25 +17,22 @@
 namespace external_api
 {
 
-Door::Door(const rclcpp::NodeOptions & options)
-: Node("external_api_door", options)
+Door::Door(const rclcpp::NodeOptions & options) : Node("external_api_door", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<tier4_external_api_msgs::srv::SetDoor>(
-    "/api/external/set/door",
-    std::bind(&Door::setDoor, this, _1, _2),
+    "/api/external/set/door", std::bind(&Door::setDoor, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   cli_ = proxy.create_client<tier4_external_api_msgs::srv::SetDoor>(
-    "/api/vehicle/set/door",
-    rmw_qos_profile_services_default);
+    "/api/vehicle/set/door", rmw_qos_profile_services_default);
   pub_door_status_ = create_publisher<tier4_external_api_msgs::msg::DoorStatus>(
     "/api/external/get/door", rclcpp::QoS(1));
   sub_door_status_ = create_subscription<tier4_api_msgs::msg::DoorStatus>(
-    "/vehicle/status/door_status", rclcpp::QoS(1),
-    std::bind(&Door::getDoorStatus, this, _1));
+    "/vehicle/status/door_status", rclcpp::QoS(1), std::bind(&Door::getDoorStatus, this, _1));
 }
 
 void Door::setDoor(
@@ -50,8 +47,7 @@ void Door::setDoor(
   response->status = resp->status;
 }
 
-void Door::getDoorStatus(
-  const tier4_api_msgs::msg::DoorStatus::SharedPtr message)
+void Door::getDoorStatus(const tier4_api_msgs::msg::DoorStatus::SharedPtr message)
 {
   tier4_external_api_msgs::msg::DoorStatus msg;
   msg.stamp = now();

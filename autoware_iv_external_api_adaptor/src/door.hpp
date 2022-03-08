@@ -17,9 +17,10 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
-#include "tier4_external_api_msgs/srv/set_door.hpp"
+
 #include "tier4_api_msgs/msg/door_status.hpp"
 #include "tier4_external_api_msgs/msg/door_status.hpp"
+#include "tier4_external_api_msgs/srv/set_door.hpp"
 
 namespace external_api
 {
@@ -42,8 +43,7 @@ private:
     const tier4_external_api_msgs::srv::SetDoor::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::SetDoor::Response::SharedPtr response);
 
-  void getDoorStatus(
-    const tier4_api_msgs::msg::DoorStatus::SharedPtr message);
+  void getDoorStatus(const tier4_api_msgs::msg::DoorStatus::SharedPtr message);
 };
 
 }  // namespace external_api

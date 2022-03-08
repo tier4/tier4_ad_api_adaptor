@@ -13,30 +13,28 @@
 // limitations under the License.
 
 #include "emergency.hpp"
+
 #include <memory>
 
 namespace external_api
 {
 
-Emergency::Emergency(const rclcpp::NodeOptions & options)
-: Node("external_api_emergency", options)
+Emergency::Emergency(const rclcpp::NodeOptions & options) : Node("external_api_emergency", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<tier4_external_api_msgs::srv::SetEmergency>(
-    "/api/external/set/emergency",
-    std::bind(&Emergency::setEmergency, this, _1, _2),
+    "/api/external/set/emergency", std::bind(&Emergency::setEmergency, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   cli_ = proxy.create_client<tier4_external_api_msgs::srv::SetEmergency>(
-    "/api/autoware/set/emergency",
-    rmw_qos_profile_services_default);
+    "/api/autoware/set/emergency", rmw_qos_profile_services_default);
   pub_emergency_ = create_publisher<tier4_external_api_msgs::msg::Emergency>(
     "/api/external/get/emergency", rclcpp::QoS(1));
   sub_emergency_ = create_subscription<tier4_external_api_msgs::msg::Emergency>(
-    "/api/autoware/get/emergency", rclcpp::QoS(1),
-    std::bind(&Emergency::getEmergency, this, _1));
+    "/api/autoware/get/emergency", rclcpp::QoS(1), std::bind(&Emergency::getEmergency, this, _1));
 }
 
 void Emergency::setEmergency(
@@ -51,8 +49,7 @@ void Emergency::setEmergency(
   response->status = resp->status;
 }
 
-void Emergency::getEmergency(
-  const tier4_external_api_msgs::msg::Emergency::SharedPtr message)
+void Emergency::getEmergency(const tier4_external_api_msgs::msg::Emergency::SharedPtr message)
 {
   pub_emergency_->publish(*message);
 }

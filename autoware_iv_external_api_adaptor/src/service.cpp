@@ -17,21 +17,20 @@
 namespace external_api
 {
 
-Service::Service(const rclcpp::NodeOptions & options)
-: Node("external_api_service", options)
+Service::Service(const rclcpp::NodeOptions & options) : Node("external_api_service", options)
 {
-  using namespace std::placeholders;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
   srv_set_service_ = proxy.create_service<tier4_external_api_msgs::srv::SetService>(
-    "/api/external/set/service",
-    std::bind(&Service::setService, this, _1, _2));
+    "/api/external/set/service", std::bind(&Service::setService, this, _1, _2));
   pub_get_service_ = create_publisher<tier4_external_api_msgs::msg::Service>(
     "/api/external/get/service", rclcpp::QoS(1).transient_local());
 
   pub_get_service_->publish(
-    tier4_external_api_msgs::build<tier4_external_api_msgs::msg::Service>()
-    .mode(tier4_external_api_msgs::msg::Service::NOT_IN_SERVICE));
+    tier4_external_api_msgs::build<tier4_external_api_msgs::msg::Service>().mode(
+      tier4_external_api_msgs::msg::Service::NOT_IN_SERVICE));
 }
 
 void Service::setService(
