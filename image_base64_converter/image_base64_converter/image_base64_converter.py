@@ -18,7 +18,7 @@ from rclpy.node import Node
 import base64
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 
-from tier4_external_api_msgs.msg import Base64Image
+from std_msgs.msg import String
 from sensor_msgs.msg import CompressedImage
 
 
@@ -34,7 +34,7 @@ class ImageCallback():
 
     def callback(self, message):
         try:
-            base64_image = Base64Image()
+            base64_image = String()
             data = base64.b64encode(bytes(message.data)).decode()
             base64_image.data = data
             self._publisher.publish(base64_image)
@@ -59,7 +59,7 @@ class ImageRePublisher(Node):
 
         for topic in self._image_topic_name_list:
             self.get_logger().info('I heard: "%s"' % topic)
-            self._publisher_list[topic] = self.create_publisher(Base64Image, '/api/external/get/base64/image' + topic, 10)
+            self._publisher_list[topic] = self.create_publisher(String, '/api/external/get/base64/image' + topic, 10)
 
             qos_profile = QoSProfile(
                 reliability=ReliabilityPolicy.BEST_EFFORT,
