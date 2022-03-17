@@ -46,6 +46,8 @@ void RosbagLoggingMode::setRosbagLoggingMode(
   const tier4_external_api_msgs::srv::SetRosbagLoggingMode::Response::SharedPtr response)
 {
   // systemd's default timeouts for starting and stopping are both 90 seconds.
+  // See below for more details.
+  // https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html
   // So timeout for restarting is 180 seconds by default.
   // The value of timeout below is 10 seconds added with a margin.
   const auto [status, resp] =
