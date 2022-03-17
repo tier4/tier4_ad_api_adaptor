@@ -45,7 +45,13 @@ void RosbagLoggingMode::setRosbagLoggingMode(
   const tier4_external_api_msgs::srv::SetRosbagLoggingMode::Request::SharedPtr request,
   const tier4_external_api_msgs::srv::SetRosbagLoggingMode::Response::SharedPtr response)
 {
-  const auto [status, resp] = cli_set_rosbag_logging_mode_->call(request);
+  // systemd's default timeouts for starting and stopping are both 90 seconds.
+  // See below for more details.
+  // https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html
+  // So timeout for restarting is 180 seconds by default.
+  // The value of timeout below is 10 seconds added with a margin.
+  const auto [status, resp] =
+    cli_set_rosbag_logging_mode_->call(request, std::chrono::seconds(190));
   if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
