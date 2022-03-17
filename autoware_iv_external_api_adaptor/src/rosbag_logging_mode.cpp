@@ -45,7 +45,7 @@ void RosbagLoggingMode::setRosbagLoggingMode(
   const tier4_external_api_msgs::srv::SetRosbagLoggingMode::Request::SharedPtr request,
   const tier4_external_api_msgs::srv::SetRosbagLoggingMode::Response::SharedPtr response)
 {
-  const auto [status, resp] = cli_set_rosbag_logging_mode_->call(request, std::chrono::seconds(60));
+  const auto [status, resp] = cli_set_rosbag_logging_mode_->call(request, std::chrono::seconds(190));
   if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
