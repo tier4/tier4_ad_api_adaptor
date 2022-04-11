@@ -12,15 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import base64
+
 # -*- coding: utf-8 -*-
 import rclpy
 from rclpy.node import Node
-import base64
-from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
-
-from std_msgs.msg import String
+from rclpy.qos import HistoryPolicy
+from rclpy.qos import QoSProfile
+from rclpy.qos import ReliabilityPolicy
 from sensor_msgs.msg import CompressedImage
-
+from std_msgs.msg import String
 
 
 class ImageCallback():

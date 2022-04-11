@@ -16,7 +16,6 @@
 #define ENGAGE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "tier4_hmi_msgs/srv/announce.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
 #include "autoware_auto_system_msgs/msg/autoware_state.hpp"
@@ -24,6 +23,7 @@
 #include "tier4_external_api_msgs/msg/engage_status.hpp"
 #include "tier4_external_api_msgs/srv/engage.hpp"
 #include "tier4_external_api_msgs/srv/set_operator.hpp"
+#include "tier4_hmi_msgs/srv/announce.hpp"
 
 namespace external_api
 {

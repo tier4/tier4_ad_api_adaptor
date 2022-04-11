@@ -21,7 +21,6 @@
 
 #include "tier4_external_api_msgs/msg/operator.hpp"
 #include "tier4_hmi_msgs/srv/announce.hpp"
-#include "std_srvs/srv/trigger.hpp"
 
 namespace external_api
 {
