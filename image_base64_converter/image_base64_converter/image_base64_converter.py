@@ -39,7 +39,7 @@ class ImageCallback():
             data = base64.b64encode(bytes(message.data)).decode()
             base64_image.data = data
             self._publisher.publish(base64_image)
-        except:
+        except Exception:
             self._node.get_logger().warn('Cannot subscribe: "%s"' % self._topic)
 
 
@@ -72,6 +72,7 @@ class ImageRePublisher(Node):
             self.create_subscription(
                 CompressedImage, topic, self._subscribe_callback_list[topic].get_callback() , qos_profile=qos_profile
             )
+
 
 def main(args=None):
     rclpy.init(args=args)
