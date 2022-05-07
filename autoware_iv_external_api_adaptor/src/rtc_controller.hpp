@@ -54,8 +54,6 @@ private:
   std::vector<CooperateStatus> pull_over_statuses_;
   std::vector<CooperateStatus> pull_out_statuses_;
 
-  bool processing_statuses_ = false;
-
   std::string BEHAVIOR_PLANNING_NAMESPACE = "/planning/scenario_planning/lane_driving/behavior_planning";
 
   /* subscribers */

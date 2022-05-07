@@ -25,52 +25,52 @@ RTCController::RTCController(const rclcpp::NodeOptions & options) : Node("extern
 
   blind_spot_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/blind_spot/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::blindSpotCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::blindSpotCallback, this, _1));
   crosswalk_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/crosswalk/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::crosswalkCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::crosswalkCallback, this, _1));
   detection_area_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/detection_area/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::detectionAreaCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::detectionAreaCallback, this, _1));
   intersection_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/intersect/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::intersectionCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::intersectionCallback, this, _1));
   no_stopping_area_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/no_stopping_area/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::noStoppingAreaCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::noStoppingAreaCallback, this, _1));
   occlusion_spot_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/occlusion_spot/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::occlusionSpotCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::occlusionSpotCallback, this, _1));
   stop_line_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/stop_line/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::stopLineCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::stopLineCallback, this, _1));
   traffic_light_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/traffic_light/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::trafficLightCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::trafficLightCallback, this, _1));
   virtual_traffic_light_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/virtual_traffic_light/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::virtualTrafficLightCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::virtualTrafficLightCallback, this, _1));
   lane_change_left_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/lane_change_left/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::laneChangeLeftCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::laneChangeLeftCallback, this, _1));
   lane_change_right_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/lane_change_right/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::laneChangeRightCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::laneChangeRightCallback, this, _1));
   avoidance_left_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/avoidance_left/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::avoidanceLeftCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::avoidanceLeftCallback, this, _1));
   avoidance_right_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/avoidance_right/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::avoidanceRightCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::avoidanceRightCallback, this, _1));
   pull_over_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/pull_over/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::pullOverCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::pullOverCallback, this, _1));
   pull_out_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/pull_out/cooperate_status",
-    rclcpp::QoS(1).transient_local(), std::bind(&RTCController::pullOutCallback, this, _1));
+    rclcpp::QoS(1), std::bind(&RTCController::pullOutCallback, this, _1));
 
   rtc_status_pub_ = create_publisher<CooperateStatusArray>(
-    "/api/external/get/rtc_status", rclcpp::QoS(1).transient_local());
+    "/api/external/get/rtc_status", rclcpp::QoS(1));
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_rtc_ = proxy.create_service<CooperateCommands>(
@@ -113,107 +113,77 @@ RTCController::RTCController(const rclcpp::NodeOptions & options) : Node("extern
 
 void RTCController::blindSpotCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    blind_spot_statuses_ = message->statuses;
-  }
+  blind_spot_statuses_ = message->statuses;
 }
 
 void RTCController::crosswalkCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    crosswalk_statuses_ = message->statuses;
-  }
+  crosswalk_statuses_ = message->statuses;
 }
 
 void RTCController::detectionAreaCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    detection_area_statuses_ = message->statuses;
-  }
+  detection_area_statuses_ = message->statuses;
 }
 
 void RTCController::intersectionCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    intersection_statuses_ = message->statuses;
-  }
+  intersection_statuses_ = message->statuses;
 }
 
 void RTCController::noStoppingAreaCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    no_stopping_area_statuses_ = message->statuses;
-  }
+  no_stopping_area_statuses_ = message->statuses;
 }
 
 void RTCController::occlusionSpotCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    occlusion_spot_statuses_ = message->statuses;
-  }
+  occlusion_spot_statuses_ = message->statuses;
 }
 
 void RTCController::stopLineCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    stop_line_statuses_ = message->statuses;
-  }
+  stop_line_statuses_ = message->statuses;
 }
 
 void RTCController::trafficLightCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    traffic_light_statuses_ = message->statuses;
-  }
+  traffic_light_statuses_ = message->statuses;
 }
 
 void RTCController::virtualTrafficLightCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    virtual_traffic_light_statuses_ = message->statuses;
-  }
+  virtual_traffic_light_statuses_ = message->statuses;
 }
 
 void RTCController::laneChangeLeftCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    lane_change_left_statuses_ = message->statuses;
-  }
+  lane_change_left_statuses_ = message->statuses;
 }
 
 void RTCController::laneChangeRightCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    lane_change_right_statuses_ = message->statuses;
-  }
+  lane_change_right_statuses_ = message->statuses;
 }
 
 void RTCController::avoidanceLeftCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    avoidance_left_statuses_ = message->statuses;
-  }
+  avoidance_left_statuses_ = message->statuses;
 }
 
 void RTCController::avoidanceRightCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    avoidance_right_statuses_ = message->statuses;
-  }
+  avoidance_right_statuses_ = message->statuses;
 }
 
 void RTCController::pullOverCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    pull_over_statuses_ = message->statuses;
-  }
+  pull_over_statuses_ = message->statuses;
 }
 
 void RTCController::pullOutCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
-  if (!processing_statuses_){
-    pull_out_statuses_ = message->statuses;
-  }
+  pull_out_statuses_ = message->statuses;
 }
 
 void RTCController::insertionSort(std::vector<CooperateStatus> statuses_vector)
@@ -235,7 +205,6 @@ void RTCController::insertionSort(std::vector<CooperateStatus> statuses_vector)
 
 void RTCController::onTimer()
 {
-  processing_statuses_ = true;
   std::vector<CooperateStatus> cooperate_statuses;
   cooperate_statuses.insert(cooperate_statuses.end(), blind_spot_statuses_.begin(), blind_spot_statuses_.end());
   cooperate_statuses.insert(cooperate_statuses.end(), crosswalk_statuses_.begin(), crosswalk_statuses_.end());
@@ -254,7 +223,6 @@ void RTCController::onTimer()
   cooperate_statuses.insert(cooperate_statuses.end(), pull_out_statuses_.begin(), pull_out_statuses_.end());
 
   insertionSort(cooperate_statuses);
-  processing_statuses_ = false;
   CooperateStatusArray msg;
   msg.stamp = now();
   msg.statuses = cooperate_statuses;
