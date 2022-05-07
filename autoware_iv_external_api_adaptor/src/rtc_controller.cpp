@@ -238,80 +238,80 @@ void RTCController::setRTC(const CooperateCommands::Request::SharedPtr requests,
     switch (command.module.type)  {
     case Module::LANE_CHANGE_LEFT:
     {
-      const auto response = cli_set_lane_change_left_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_lane_change_left_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::LANE_CHANGE_RIGHT:
     {
-      const auto response = cli_set_lane_change_right_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_lane_change_right_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::AVOIDANCE_LEFT:
     {
-      const auto response = cli_set_avoidance_left_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_avoidance_left_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::AVOIDANCE_RIGHT:
     {
-      const auto response = cli_set_avoidance_right_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_avoidance_right_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::PULL_OVER:
     {
-      const auto response = cli_set_pull_over_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_pull_over_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::PULL_OUT:
     {
-      const auto response = cli_set_pull_out_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_pull_out_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::TRAFFIC_LIGHT:
     {
-      const auto response = cli_set_traffic_light_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_traffic_light_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::INTERSECTION:
     {
-      const auto response = cli_set_intersection_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_intersection_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::CROSSWALK:
     {
-      const auto response = cli_set_crosswalk_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_crosswalk_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::BLIND_SPOT:
     {
-      const auto response = cli_set_blind_spot_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_blind_spot_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::DETECTION_AREA:
     {
-      const auto response = cli_set_detection_area_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_detection_area_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::NO_STOPPING_AREA:
     {
-      const auto response = cli_set_no_stopping_area_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_no_stopping_area_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     case Module::OCCLUSION_SPOT:
     {
-      const auto response = cli_set_occlusion_spot_->call(request);
-      //responses->responses.insert(responses->responses.end(), response.begin(), response.end());
+      const auto [status, resp] = cli_set_occlusion_spot_->call(request);
+      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
       break;
     }
     // stopline, virtual_traffic not found
