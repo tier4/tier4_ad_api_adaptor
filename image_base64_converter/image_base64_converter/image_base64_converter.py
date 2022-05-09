@@ -24,7 +24,7 @@ from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import String
 
 
-class ImageCallback():
+class ImageCallback:
     def __init__(self, node, topic, publisher):
         self._node = node
         self._topic = topic
@@ -45,31 +45,34 @@ class ImageCallback():
 
 class ImageRePublisher(Node):
     def __init__(self):
-        super().__init__('image_converter')
+        super().__init__("image_converter")
 
         self._publisher_list = {}
         self._subscribe_callback_list = {}
 
-        self.declare_parameter('image_topic_name_list', [''])
-        self._image_topic_name_list = (
-            self.get_parameter('image_topic_name_list').value
-        )
+        self.declare_parameter("image_topic_name_list", [""])
+        self._image_topic_name_list = self.get_parameter("image_topic_name_list").value
 
         self.get_logger().info('I heard: "%s"' % type(self._image_topic_name_list))
 
         for topic in self._image_topic_name_list:
             self.get_logger().info('I heard: "%s"' % topic)
-            self._publisher_list[topic] = self.create_publisher(String, '/api/external/get/base64/image' + topic, 10)
+            self._publisher_list[topic] = self.create_publisher(
+                String, "/api/external/get/base64/image" + topic, 10
+            )
 
             qos_profile = QoSProfile(
-                reliability=ReliabilityPolicy.BEST_EFFORT,
-                history=HistoryPolicy.KEEP_LAST,
-                depth=1
+                reliability=ReliabilityPolicy.BEST_EFFORT, history=HistoryPolicy.KEEP_LAST, depth=1
             )
-            self._subscribe_callback_list[topic] = ImageCallback(self, topic, self._publisher_list[topic])
+            self._subscribe_callback_list[topic] = ImageCallback(
+                self, topic, self._publisher_list[topic]
+            )
 
             self.create_subscription(
-                CompressedImage, topic, self._subscribe_callback_list[topic].get_callback() , qos_profile=qos_profile
+                CompressedImage,
+                topic,
+                self._subscribe_callback_list[topic].get_callback(),
+                qos_profile=qos_profile,
             )
 
 
@@ -87,5 +90,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
