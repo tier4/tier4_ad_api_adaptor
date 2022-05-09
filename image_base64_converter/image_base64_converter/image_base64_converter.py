@@ -44,16 +44,15 @@ class ImageCallback():
 
 
 class ImageRePublisher(Node):
-
     def __init__(self):
         super().__init__('image_converter')
 
         self._publisher_list = {}
         self._subscribe_callback_list = {}
 
-        self.declare_parameter("image_topic_name_list", [''])
+        self.declare_parameter('image_topic_name_list', [''])
         self._image_topic_name_list = (
-            self.get_parameter("image_topic_name_list").value
+            self.get_parameter('image_topic_name_list').value
         )
 
         self.get_logger().info('I heard: "%s"' % type(self._image_topic_name_list))

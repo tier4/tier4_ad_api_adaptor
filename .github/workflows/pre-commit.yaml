@@ -10,6 +10,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
+      - name: install black
+        run: |
+          pip install black==22.3.0
+
       - name: Run pre-commit
         uses: autowarefoundation/autoware-github-actions/pre-commit@tier4/proposal
         with:
