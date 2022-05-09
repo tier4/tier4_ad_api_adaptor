@@ -10,7 +10,6 @@
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
-    <depend>tier4_rtc_msgs</depend>
   <depend>autoware_auto_control_msgs</depend>
   <depend>autoware_auto_system_msgs</depend>
   <depend>autoware_auto_vehicle_msgs</depend>
@@ -23,6 +22,7 @@
   <depend>tier4_api_utils</depend>
   <depend>tier4_auto_msgs_converter</depend>
   <depend>tier4_external_api_msgs</depend>
+  <depend>tier4_rtc_msgs</depend>
   <depend>tier4_vehicle_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>

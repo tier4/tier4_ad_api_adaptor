@@ -132,7 +132,6 @@
 |     | autoware_auto_perception_msgs/TrafficSignal | signal |                      | traffic light color/arrow                                      |
 |     | uint8                                       | judge  | 0:NONE, 1:STOP, 2:GO | go/stop judgment based on the color/arrow of the traffic light |
 
-
 ## put topic
 
 ### /awapi/vehicle/put/velocity
