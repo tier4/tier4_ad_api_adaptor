@@ -46,7 +46,6 @@ private:
   std::vector<CooperateStatus> intersection_statuses_;
   std::vector<CooperateStatus> no_stopping_area_statuses_;
   std::vector<CooperateStatus> occlusion_spot_statuses_;
-  std::vector<CooperateStatus> stop_line_statuses_;
   std::vector<CooperateStatus> traffic_light_statuses_;
   std::vector<CooperateStatus> virtual_traffic_light_statuses_;
   std::vector<CooperateStatus> lane_change_left_statuses_;
@@ -66,7 +65,6 @@ private:
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr intersection_sub_;
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr no_stopping_area_sub_;
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr occlusion_spot_sub_;
-  rclcpp::Subscription<CooperateStatusArray>::SharedPtr stop_line_sub_;
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr traffic_light_sub_;
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr virtual_traffic_light_sub_;
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr lane_change_left_sub_;
@@ -86,7 +84,6 @@ private:
   tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_intersection_;
   tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_no_stopping_area_;
   tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_occlusion_spot_;
-  tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_stop_line_;
   tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_traffic_light_;
   tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_virtual_traffic_light_;
   tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_lane_change_left_;

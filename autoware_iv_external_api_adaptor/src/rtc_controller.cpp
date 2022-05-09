@@ -44,9 +44,6 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   occlusion_spot_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/occlusion_spot/cooperate_status",
     rclcpp::QoS(1), std::bind(&RTCController::occlusionSpotCallback, this, _1));
-  stop_line_sub_ = create_subscription<CooperateStatusArray>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/stop_line/cooperate_status",
-    rclcpp::QoS(1), std::bind(&RTCController::stopLineCallback, this, _1));
   traffic_light_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/traffic_light/cooperate_status",
     rclcpp::QoS(1), std::bind(&RTCController::trafficLightCallback, this, _1));
@@ -98,9 +95,6 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     rmw_qos_profile_services_default);
   cli_set_occlusion_spot_ = proxy.create_client<CooperateCommands>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/occlusion_spot/cooperate_commands",
-    rmw_qos_profile_services_default);
-  cli_set_stop_line_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/stop_line/cooperate_commands",
     rmw_qos_profile_services_default);
   cli_set_traffic_light_ = proxy.create_client<CooperateCommands>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/traffic_light/cooperate_commands",
@@ -159,11 +153,6 @@ void RTCController::noStoppingAreaCallback(const CooperateStatusArray::ConstShar
 void RTCController::occlusionSpotCallback(const CooperateStatusArray::ConstSharedPtr message)
 {
   occlusion_spot_statuses_ = message->statuses;
-}
-
-void RTCController::stopLineCallback(const CooperateStatusArray::ConstSharedPtr message)
-{
-  stop_line_statuses_ = message->statuses;
 }
 
 void RTCController::trafficLightCallback(const CooperateStatusArray::ConstSharedPtr message)
@@ -236,8 +225,6 @@ void RTCController::onTimer()
     cooperate_statuses.end(), no_stopping_area_statuses_.begin(), no_stopping_area_statuses_.end());
   cooperate_statuses.insert(
     cooperate_statuses.end(), occlusion_spot_statuses_.begin(), occlusion_spot_statuses_.end());
-  cooperate_statuses.insert(
-    cooperate_statuses.end(), stop_line_statuses_.begin(), stop_line_statuses_.end());
   cooperate_statuses.insert(
     cooperate_statuses.end(), traffic_light_statuses_.begin(), traffic_light_statuses_.end());
   cooperate_statuses.insert(
@@ -350,7 +337,7 @@ void RTCController::setRTC(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
-        // stopline, virtual_traffic not found
+        // virtual_traffic not found
     }
   }
 }
