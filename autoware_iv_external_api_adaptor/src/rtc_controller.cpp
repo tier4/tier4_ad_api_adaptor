@@ -195,7 +195,7 @@ void RTCController::pullOutCallback(const CooperateStatusArray::ConstSharedPtr m
   pull_out_statuses_ = message->statuses;
 }
 
-void RTCController::insertionSort(std::vector<CooperateStatus> statuses_vector)
+void RTCController::insertionSort(std::vector<CooperateStatus> & statuses_vector)
 {
   tier4_rtc_msgs::msg::CooperateStatus current_status;
   for (size_t i = 1; i < statuses_vector.size(); i++) {

@@ -100,7 +100,7 @@ private:
   /* Timer */
   rclcpp::TimerBase::SharedPtr timer_;
 
-  void insertionSort(std::vector<CooperateStatus> statuses_vector);
+  void insertionSort(std::vector<CooperateStatus> & statuses_vector);
 
   void blindSpotCallback(const CooperateStatusArray::ConstSharedPtr message);
   void crosswalkCallback(const CooperateStatusArray::ConstSharedPtr message);
