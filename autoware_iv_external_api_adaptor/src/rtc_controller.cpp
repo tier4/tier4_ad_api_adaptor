@@ -14,11 +14,14 @@
 
 #include "rtc_controller.hpp"
 
+#include <memory>
+
 namespace external_api
 {
-RTCController::RTCController(const rclcpp::NodeOptions & options) : Node("external_api_rtc_controller", options)
+RTCController::RTCController(const rclcpp::NodeOptions & options)
+: Node("external_api_rtc_controller", options)
 {
-  using namespace std::chrono_literals;
+  using namespace std::literals::chrono_literals;
   using std::placeholders::_1;
   using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
@@ -48,7 +51,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options) : Node("extern
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/traffic_light/cooperate_status",
     rclcpp::QoS(1), std::bind(&RTCController::trafficLightCallback, this, _1));
   virtual_traffic_light_sub_ = create_subscription<CooperateStatusArray>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/virtual_traffic_light/cooperate_status",
+    BEHAVIOR_PLANNING_NAMESPACE +
+      "/behavior_velocity_planner/virtual_traffic_light/cooperate_status",
     rclcpp::QoS(1), std::bind(&RTCController::virtualTrafficLightCallback, this, _1));
   lane_change_left_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/lane_change_left/cooperate_status",
@@ -69,8 +73,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options) : Node("extern
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/pull_out/cooperate_status",
     rclcpp::QoS(1), std::bind(&RTCController::pullOutCallback, this, _1));
 
-  rtc_status_pub_ = create_publisher<CooperateStatusArray>(
-    "/api/external/get/rtc_status", rclcpp::QoS(1));
+  rtc_status_pub_ =
+    create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_rtc_ = proxy.create_service<CooperateCommands>(
@@ -78,35 +82,51 @@ RTCController::RTCController(const rclcpp::NodeOptions & options) : Node("extern
     rmw_qos_profile_services_default, group_);
 
   cli_set_blind_spot_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/blind_spot/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/blind_spot/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_crosswalk_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/crosswalk/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/crosswalk/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_detection_area_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/detection_area/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/detection_area/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_intersection_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/intersect/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/intersect/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_no_stopping_area_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/no_stopping_area/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/no_stopping_area/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_occlusion_spot_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/occlusion_spot/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/occlusion_spot/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_stop_line_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/stop_line/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/stop_line/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_traffic_light_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/traffic_light/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/traffic_light/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_virtual_traffic_light_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/virtual_traffic_light/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE +
+      "/behavior_velocity_planner/virtual_traffic_light/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_lane_change_left_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/lane_change_left/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/lane_change_left/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_lane_change_right_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/lane_change_right/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/lane_change_right/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_avoidance_left_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/avoidance_left/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/avoidance_left/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_avoidance_right_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/avoidance_right/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/avoidance_right/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_pull_over_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/pull_over/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/pull_over/cooperate_commands",
+    rmw_qos_profile_services_default);
   cli_set_pull_out_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/pull_out/cooperate_commands", rmw_qos_profile_services_default);
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_path_planner/pull_out/cooperate_commands",
+    rmw_qos_profile_services_default);
 
   timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
 }
@@ -189,13 +209,11 @@ void RTCController::pullOutCallback(const CooperateStatusArray::ConstSharedPtr m
 void RTCController::insertionSort(std::vector<CooperateStatus> statuses_vector)
 {
   tier4_rtc_msgs::msg::CooperateStatus current_status;
-  for (size_t i = 1; i < statuses_vector.size(); i++)
-  {
+  for (size_t i = 1; i < statuses_vector.size(); i++) {
     current_status = statuses_vector[i];
     int j = i - 1;
 
-    while (j >= 0 && current_status.distance < statuses_vector[j].distance)
-    {
+    while (j >= 0 && current_status.distance < statuses_vector[j].distance) {
       statuses_vector[j + 1] = statuses_vector[j];
       j = j - 1;
     }
@@ -206,21 +224,38 @@ void RTCController::insertionSort(std::vector<CooperateStatus> statuses_vector)
 void RTCController::onTimer()
 {
   std::vector<CooperateStatus> cooperate_statuses;
-  cooperate_statuses.insert(cooperate_statuses.end(), blind_spot_statuses_.begin(), blind_spot_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), crosswalk_statuses_.begin(), crosswalk_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), detection_area_statuses_.begin(), detection_area_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), intersection_statuses_.begin(), intersection_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), no_stopping_area_statuses_.begin(), no_stopping_area_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), occlusion_spot_statuses_.begin(), occlusion_spot_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), stop_line_statuses_.begin(), stop_line_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), traffic_light_statuses_.begin(), traffic_light_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), virtual_traffic_light_statuses_.begin(), virtual_traffic_light_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), lane_change_left_statuses_.begin(), lane_change_left_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), lane_change_right_statuses_.begin(), lane_change_right_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), avoidance_left_statuses_.begin(), avoidance_left_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), avoidance_right_statuses_.begin(), avoidance_right_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), pull_over_statuses_.begin(), pull_over_statuses_.end());
-  cooperate_statuses.insert(cooperate_statuses.end(), pull_out_statuses_.begin(), pull_out_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), blind_spot_statuses_.begin(), blind_spot_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), crosswalk_statuses_.begin(), crosswalk_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), detection_area_statuses_.begin(), detection_area_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), intersection_statuses_.begin(), intersection_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), no_stopping_area_statuses_.begin(), no_stopping_area_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), occlusion_spot_statuses_.begin(), occlusion_spot_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), stop_line_statuses_.begin(), stop_line_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), traffic_light_statuses_.begin(), traffic_light_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), virtual_traffic_light_statuses_.begin(),
+    virtual_traffic_light_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), lane_change_left_statuses_.begin(), lane_change_left_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), lane_change_right_statuses_.begin(),
+    lane_change_right_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), avoidance_left_statuses_.begin(), avoidance_left_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), avoidance_right_statuses_.begin(), avoidance_right_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), pull_over_statuses_.begin(), pull_over_statuses_.end());
+  cooperate_statuses.insert(
+    cooperate_statuses.end(), pull_out_statuses_.begin(), pull_out_statuses_.end());
 
   insertionSort(cooperate_statuses);
   CooperateStatusArray msg;
@@ -229,94 +264,94 @@ void RTCController::onTimer()
   rtc_status_pub_->publish(msg);
 }
 
-void RTCController::setRTC(const CooperateCommands::Request::SharedPtr requests,
+void RTCController::setRTC(
+  const CooperateCommands::Request::SharedPtr requests,
   const CooperateCommands::Response::SharedPtr responses)
 {
-  for(tier4_rtc_msgs::msg::CooperateCommand & command : requests->commands){
+  for (tier4_rtc_msgs::msg::CooperateCommand & command : requests->commands) {
     auto request = std::make_shared<CooperateCommands::Request>();
     request->commands = {command};
-    switch (command.module.type)  {
-    case Module::LANE_CHANGE_LEFT:
-    {
-      const auto [status, resp] = cli_set_lane_change_left_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
+    switch (command.module.type) {
+      case Module::LANE_CHANGE_LEFT: {
+        const auto [status, resp] = cli_set_lane_change_left_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::LANE_CHANGE_RIGHT: {
+        const auto [status, resp] = cli_set_lane_change_right_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::AVOIDANCE_LEFT: {
+        const auto [status, resp] = cli_set_avoidance_left_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::AVOIDANCE_RIGHT: {
+        const auto [status, resp] = cli_set_avoidance_right_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::PULL_OVER: {
+        const auto [status, resp] = cli_set_pull_over_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::PULL_OUT: {
+        const auto [status, resp] = cli_set_pull_out_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::TRAFFIC_LIGHT: {
+        const auto [status, resp] = cli_set_traffic_light_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::INTERSECTION: {
+        const auto [status, resp] = cli_set_intersection_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::CROSSWALK: {
+        const auto [status, resp] = cli_set_crosswalk_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::BLIND_SPOT: {
+        const auto [status, resp] = cli_set_blind_spot_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::DETECTION_AREA: {
+        const auto [status, resp] = cli_set_detection_area_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::NO_STOPPING_AREA: {
+        const auto [status, resp] = cli_set_no_stopping_area_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+      case Module::OCCLUSION_SPOT: {
+        const auto [status, resp] = cli_set_occlusion_spot_->call(request);
+        responses->responses.insert(
+          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        break;
+      }
+        // stopline, virtual_traffic not found
     }
-    case Module::LANE_CHANGE_RIGHT:
-    {
-      const auto [status, resp] = cli_set_lane_change_right_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::AVOIDANCE_LEFT:
-    {
-      const auto [status, resp] = cli_set_avoidance_left_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::AVOIDANCE_RIGHT:
-    {
-      const auto [status, resp] = cli_set_avoidance_right_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::PULL_OVER:
-    {
-      const auto [status, resp] = cli_set_pull_over_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::PULL_OUT:
-    {
-      const auto [status, resp] = cli_set_pull_out_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::TRAFFIC_LIGHT:
-    {
-      const auto [status, resp] = cli_set_traffic_light_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::INTERSECTION:
-    {
-      const auto [status, resp] = cli_set_intersection_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::CROSSWALK:
-    {
-      const auto [status, resp] = cli_set_crosswalk_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::BLIND_SPOT:
-    {
-      const auto [status, resp] = cli_set_blind_spot_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::DETECTION_AREA:
-    {
-      const auto [status, resp] = cli_set_detection_area_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::NO_STOPPING_AREA:
-    {
-      const auto [status, resp] = cli_set_no_stopping_area_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    case Module::OCCLUSION_SPOT:
-    {
-      const auto [status, resp] = cli_set_occlusion_spot_->call(request);
-      responses->responses.insert(responses->responses.end(), resp->responses.begin(), resp->responses.end());
-      break;
-    }
-    // stopline, virtual_traffic not found
-  }
-
   }
 }
 

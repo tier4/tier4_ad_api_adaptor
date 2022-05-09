@@ -15,15 +15,17 @@
 #ifndef RTC_CONTROLLER_HPP_
 #define RTC_CONTROLLER_HPP_
 
-#include <vector>
 #include <rclcpp/rclcpp.hpp>
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
-#include "tier4_rtc_msgs/msg/module.hpp"
+#include "tier4_rtc_msgs/msg/cooperate_command.hpp"
 #include "tier4_rtc_msgs/msg/cooperate_status.hpp"
 #include "tier4_rtc_msgs/msg/cooperate_status_array.hpp"
-#include "tier4_rtc_msgs/msg/cooperate_command.hpp"
+#include "tier4_rtc_msgs/msg/module.hpp"
 #include "tier4_rtc_msgs/srv/cooperate_commands.hpp"
+
+#include <string>
+#include <vector>
 
 namespace external_api
 {
@@ -54,7 +56,8 @@ private:
   std::vector<CooperateStatus> pull_over_statuses_;
   std::vector<CooperateStatus> pull_out_statuses_;
 
-  std::string BEHAVIOR_PLANNING_NAMESPACE = "/planning/scenario_planning/lane_driving/behavior_planning";
+  std::string BEHAVIOR_PLANNING_NAMESPACE =
+    "/planning/scenario_planning/lane_driving/behavior_planning";
 
   /* subscribers */
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr blind_spot_sub_;
