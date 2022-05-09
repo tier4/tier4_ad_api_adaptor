@@ -36,7 +36,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/detection_area/cooperate_status",
     rclcpp::QoS(1), std::bind(&RTCController::detectionAreaCallback, this, _1));
   intersection_sub_ = create_subscription<CooperateStatusArray>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/intersect/cooperate_status",
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/intersection/cooperate_status",
     rclcpp::QoS(1), std::bind(&RTCController::intersectionCallback, this, _1));
   no_stopping_area_sub_ = create_subscription<CooperateStatusArray>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/no_stopping_area/cooperate_status",
@@ -88,7 +88,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/detection_area/cooperate_commands",
     rmw_qos_profile_services_default);
   cli_set_intersection_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/intersect/cooperate_commands",
+    BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/intersection/cooperate_commands",
     rmw_qos_profile_services_default);
   cli_set_no_stopping_area_ = proxy.create_client<CooperateCommands>(
     BEHAVIOR_PLANNING_NAMESPACE + "/behavior_velocity_planner/no_stopping_area/cooperate_commands",
