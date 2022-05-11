@@ -23,7 +23,6 @@ from rclpy.qos import ReliabilityPolicy
 from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import String
 
-
 class ImageCallback:
     def __init__(self, node, topic, publisher):
         self._node = node
