@@ -1,4 +1,4 @@
-// Copyright 2021 Tier IV, Inc.
+// Copyright 2021 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,11 +27,10 @@ Start::Start(const rclcpp::NodeOptions & options) : Node("external_api_start", o
     "/api/autoware/set/start_request", std::bind(&Start::setRequestStart, this, _1, _2));
   sub_get_operator_ = create_subscription<tier4_external_api_msgs::msg::Operator>(
     "/api/external/get/operator", rclcpp::QoS(1), std::bind(&Start::getOperator, this, _1));
-  cli_signage_announce_ = this->create_client<tier4_hmi_msgs::srv::Announce>(
-    "/api/signage/set/announce");
-  cli_vehicle_voice_announce_ = this->create_client<tier4_hmi_msgs::srv::Announce>(
-    "/api/vehicle_voice/set/announce");
-
+  cli_signage_announce_ =
+    this->create_client<tier4_hmi_msgs::srv::Announce>("/api/signage/set/announce");
+  cli_vehicle_voice_announce_ =
+    this->create_client<tier4_hmi_msgs::srv::Announce>("/api/vehicle_voice/set/announce");
 }
 
 void Start::setRequestStart(

@@ -1,4 +1,4 @@
-// Copyright 2021 Tier IV, Inc.
+// Copyright 2021 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@
 
 #include "tier4_external_api_msgs/msg/operator.hpp"
 #include "tier4_hmi_msgs/srv/announce.hpp"
-#include "std_srvs/srv/trigger.hpp"
 
 namespace external_api
 {

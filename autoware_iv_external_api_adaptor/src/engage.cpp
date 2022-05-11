@@ -1,4 +1,4 @@
-// Copyright 2021 Tier IV, Inc.
+// Copyright 2021 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,11 +42,9 @@ Engage::Engage(const rclcpp::NodeOptions & options) : Node("external_api_engage"
 
   // For restart announce from signage and vehicle_voice
   cli_announce_ = proxy.create_client<tier4_hmi_msgs::srv::Announce>(
-    "/api/signage/set/announce",
-    rmw_qos_profile_services_default);
+    "/api/signage/set/announce", rmw_qos_profile_services_default);
   cli_vehicle_voice_announce_ = proxy.create_client<tier4_hmi_msgs::srv::Announce>(
-    "/api/vehicle_voice/set/announce",
-    rmw_qos_profile_services_default);
+    "/api/vehicle_voice/set/announce", rmw_qos_profile_services_default);
 
   waiting_for_engage_ = false;
   auto_operator_change_ = declare_parameter("auto_operator_change", false);
@@ -71,7 +69,7 @@ void Engage::setEngage(
       return;
     }
   }
-  
+
   // announce start message
   auto announce_request = std::make_shared<tier4_hmi_msgs::srv::Announce::Request>();
   announce_request->kind = tier4_hmi_msgs::srv::Announce::Request::ENGAGE;
