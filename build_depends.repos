@@ -6,7 +6,7 @@ repositories:
   core/common:
     type: git
     url: https://github.com/autowarefoundation/autoware_common.git
-    version: tier4/proposal
+    version: main
   universe/tier4_autoware_msgs:
     type: git
     url: https://github.com/tier4/tier4_autoware_msgs.git
@@ -14,4 +14,4 @@ repositories:
   universe/universe:
     type: git
     url: https://github.com/autowarefoundation/autoware.universe
-    version: tier4/proposal
+    version: main
