@@ -49,10 +49,6 @@ AutowareIvAdapter::AutowareIvAdapter()
     std::make_unique<AutowareIvMaxVelocityPublisher>(*this, default_max_velocity);
 
   // publisher
-  pub_door_control_ =
-    this->create_publisher<pacmod3_msgs::msg::SystemCmdInt>("output/door_control", 1);
-  pub_door_status_ =
-    this->create_publisher<tier4_api_msgs::msg::DoorStatus>("output/door_status", 1);
   pub_v2x_command_ = this->create_publisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>(
     "output/v2x_command", 1);
   pub_v2x_state_ = this->create_publisher<tier4_v2x_msgs::msg::VirtualTrafficLightStateArray>(
@@ -101,8 +97,6 @@ AutowareIvAdapter::AutowareIvAdapter()
     "input/v2x_state", 100, std::bind(&AutowareIvAdapter::callbackV2XState, this, _1));
   sub_diagnostics_ = this->create_subscription<diagnostic_msgs::msg::DiagnosticArray>(
     "input/diagnostics", 1, std::bind(&AutowareIvAdapter::callbackDiagnostics, this, _1));
-  sub_global_rpt_ = this->create_subscription<pacmod3_msgs::msg::GlobalRpt>(
-    "input/global_rpt", 1, std::bind(&AutowareIvAdapter::callbackGlobalRpt, this, _1));
   sub_lane_change_available_ =
     this->create_subscription<tier4_planning_msgs::msg::LaneChangeStatus>(
       "input/lane_change_available", 1,
@@ -130,10 +124,6 @@ AutowareIvAdapter::AutowareIvAdapter()
   sub_autoware_traj_ = this->create_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
     "input/autoware_trajectory", 1,
     std::bind(&AutowareIvAdapter::callbackAutowareTrajectory, this, _1));
-  sub_door_control_ = this->create_subscription<tier4_api_msgs::msg::DoorControlCommand>(
-    "input/door_control", 1, std::bind(&AutowareIvAdapter::callbackDoorControl, this, _1));
-  sub_door_status_ = this->create_subscription<pacmod3_msgs::msg::SystemRptInt>(
-    "input/door_status", 1, std::bind(&AutowareIvAdapter::callbackDoorStatus, this, _1));
 
   // timer
   auto timer_callback = std::bind(&AutowareIvAdapter::timerCallback, this);
@@ -169,9 +159,6 @@ void AutowareIvAdapter::timerCallback()
 
   // publish obstacle_avoidance state
   obstacle_avoidance_state_publisher_->statePublisher(aw_info_);
-
-  // publish pacmod door status
-  pub_door_status_->publish(pacmod_util::getDoorStatusMsg(aw_info_.door_state_ptr));
 
   // publish v2x command and state
   if (aw_info_.v2x_command_ptr) {
@@ -298,12 +285,6 @@ void AutowareIvAdapter::callbackDiagnostics(
   aw_info_.diagnostic_ptr = msg_ptr;
 }
 
-void AutowareIvAdapter::callbackGlobalRpt(
-  const pacmod3_msgs::msg::GlobalRpt::ConstSharedPtr msg_ptr)
-{
-  aw_info_.global_rpt_ptr = msg_ptr;
-}
-
 void AutowareIvAdapter::callbackLaneChangeAvailable(
   const tier4_planning_msgs::msg::LaneChangeStatus::ConstSharedPtr msg_ptr)
 {
@@ -365,20 +346,6 @@ void AutowareIvAdapter::callbackAutowareTrajectory(
   const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr)
 {
   aw_info_.autoware_planning_traj_ptr = msg_ptr;
-}
-
-void AutowareIvAdapter::callbackDoorControl(
-  const tier4_api_msgs::msg::DoorControlCommand::ConstSharedPtr msg_ptr)
-{
-  pub_door_control_->publish(pacmod_util::createClearOverrideDoorCommand(this->get_clock()));
-  rclcpp::Rate(10.0).sleep();  // avoid message loss
-  pub_door_control_->publish(pacmod_util::createDoorCommand(this->get_clock(), msg_ptr));
-}
-
-void AutowareIvAdapter::callbackDoorStatus(
-  const pacmod3_msgs::msg::SystemRptInt::ConstSharedPtr msg_ptr)
-{
-  aw_info_.door_state_ptr = msg_ptr;
 }
 
 }  // namespace autoware_api

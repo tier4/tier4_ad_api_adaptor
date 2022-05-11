@@ -51,7 +51,6 @@ void AutowareIvAutowareStatePublisher::statePublisher(const AutowareInfo & aw_in
   getStopReasonInfo(aw_info.stop_reason_ptr, &status);
   getDiagInfo(aw_info, &status);
   getErrorDiagInfo(aw_info, &status);
-  getGlobalRptInfo(aw_info.global_rpt_ptr, &status);
 
   // publish info
   pub_state_->publish(status);
@@ -258,19 +257,6 @@ void AutowareIvAutowareStatePublisher::getErrorDiagInfo(
 
   // filter leaf diag
   status->error_diagnostics = diagnostics_filter::extractLeafDiagnostics(error_diagnostics);
-}
-
-void AutowareIvAutowareStatePublisher::getGlobalRptInfo(
-  const pacmod3_msgs::msg::GlobalRpt::ConstSharedPtr & global_rpt_ptr,
-  tier4_api_msgs::msg::AwapiAutowareStatus * status)
-{
-  if (!global_rpt_ptr) {
-    RCLCPP_DEBUG_STREAM_THROTTLE(logger_, *clock_, 5000 /* ms */, "global_rpt is nullptr");
-    return;
-  }
-
-  // get global_rpt
-  status->autonomous_overridden = global_rpt_ptr->override_active;
 }
 
 bool AutowareIvAutowareStatePublisher::isGoal(
