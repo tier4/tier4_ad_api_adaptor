@@ -14,6 +14,8 @@
 
 #include "start.hpp"
 
+#include <memory>
+
 namespace external_api
 {
 
