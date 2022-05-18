@@ -49,6 +49,7 @@ void AutowareIvAutowareStatePublisher::statePublisher(const AutowareInfo & aw_in
   getCurrentMaxVelInfo(aw_info.current_max_velocity_ptr, &status);
   getHazardStatusInfo(aw_info, &status);
   getStopReasonInfo(aw_info.stop_reason_ptr, &status);
+  getMotionFactorInfo(aw_info.motion_factor_ptr, &status);
   getDiagInfo(aw_info, &status);
   getErrorDiagInfo(aw_info, &status);
 
@@ -178,6 +179,18 @@ void AutowareIvAutowareStatePublisher::getStopReasonInfo(
   }
 
   status->stop_reason = *stop_reason_ptr;
+}
+
+void AutowareIvAutowareStatePublisher::getMotionFactorInfo(
+  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & motion_factor_ptr,
+  tier4_api_msgs::msg::AwapiAutowareStatus * status)
+{
+  if (!motion_factor_ptr) {
+    RCLCPP_DEBUG_STREAM_THROTTLE(logger_, *clock_, 5000 /* ms */, "motion factor is nullptr");
+    return;
+  }
+
+  status->motion_factor = *motion_factor_ptr;
 }
 
 void AutowareIvAutowareStatePublisher::getDiagInfo(

@@ -18,6 +18,7 @@
   <arg name="input_gate_mode" default="/control/current_gate_mode" />
   <arg name="input_emergency_state" default="/system/emergency/emergency_state" />
   <arg name="input_hazard_status" default="/system/emergency/hazard_status" />
+  <arg name="input_motion_factor" default="/planning/scenario_planning/status/motion_factors" />
   <arg name="input_stop_reason" default="/planning/scenario_planning/status/stop_reasons" />
   <arg name="input_v2x_command" default="/planning/scenario_planning/status/infrastructure_commands" />
   <arg name="input_v2x_state" default="/system/v2x/virtual_traffic_light_states" />

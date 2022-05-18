@@ -36,6 +36,7 @@
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_planning_msgs/msg/is_avoidance_possible.hpp>
 #include <tier4_planning_msgs/msg/lane_change_status.hpp>
+#include <tier4_planning_msgs/msg/motion_factor_array.hpp>
 #include <tier4_planning_msgs/msg/stop_reason_array.hpp>
 #include <tier4_planning_msgs/msg/velocity_limit.hpp>
 #include <tier4_system_msgs/msg/autoware_state.hpp>
@@ -75,6 +76,7 @@ struct AutowareInfo
   tier4_control_msgs::msg::GateMode::ConstSharedPtr gate_mode_ptr;
   autoware_auto_system_msgs::msg::EmergencyState::ConstSharedPtr emergency_state_ptr;
   autoware_auto_system_msgs::msg::HazardStatusStamped::ConstSharedPtr hazard_status_ptr;
+  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr motion_factor_ptr;
   tier4_planning_msgs::msg::StopReasonArray::ConstSharedPtr stop_reason_ptr;
   tier4_v2x_msgs::msg::InfrastructureCommandArray::ConstSharedPtr v2x_command_ptr;
   tier4_v2x_msgs::msg::VirtualTrafficLightStateArray::ConstSharedPtr v2x_state_ptr;

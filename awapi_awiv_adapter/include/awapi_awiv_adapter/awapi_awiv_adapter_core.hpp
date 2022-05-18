@@ -19,6 +19,7 @@
 #include "awapi_awiv_adapter/awapi_autoware_util.hpp"
 #include "awapi_awiv_adapter/awapi_lane_change_state_publisher.hpp"
 #include "awapi_awiv_adapter/awapi_max_velocity_publisher.hpp"
+#include "awapi_awiv_adapter/awapi_motion_factor_aggregator.hpp"
 #include "awapi_awiv_adapter/awapi_obstacle_avoidance_state_publisher.hpp"
 #include "awapi_awiv_adapter/awapi_stop_reason_aggregator.hpp"
 #include "awapi_awiv_adapter/awapi_v2x_aggregator.hpp"
@@ -39,6 +40,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
+#include <tier4_planning_msgs/msg/motion_factor_array.hpp>
 #include <tier4_planning_msgs/msg/stop_reason_array.hpp>
 #include <tier4_system_msgs/msg/autoware_state.hpp>
 #include <tier4_v2x_msgs/msg/infrastructure_command_array.hpp>
@@ -77,6 +79,7 @@ private:
   rclcpp::Subscription<autoware_auto_system_msgs::msg::HazardStatusStamped>::SharedPtr
     sub_hazard_status_;
   rclcpp::Subscription<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr sub_stop_reason_;
+  rclcpp::Subscription<tier4_planning_msgs::msg::MotionFactorArray>::SharedPtr sub_motion_factor_;
   rclcpp::Subscription<tier4_v2x_msgs::msg::InfrastructureCommandArray>::SharedPtr sub_v2x_command_;
   rclcpp::Subscription<tier4_v2x_msgs::msg::VirtualTrafficLightStateArray>::SharedPtr
     sub_v2x_state_;
@@ -129,6 +132,7 @@ private:
   void callbackHazardStatus(
     const autoware_auto_system_msgs::msg::HazardStatusStamped::ConstSharedPtr msg_ptr);
   void callbackStopReason(const tier4_planning_msgs::msg::StopReasonArray::ConstSharedPtr msg_ptr);
+  void callbackMotionFactor(const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr);
   void callbackV2XCommand(
     const tier4_v2x_msgs::msg::InfrastructureCommandArray::ConstSharedPtr msg_ptr);
   void callbackV2XState(
@@ -162,6 +166,7 @@ private:
   std::unique_ptr<AutowareIvVehicleStatePublisher> vehicle_state_publisher_;
   std::unique_ptr<AutowareIvAutowareStatePublisher> autoware_state_publisher_;
   std::unique_ptr<AutowareIvStopReasonAggregator> stop_reason_aggregator_;
+  std::unique_ptr<AutowareIvMotionFactorAggregator> motion_factor_aggregator_;
   std::unique_ptr<AutowareIvV2XAggregator> v2x_aggregator_;
   std::unique_ptr<AutowareIvLaneChangeStatePublisher> lane_change_state_publisher_;
   std::unique_ptr<AutowareIvObstacleAvoidanceStatePublisher> obstacle_avoidance_state_publisher_;

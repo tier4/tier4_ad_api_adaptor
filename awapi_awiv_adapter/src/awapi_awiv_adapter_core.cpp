@@ -41,6 +41,7 @@ AutowareIvAdapter::AutowareIvAdapter()
   autoware_state_publisher_ = std::make_unique<AutowareIvAutowareStatePublisher>(*this);
   stop_reason_aggregator_ = std::make_unique<AutowareIvStopReasonAggregator>(
     *this, stop_reason_timeout_, stop_reason_thresh_dist_);
+  motion_factor_aggregator_ = std::make_unique<AutowareIvMotionFactorAggregator>(*this);
   v2x_aggregator_ = std::make_unique<AutowareIvV2XAggregator>(*this);
   lane_change_state_publisher_ = std::make_unique<AutowareIvLaneChangeStatePublisher>(*this);
   obstacle_avoidance_state_publisher_ =
@@ -91,6 +92,8 @@ AutowareIvAdapter::AutowareIvAdapter()
       "input/hazard_status", 1, std::bind(&AutowareIvAdapter::callbackHazardStatus, this, _1));
   sub_stop_reason_ = this->create_subscription<tier4_planning_msgs::msg::StopReasonArray>(
     "input/stop_reason", 100, std::bind(&AutowareIvAdapter::callbackStopReason, this, _1));
+  sub_motion_factor_ = this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
+    "input/motion_factor", 100, std::bind(&AutowareIvAdapter::callbackMotionFactor, this, _1));
   sub_v2x_command_ = this->create_subscription<tier4_v2x_msgs::msg::InfrastructureCommandArray>(
     "input/v2x_command", 100, std::bind(&AutowareIvAdapter::callbackV2XCommand, this, _1));
   sub_v2x_state_ = this->create_subscription<tier4_v2x_msgs::msg::VirtualTrafficLightStateArray>(
@@ -265,6 +268,12 @@ void AutowareIvAdapter::callbackStopReason(
   const tier4_planning_msgs::msg::StopReasonArray::ConstSharedPtr msg_ptr)
 {
   aw_info_.stop_reason_ptr = stop_reason_aggregator_->updateStopReasonArray(msg_ptr, aw_info_);
+}
+
+void AutowareIvAdapter::callbackMotionFactor(
+  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr)
+{
+  aw_info_.motion_factor_ptr = motion_factor_aggregator_->updateMotionFactorArray(msg_ptr, aw_info_);
 }
 
 void AutowareIvAdapter::callbackV2XCommand(
