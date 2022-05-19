@@ -19,114 +19,40 @@
 
 namespace autoware_api
 {
-AutowareIvMotionFactorAggregator::AutowareIvMotionFactorAggregator(
-  rclcpp::Node & node, const double timeout, const double thresh_dist_to_stop_pose)
+AutowareIvMotionFactorAggregator::AutowareIvMotionFactorAggregator(rclcpp::Node & node)
 : logger_(node.get_logger().get_child("awapi_awiv_motion_factor_aggregator")),
   clock_(node.get_clock()),
-  timeout_(timeout),
-  thresh_dist_to_stop_pose_(thresh_dist_to_stop_pose)
 {
 }
 
-tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr
-AutowareIvMotionFactorAggregator::updateMotionFactorArray(
-  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr,
-  const AutowareInfo & aw_info)
+void AutowareIvMotionFactorAggregator::updateSceneModuleMotionFactorArray(
+  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr)
 {
-  applyUpdate(msg_ptr, aw_info);
-  applyTimeOut();
-  return makeMotionFactorArray(aw_info);
+  if(!scene_module_factor_.empty())
+  {
+    scene_module_factor_.clear();
+  }
+  scene_module_factor_ = *msg_ptr;
 }
 
-void AutowareIvMotionFactorAggregator::applyUpdate(
-  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr,
-  [[maybe_unused]] const AutowareInfo & aw_info)
+void AutowareIvMotionFactorAggregator::updateObstacleStopMotionFactorArray(
+  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr)
 {
-  /* remove old motion_factor that matches reason with received msg */
-  // make reason-matching msg list
-
-  std::vector<size_t> remove_idx;
-  if (!motion_factor_array_vec_.empty()) {
-    for (int i = motion_factor_array_vec_.size() - 1; i >= 0; i--) {
-      if (checkMatchingReason(msg_ptr, motion_factor_array_vec_.at(i))) {
-        remove_idx.emplace_back(i);
-      }
-    }
+  if(!obstacle_stop_factor_.empty())
+  {
+    obstacle_stop_factor_.clear();
   }
-
-  // remove reason matching msg
-  for (const auto idx : remove_idx) {
-    motion_factor_array_vec_.erase(motion_factor_array_vec_.begin() + idx);
-  }
-
-  // add new reason msg
-  motion_factor_array_vec_.emplace_back(*msg_ptr);
+  obstacle_stop_factor_ = *msg_ptr;
 }
 
-bool AutowareIvMotionFactorAggregator::checkMatchingReason(
-  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_motion_factor_array,
-  const tier4_planning_msgs::msg::MotionFactorArray & motion_factor_array)
+void AutowareIvMotionFactorAggregator::updateSurroundObstacleMotionFactorArray(
+  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr)
 {
-  for (const auto & msg_motion_factor : msg_motion_factor_array->motion_factors) {
-    for (const auto & motion_factor : motion_factor_array.motion_factors) {
-      if (msg_motion_factor.reason == motion_factor.reason) {
-        // find matching reason
-        return true;
-      }
-    }
+  if(!surround_obstacle_factor_.empty())
+  {
+    surround_obstacle_factor_.clear();
   }
-  // cannot find matching reason
-  return false;
-}
-
-void AutowareIvMotionFactorAggregator::applyTimeOut()
-{
-  const auto current_time = clock_->now();
-
-  // make timeout-msg list
-  std::vector<size_t> remove_idx;
-  if (!motion_factor_array_vec_.empty()) {
-    for (int i = motion_factor_array_vec_.size() - 1; i >= 0; i--) {
-      if (
-        (current_time - rclcpp::Time(motion_factor_array_vec_.at(i).header.stamp)).seconds() >
-        timeout_) {
-        remove_idx.emplace_back(i);
-      }
-    }
-  }
-  // remove timeout-msg
-  for (const auto idx : remove_idx) {
-    motion_factor_array_vec_.erase(motion_factor_array_vec_.begin() + idx);
-  }
-}
-
-void AutowareIvMotionFactorAggregator::appendMotionFactorToArray(
-  const tier4_planning_msgs::msg::MotionFactor & motion_factor,
-  tier4_planning_msgs::msg::MotionFactorArray * motion_factor_array, const AutowareInfo & aw_info)
-{
-  // calculate dist_to_stop_pose
-  const auto motion_factor_with_dist = inputStopDistToMotionFactor(motion_factor, aw_info);
-
-  // cut stop reason
-  const auto near_motion_factor = getNearMotionFactor(motion_factor_with_dist, aw_info);
-
-  // if stop factors is empty, not append
-  if (near_motion_factor.stop_factors.empty()) {
-    return;
-  }
-
-  // if already exists same reason msg in motion_factor_array_msg, append stop_factors to there
-  for (auto & base_motion_factors : motion_factor_array->motion_factors) {
-    if (base_motion_factors.reason == near_motion_factor.reason) {
-      base_motion_factors.stop_factors.insert(
-        base_motion_factors.stop_factors.end(), near_motion_factor.stop_factors.begin(),
-        near_motion_factor.stop_factors.end());
-      return;
-    }
-  }
-
-  // if not exist same reason msg, append new stop reason
-  motion_factor_array->motion_factors.emplace_back(near_motion_factor);
+  surround_obstacle_factor_ = *msg_ptr;
 }
 
 tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr
@@ -138,12 +64,39 @@ AutowareIvMotionFactorAggregator::makeMotionFactorArray(const AutowareInfo & aw_
   motion_factor_array_msg.header.stamp = clock_->now();
 
   // input motion factor
-  for (const auto & motion_factor_array : motion_factor_array_vec_) {
-    for (const auto & motion_factor : motion_factor_array.motion_factors) {
-      appendMotionFactorToArray(motion_factor, &motion_factor_array_msg, aw_info);
-    }
+  for (const auto & motion_factor : scene_module_factor.motion_factors) {
+    appendMotionFactorToArray(motion_factor, &motion_factor_array_msg, aw_info);
   }
+
+  for (const auto & motion_factor : obstacle_factor.motion_factors) {
+    appendMotionFactorToArray(motion_factor, &motion_factor_array_msg, aw_info);
+  }
+
+  for (const auto & motion_factor : surround_obstacle_factor.motion_factors) {
+    appendMotionFactorToArray(motion_factor, &motion_factor_array_msg, aw_info);
+  }
+
+  // sort factors in ascending order
+  std::sort(motion_factor_array_msg.begin(), motion_factor_array_msg.end(), compareFactorsByDistance);
+
   return std::make_shared<tier4_planning_msgs::msg::MotionFactorArray>(motion_factor_array_msg);
+}
+
+static bool AutowareIvMotionFactorAggregator::compareFactorsByDistance(
+  tier4_planning_msgs::msg::MotionFactor &a, tier4_planning_msgs::msg::MotionFactor &b)
+{
+  return a.dist_to_stop_pose < b.dist_to_stop_pose;
+}
+
+void AutowareIvMotionFactorAggregator::appendMotionFactorToArray(
+  const tier4_planning_msgs::msg::MotionFactor & motion_factor,
+  tier4_planning_msgs::msg::MotionFactorArray * motion_factor_array, const AutowareInfo & aw_info)
+{
+  // calculate dist_to_stop_pose
+  const auto motion_factor_with_dist = inputStopDistToMotionFactor(motion_factor, aw_info);
+
+  // if not exist same reason msg, append new stop reason
+  motion_factor_array->motion_factors.emplace_back(motion_factor_with_dist);
 }
 
 tier4_planning_msgs::msg::MotionFactor AutowareIvMotionFactorAggregator::inputStopDistToMotionFactor(
@@ -161,25 +114,6 @@ tier4_planning_msgs::msg::MotionFactor AutowareIvMotionFactorAggregator::inputSt
     planning_util::calcDistanceAlongTrajectory(trajectory, current_pose, motion_factor.stop_pose);
   
   return motion_factor_with_dist;
-}
-
-tier4_planning_msgs::msg::MotionFactor AutowareIvMotionFactorAggregator::getNearMotionFactor(
-  const tier4_planning_msgs::msg::MotionFactor & motion_factor, const AutowareInfo & aw_info)
-{
-  if (!aw_info.autoware_planning_traj_ptr || !aw_info.current_pose_ptr) {
-    // pass through all stop reason
-    return motion_factor;
-  }
-
-  tier4_planning_msgs::msg::MotionFactor near_motion_factor;
-  near_motion_factor.reason = motion_factor.reason;
-  for (const auto & stop_factor : motion_factor.stop_factors) {
-    if (stop_factor.dist_to_stop_pose < thresh_dist_to_stop_pose_) {
-      // append only near stop factor
-      near_motion_factor.stop_factors.emplace_back(stop_factor);
-    }
-  }
-  return near_motion_factor;
 }
 
 }  // namespace autoware_api

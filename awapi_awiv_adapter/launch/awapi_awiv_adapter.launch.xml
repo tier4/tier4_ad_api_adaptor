@@ -18,8 +18,10 @@
   <arg name="input_gate_mode" default="/control/current_gate_mode" />
   <arg name="input_emergency_state" default="/system/emergency/emergency_state" />
   <arg name="input_hazard_status" default="/system/emergency/hazard_status" />
-  <arg name="input_motion_factor" default="/planning/scenario_planning/status/motion_factors" />
   <arg name="input_stop_reason" default="/planning/scenario_planning/status/stop_reasons" />
+  <arg name="input_scene_module_motion_factor" default="/planning/scenario_planning/status/scene_modules/motion_factors" />
+  <arg name="input_obstacle_stop_motion_factor" default="/planning/scenario_planning/status/obstacle_stop/motion_factors" />
+  <arg name="input_surround_obstacle_motion_factor" default="/planning/scenario_planning/status/surround_obstacle_checker/motion_factors" />
   <arg name="input_v2x_command" default="/planning/scenario_planning/status/infrastructure_commands" />
   <arg name="input_v2x_state" default="/system/v2x/virtual_traffic_light_states" />
   <arg name="input_diagnostics" default="/diagnostics_agg" />
@@ -114,6 +116,9 @@
       <remap from="input/emergency_state" to="$(var input_emergency_state)" />
       <remap from="input/hazard_status" to="$(var input_hazard_status)" />
       <remap from="input/stop_reason" to="$(var input_stop_reason)" />
+      <remap from="input/scene_module/motion_factor" to="$(var input_scene_module_motion_factor)" />
+      <remap from="input/obstacle_stop/motion_factor" to="$(var input_obstacle_stop_motion_factor)" />
+      <remap from="input/surround_obstacle/motion_factor" to="$(var input_surround_obstacle_motion_factor)" />
       <remap from="input/v2x_command" to="$(var input_v2x_command)" />
       <remap from="input/v2x_state" to="$(var input_v2x_state)" />
       <remap from="input/diagnostics" to="$(var input_diagnostics)" />

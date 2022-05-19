@@ -79,7 +79,9 @@ private:
   rclcpp::Subscription<autoware_auto_system_msgs::msg::HazardStatusStamped>::SharedPtr
     sub_hazard_status_;
   rclcpp::Subscription<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr sub_stop_reason_;
-  rclcpp::Subscription<tier4_planning_msgs::msg::MotionFactorArray>::SharedPtr sub_motion_factor_;
+  rclcpp::Subscription<tier4_planning_msgs::msg::MotionFactorArray>::SharedPtr sub_scene_module_motion_factor_;
+  rclcpp::Subscription<tier4_planning_msgs::msg::MotionFactorArray>::SharedPtr sub_obstacle_stop_motion_factor_;
+  rclcpp::Subscription<tier4_planning_msgs::msg::MotionFactorArray>::SharedPtr sub_surround_obstacle_motion_factor_;
   rclcpp::Subscription<tier4_v2x_msgs::msg::InfrastructureCommandArray>::SharedPtr sub_v2x_command_;
   rclcpp::Subscription<tier4_v2x_msgs::msg::VirtualTrafficLightStateArray>::SharedPtr
     sub_v2x_state_;
@@ -132,7 +134,9 @@ private:
   void callbackHazardStatus(
     const autoware_auto_system_msgs::msg::HazardStatusStamped::ConstSharedPtr msg_ptr);
   void callbackStopReason(const tier4_planning_msgs::msg::StopReasonArray::ConstSharedPtr msg_ptr);
-  void callbackMotionFactor(const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr);
+  void callbackSceneModuleMotionFactor(const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr);
+  void callbackObstacleStopMotionFactor(const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr);
+  void callbackSurroundObstacleMotionFactor(const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr);
   void callbackV2XCommand(
     const tier4_v2x_msgs::msg::InfrastructureCommandArray::ConstSharedPtr msg_ptr);
   void callbackV2XState(

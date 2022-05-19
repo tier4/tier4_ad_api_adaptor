@@ -26,37 +26,35 @@ namespace autoware_api
 class AutowareIvMotionFactorAggregator
 {
 public:
-  AutowareIvMotionFactorAggregator(
-    rclcpp::Node & node, const double timeout, const double thresh_dist_to_stop_pose);
-  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr updateMotionFactorArray(
-    const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr,
+  AutowareIvMotionFactorAggregator(rclcpp::Node & node);
+  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr updateSceneModuleMotionFactorArray(
+    const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr);
+  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr updateObstacleStopMotionFactorArray(
+    const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr);
+  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr updateSurroundObstacleMotionFactorArray(
+    const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr);
+  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr makeMotionFactorArray(
     const AutowareInfo & aw_info);
+  
 
 private:
-  void applyUpdate(
-    const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr,
-    const AutowareInfo & aw_info);
-  bool checkMatchingReason(
-    const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_motion_factor_array,
-    const tier4_planning_msgs::msg::MotionFactorArray & motion_factor_array);
-  void applyTimeOut();
+  static bool compareFactorsByDistance(
+    tier4_planning_msgs::msg::MotionFactor &a, tier4_planning_msgs::msg::MotionFactor &b);
   void appendMotionFactorToArray(
     const tier4_planning_msgs::msg::MotionFactor & motion_factor,
     tier4_planning_msgs::msg::MotionFactorArray * motion_factor_array, const AutowareInfo & aw_info);
-  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr makeMotionFactorArray(
-    const AutowareInfo & aw_info);
   tier4_planning_msgs::msg::MotionFactor inputStopDistToMotionFactor(
     const tier4_planning_msgs::msg::MotionFactor & motion_factor, const AutowareInfo & aw_info);
   double calcStopDistToStopFactor(
     const tier4_planning_msgs::msg::StopFactor & stop_factor, const AutowareInfo & aw_info);
-  tier4_planning_msgs::msg::MotionFactor getNearMotionFactor(
-    const tier4_planning_msgs::msg::MotionFactor & motion_factor, const AutowareInfo & aw_info);
 
   rclcpp::Logger logger_;
   rclcpp::Clock::SharedPtr clock_;
-  double timeout_;
-  double thresh_dist_to_stop_pose_;
+
   std::vector<tier4_planning_msgs::msg::MotionFactorArray> motion_factor_array_vec_;
+  tier4_planning_msgs::msg::MotionFactorArray scene_module_factor_;
+  tier4_planning_msgs::msg::MotionFactorArray obstcle_stop_factor_;
+  tier4_planning_msgs::msg::MotionFactorArray surround_obstacle_factor_;
 };
 
 }  // namespace autoware_api

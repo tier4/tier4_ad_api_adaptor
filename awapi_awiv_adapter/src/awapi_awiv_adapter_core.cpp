@@ -92,8 +92,12 @@ AutowareIvAdapter::AutowareIvAdapter()
       "input/hazard_status", 1, std::bind(&AutowareIvAdapter::callbackHazardStatus, this, _1));
   sub_stop_reason_ = this->create_subscription<tier4_planning_msgs::msg::StopReasonArray>(
     "input/stop_reason", 100, std::bind(&AutowareIvAdapter::callbackStopReason, this, _1));
-  sub_motion_factor_ = this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
-    "input/motion_factor", 100, std::bind(&AutowareIvAdapter::callbackMotionFactor, this, _1));
+  sub_scene_module_motion_factor_ = this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
+    "input/scene_module/motion_factor", 100, std::bind(&AutowareIvAdapter::callbackSceneModuleMotionFactor, this, _1));
+  sub_obstacle_stop_motion_factor_ = this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
+    "input/obstacle_stop/motion_factor", 100, std::bind(&AutowareIvAdapter::callbackObstacleStopMotionFactor, this, _1));
+  sub_surround_obstacle_motion_factor_ = this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
+    "input/surround_obstacle/motion_factor", 100, std::bind(&AutowareIvAdapter::callbackSurroundObstacleMotionFactor, this, _1));
   sub_v2x_command_ = this->create_subscription<tier4_v2x_msgs::msg::InfrastructureCommandArray>(
     "input/v2x_command", 100, std::bind(&AutowareIvAdapter::callbackV2XCommand, this, _1));
   sub_v2x_state_ = this->create_subscription<tier4_v2x_msgs::msg::VirtualTrafficLightStateArray>(
@@ -150,6 +154,9 @@ void AutowareIvAdapter::timerCallback()
 {
   // get current pose
   getCurrentPose();
+
+  // 
+  aw_info_.motion_factor_ptr = motion_factor_aggregator_->makeMotionFactorArray(aw_info_);
 
   // publish vehicle state
   vehicle_state_publisher_->statePublisher(aw_info_);
@@ -270,10 +277,22 @@ void AutowareIvAdapter::callbackStopReason(
   aw_info_.stop_reason_ptr = stop_reason_aggregator_->updateStopReasonArray(msg_ptr, aw_info_);
 }
 
-void AutowareIvAdapter::callbackMotionFactor(
+void AutowareIvAdapter::callbackSceneModuleMotionFactor(
   const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr)
 {
-  aw_info_.motion_factor_ptr = motion_factor_aggregator_->updateMotionFactorArray(msg_ptr, aw_info_);
+  motion_factor_aggregator_->updateSceneModuleMotionFactorArray(msg_ptr);
+}
+
+void AutowareIvAdapter::callbackObstacleStopMotionFactor(
+  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr)
+{
+  motion_factor_aggregator_->updateObstacleStopMotionFactorArray(msg_ptr);
+}
+
+void AutowareIvAdapter::callbackSurroundObstacleMotionFactor(
+  const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr msg_ptr)
+{
+  motion_factor_aggregator_->updateSurroundObstacleMotionFactorArray(msg_ptr);
 }
 
 void AutowareIvAdapter::callbackV2XCommand(
