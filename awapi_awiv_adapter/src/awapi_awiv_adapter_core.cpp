@@ -28,6 +28,7 @@ AutowareIvAdapter::AutowareIvAdapter()
   // get param
   status_pub_hz_ = this->declare_parameter("status_pub_hz", 5.0);
   stop_reason_timeout_ = this->declare_parameter("stop_reason_timeout", 0.5);
+  motion_factor_timeout_ = this->declare_parameter("motion_factor_timeout", 0.5);
   stop_reason_thresh_dist_ = this->declare_parameter("stop_reason_thresh_dist", 100.0);
   const double default_max_velocity = waitForParam<double>(
     this, declare_parameter("node/max_velocity", ""), declare_parameter("param/max_velocity", ""));
@@ -41,7 +42,8 @@ AutowareIvAdapter::AutowareIvAdapter()
   autoware_state_publisher_ = std::make_unique<AutowareIvAutowareStatePublisher>(*this);
   stop_reason_aggregator_ = std::make_unique<AutowareIvStopReasonAggregator>(
     *this, stop_reason_timeout_, stop_reason_thresh_dist_);
-  motion_factor_aggregator_ = std::make_unique<AutowareIvMotionFactorAggregator>(*this);
+  motion_factor_aggregator_ =
+    std::make_unique<AutowareIvMotionFactorAggregator>(*this, motion_factor_timeout_);
   v2x_aggregator_ = std::make_unique<AutowareIvV2XAggregator>(*this);
   lane_change_state_publisher_ = std::make_unique<AutowareIvLaneChangeStatePublisher>(*this);
   obstacle_avoidance_state_publisher_ =
@@ -92,12 +94,18 @@ AutowareIvAdapter::AutowareIvAdapter()
       "input/hazard_status", 1, std::bind(&AutowareIvAdapter::callbackHazardStatus, this, _1));
   sub_stop_reason_ = this->create_subscription<tier4_planning_msgs::msg::StopReasonArray>(
     "input/stop_reason", 100, std::bind(&AutowareIvAdapter::callbackStopReason, this, _1));
-  sub_scene_module_motion_factor_ = this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
-    "input/scene_module/motion_factor", 100, std::bind(&AutowareIvAdapter::callbackSceneModuleMotionFactor, this, _1));
-  sub_obstacle_stop_motion_factor_ = this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
-    "input/obstacle_stop/motion_factor", 100, std::bind(&AutowareIvAdapter::callbackObstacleStopMotionFactor, this, _1));
-  sub_surround_obstacle_motion_factor_ = this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
-    "input/surround_obstacle/motion_factor", 100, std::bind(&AutowareIvAdapter::callbackSurroundObstacleMotionFactor, this, _1));
+  sub_scene_module_motion_factor_ =
+    this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
+      "input/scene_module/motion_factor", 100,
+      std::bind(&AutowareIvAdapter::callbackSceneModuleMotionFactor, this, _1));
+  sub_obstacle_stop_motion_factor_ =
+    this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
+      "input/obstacle_stop/motion_factor", 100,
+      std::bind(&AutowareIvAdapter::callbackObstacleStopMotionFactor, this, _1));
+  sub_surround_obstacle_motion_factor_ =
+    this->create_subscription<tier4_planning_msgs::msg::MotionFactorArray>(
+      "input/surround_obstacle/motion_factor", 100,
+      std::bind(&AutowareIvAdapter::callbackSurroundObstacleMotionFactor, this, _1));
   sub_v2x_command_ = this->create_subscription<tier4_v2x_msgs::msg::InfrastructureCommandArray>(
     "input/v2x_command", 100, std::bind(&AutowareIvAdapter::callbackV2XCommand, this, _1));
   sub_v2x_state_ = this->create_subscription<tier4_v2x_msgs::msg::VirtualTrafficLightStateArray>(
@@ -155,7 +163,7 @@ void AutowareIvAdapter::timerCallback()
   // get current pose
   getCurrentPose();
 
-  // 
+  //
   aw_info_.motion_factor_ptr = motion_factor_aggregator_->makeMotionFactorArray(aw_info_);
 
   // publish vehicle state

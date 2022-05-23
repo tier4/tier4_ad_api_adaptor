@@ -26,23 +26,26 @@ namespace autoware_api
 class AutowareIvMotionFactorAggregator
 {
 public:
-  AutowareIvMotionFactorAggregator(rclcpp::Node & node);
-  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr updateSceneModuleMotionFactorArray(
+  AutowareIvMotionFactorAggregator(rclcpp::Node & node, const double timeout);
+  void updateSceneModuleMotionFactorArray(
     const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr);
-  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr updateObstacleStopMotionFactorArray(
+  void updateObstacleStopMotionFactorArray(
     const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr);
-  tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr updateSurroundObstacleMotionFactorArray(
+  void updateSurroundObstacleMotionFactorArray(
     const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr);
   tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr makeMotionFactorArray(
     const AutowareInfo & aw_info);
-  
 
 private:
-  static bool compareFactorsByDistance(
-    tier4_planning_msgs::msg::MotionFactor &a, tier4_planning_msgs::msg::MotionFactor &b);
+  void applyUpdate(const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_ptr);
+  bool checkMatchingReason(
+    const tier4_planning_msgs::msg::MotionFactorArray::ConstSharedPtr & msg_motion_factor_array,
+    const tier4_planning_msgs::msg::MotionFactorArray & motion_factor_array);
+  void applyTimeOut();
   void appendMotionFactorToArray(
     const tier4_planning_msgs::msg::MotionFactor & motion_factor,
-    tier4_planning_msgs::msg::MotionFactorArray * motion_factor_array, const AutowareInfo & aw_info);
+    tier4_planning_msgs::msg::MotionFactorArray * motion_factor_array,
+    const AutowareInfo & aw_info);
   tier4_planning_msgs::msg::MotionFactor inputStopDistToMotionFactor(
     const tier4_planning_msgs::msg::MotionFactor & motion_factor, const AutowareInfo & aw_info);
   double calcStopDistToStopFactor(
@@ -50,10 +53,10 @@ private:
 
   rclcpp::Logger logger_;
   rclcpp::Clock::SharedPtr clock_;
+  double timeout_;
 
   std::vector<tier4_planning_msgs::msg::MotionFactorArray> motion_factor_array_vec_;
-  tier4_planning_msgs::msg::MotionFactorArray scene_module_factor_;
-  tier4_planning_msgs::msg::MotionFactorArray obstcle_stop_factor_;
+  tier4_planning_msgs::msg::MotionFactorArray obstacle_stop_factor_;
   tier4_planning_msgs::msg::MotionFactorArray surround_obstacle_factor_;
 };
 
