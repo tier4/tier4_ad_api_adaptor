@@ -30,23 +30,28 @@ public:
   explicit CalibrationStatus(const rclcpp::NodeOptions & options);
 
 private:
-  using GetAccelBrakeMapCalibrationData = tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData;
+  using GetAccelBrakeMapCalibrationData =
+    tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
   rclcpp::TimerBase::SharedPtr timer_;
-  tier4_api_utils::Service<GetAccelBrakeMapCalibrationData>::SharedPtr srv_get_accel_brake_map_calibration_data_;
-  tier4_api_utils::Client<GetAccelBrakeMapCalibrationData>::SharedPtr cli_get_accel_brake_map_calibration_data_;
-  rclcpp::Publisher<tier4_external_api_msgs::msg::CalibrationStatusArray>::SharedPtr pub_calibration_status_;
-  rclcpp::Subscription<tier4_external_api_msgs::msg::CalibrationStatus>::SharedPtr sub_accel_brake_map_calibration_status_;
-  
+  tier4_api_utils::Service<GetAccelBrakeMapCalibrationData>::SharedPtr
+    srv_get_accel_brake_map_calibration_data_;
+  tier4_api_utils::Client<GetAccelBrakeMapCalibrationData>::SharedPtr
+    cli_get_accel_brake_map_calibration_data_;
+  rclcpp::Publisher<tier4_external_api_msgs::msg::CalibrationStatusArray>::SharedPtr
+    pub_calibration_status_;
+  rclcpp::Subscription<tier4_external_api_msgs::msg::CalibrationStatus>::SharedPtr
+    sub_accel_brake_map_calibration_status_;
+
   // ros callback
   void onTimer();
   void getAccelBrakeMapCalibrationData(
     const tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData::Request::SharedPtr request,
-    const tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData::Response::SharedPtr response
-  );
-  
+    const tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData::Response::SharedPtr
+      response);
+
   // calibration status
   tier4_external_api_msgs::msg::CalibrationStatus::ConstSharedPtr accel_brake_map_status_;
 };
