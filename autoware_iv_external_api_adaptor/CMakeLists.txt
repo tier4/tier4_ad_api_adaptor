@@ -27,6 +27,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/operator.cpp
   src/rosbag_logging_mode.cpp
   src/route.cpp
+  src/rtc_controller.cpp
   src/service.cpp
   src/start.cpp
   src/vehicle_status.cpp
@@ -45,6 +46,7 @@ rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::MetadataPackages
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Operator")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::RosbagLoggingMode")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Route")
+rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::RTCController")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Service")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Start")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::VehicleStatus")
