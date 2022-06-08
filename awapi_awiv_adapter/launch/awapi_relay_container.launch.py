@@ -34,7 +34,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("input_route"),
                     "output_topic": LaunchConfiguration("get_route"),
-                    "type": "autoware_auto_planning_msgs/msg/HADMapRoute",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -51,7 +50,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("input_object"),
                     "output_topic": LaunchConfiguration("get_predicted_object"),
-                    "type": "autoware_auto_perception_msgs/msg/PredictedObjects",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -68,7 +66,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("input_nearest_traffic_signal"),
                     "output_topic": LaunchConfiguration("get_nearest_traffic_signal"),
-                    "type": "autoware_auto_perception_msgs/msg/LookingTrafficSignal",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -85,7 +82,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("input_path_change_ready"),
                     "output_topic": LaunchConfiguration("get_path_change_ready"),
-                    "type": "tier4_planning_msgs/msg/PathChangeModule",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -102,7 +98,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("input_path_change_force_available"),
                     "output_topic": LaunchConfiguration("get_path_change_force_available"),
-                    "type": "tier4_planning_msgs/msg/PathChangeModuleArray",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -119,7 +114,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("input_path_change_running"),
                     "output_topic": LaunchConfiguration("get_path_change_running"),
-                    "type": "tier4_planning_msgs/msg/PathChangeModuleArray",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -136,7 +130,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_engage"),
                     "output_topic": LaunchConfiguration("output_autoware_engage"),
-                    "type": "autoware_auto_vehicle_msgs/msg/Engage",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -153,7 +146,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_engage"),
                     "output_topic": LaunchConfiguration("output_vehicle_engage"),
-                    "type": "autoware_auto_vehicle_msgs/msg/Engage",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -170,8 +162,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_route"),
                     "output_topic": LaunchConfiguration("output_route"),
-                    "type": "autoware_auto_planning_msgs/msg/HADMapRoute",
-                    "durability": "transient_local",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -188,7 +178,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_goal"),
                     "output_topic": LaunchConfiguration("output_goal"),
-                    "type": "geometry_msgs/msg/PoseStamped",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -205,7 +194,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_lane_change_approval"),
                     "output_topic": LaunchConfiguration("output_lane_change_approval"),
-                    "type": "tier4_planning_msgs/msg/LaneChangeCommand",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -222,7 +210,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_force_lane_change"),
                     "output_topic": LaunchConfiguration("output_force_lane_change"),
-                    "type": "tier4_planning_msgs/msg/LaneChangeCommand",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -239,7 +226,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_path_change_approval"),
                     "output_topic": LaunchConfiguration("output_path_change_approval"),
-                    "type": "tier4_planning_msgs/msg/Approval",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -256,7 +242,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_path_change_force"),
                     "output_topic": LaunchConfiguration("output_path_change_force"),
-                    "type": "tier4_planning_msgs/msg/PathChangeModule",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -273,7 +258,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_obstacle_avoid_approval"),
                     "output_topic": LaunchConfiguration("output_obstacle_avoid_approval"),
-                    "type": "tier4_planning_msgs/msg/EnableAvoidance",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -290,7 +274,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("input_traffic_signals"),
                     "output_topic": LaunchConfiguration("get_traffic_signals"),
-                    "type": "autoware_auto_perception_msgs/msg/TrafficSignalArray",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -307,7 +290,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_overwrite_traffic_signals"),
                     "output_topic": LaunchConfiguration("output_overwrite_traffic_signals"),
-                    "type": "autoware_auto_perception_msgs/msg/TrafficSignalArray",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -324,7 +306,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("input_stop_speed_exceeded"),
                     "output_topic": LaunchConfiguration("get_stop_speed_exceeded"),
-                    "type": "tier4_planning_msgs/msg/StopSpeedExceeded",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -341,7 +322,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_crosswalk_status"),
                     "output_topic": LaunchConfiguration("input_external_crosswalk_status"),
-                    "type": "tier4_api_msgs/msg/CrosswalkStatus",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -358,7 +338,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_intersection_status"),
                     "output_topic": LaunchConfiguration("input_external_intersection_status"),
-                    "type": "tier4_api_msgs/msg/IntersectionStatus",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -375,7 +354,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_expand_stop_range"),
                     "output_topic": LaunchConfiguration("input_expand_stop_range"),
-                    "type": "tier4_planning_msgs/msg/ExpandStopRange",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
@@ -392,7 +370,6 @@ def generate_launch_description():
                 {
                     "input_topic": LaunchConfiguration("set_pose_initialization_request"),
                     "output_topic": LaunchConfiguration("input_pose_initialization_request"),
-                    "type": "tier4_localization_msgs/msg/PoseInitializationRequest",
                 }
             ],
             extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
