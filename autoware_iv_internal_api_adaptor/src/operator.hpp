@@ -23,6 +23,8 @@
 #include <tier4_control_msgs/msg/external_command_selector_mode.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_control_msgs/srv/external_command_select.hpp>
+#include <tier4_system_msgs/msg/operation_mode.hpp>
+#include <tier4_system_msgs/srv/operation_mode_request.hpp>
 #include <tier4_external_api_msgs/msg/observer.hpp>
 #include <tier4_external_api_msgs/msg/operator.hpp>
 #include <tier4_external_api_msgs/srv/set_observer.hpp>
@@ -43,6 +45,8 @@ private:
   using ExternalCommandSelect = tier4_control_msgs::srv::ExternalCommandSelect;
   using ExternalCommandSelectorMode = tier4_control_msgs::msg::ExternalCommandSelectorMode;
   using GateMode = tier4_control_msgs::msg::GateMode;
+  using OperationMode = tier4_system_msgs::msg::OperationMode;
+  using OperationModeRequest = tier4_system_msgs::srv::OperationModeRequest;
   using VehicleEngage = autoware_auto_vehicle_msgs::msg::Engage;
   using VehicleControlMode = autoware_auto_vehicle_msgs::msg::ControlModeReport;
 
@@ -51,6 +55,7 @@ private:
   tier4_api_utils::Service<SetOperator>::SharedPtr srv_set_operator_;
   tier4_api_utils::Service<SetObserver>::SharedPtr srv_set_observer_;
   tier4_api_utils::Client<ExternalCommandSelect>::SharedPtr cli_external_select_;
+  tier4_api_utils::Client<OperationModeRequest>::SharedPtr cli_operation_mode_;
   rclcpp::Publisher<GateMode>::SharedPtr pub_gate_mode_;
   rclcpp::Publisher<VehicleEngage>::SharedPtr pub_vehicle_engage_;
   rclcpp::Publisher<GetOperator>::SharedPtr pub_operator_;
@@ -83,6 +88,7 @@ private:
   void publishOperator();
   void publishObserver();
   void setVehicleEngage(bool engage);
+  void setVehicleControlMode(uint8_t mode);
   void setGateMode(tier4_control_msgs::msg::GateMode::_data_type data);
   tier4_external_api_msgs::msg::ResponseStatus setExternalSelect(
     tier4_control_msgs::msg::ExternalCommandSelectorMode::_data_type data);
