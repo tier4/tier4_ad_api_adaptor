@@ -261,78 +261,117 @@ void RTCController::setRTC(
     switch (command.module.type) {
       case Module::LANE_CHANGE_LEFT: {
         const auto [status, resp] = cli_set_lane_change_left_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::LANE_CHANGE_RIGHT: {
         const auto [status, resp] = cli_set_lane_change_right_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::AVOIDANCE_LEFT: {
         const auto [status, resp] = cli_set_avoidance_left_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::AVOIDANCE_RIGHT: {
         const auto [status, resp] = cli_set_avoidance_right_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::PULL_OVER: {
         const auto [status, resp] = cli_set_pull_over_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::PULL_OUT: {
         const auto [status, resp] = cli_set_pull_out_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::TRAFFIC_LIGHT: {
         const auto [status, resp] = cli_set_traffic_light_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::INTERSECTION: {
         const auto [status, resp] = cli_set_intersection_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::CROSSWALK: {
         const auto [status, resp] = cli_set_crosswalk_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::BLIND_SPOT: {
         const auto [status, resp] = cli_set_blind_spot_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::DETECTION_AREA: {
         const auto [status, resp] = cli_set_detection_area_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::NO_STOPPING_AREA: {
         const auto [status, resp] = cli_set_no_stopping_area_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
       }
       case Module::OCCLUSION_SPOT: {
         const auto [status, resp] = cli_set_occlusion_spot_->call(request);
+        if (!tier4_api_utils::is_success(status)) {
+          break;
+        }
         responses->responses.insert(
           responses->responses.end(), resp->responses.begin(), resp->responses.end());
         break;
