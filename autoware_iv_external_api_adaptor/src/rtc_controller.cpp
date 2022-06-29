@@ -43,6 +43,16 @@ void RTCModule::insertMessage(std::vector<CooperateStatus> & cooperate_statuses)
   cooperate_statuses.insert(
     cooperate_statuses.end(), module_statuses_.begin(), module_statuses_.end());
 }
+
+void RTCModule::callService(CooperateCommands::Request::SharedPtr request, const CooperateCommands::Response::SharedPtr & responses){
+  const auto [status, resp] = cli_set_module_->call(request);
+  if (!tier4_api_utils::is_success(status)) {
+    return;
+  }
+  responses->responses.insert(
+    responses->responses.end(), resp->responses.begin(), resp->responses.end());
+}
+
 } // namespace
 
 
@@ -131,120 +141,55 @@ void RTCController::setRTC(
     request->commands = {command};
     switch (command.module.type) {
       case Module::LANE_CHANGE_LEFT: {
-        const auto [status, resp] = lane_change_left_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        lane_change_left_->callService(request, responses);
         break;
       }
       case Module::LANE_CHANGE_RIGHT: {
-        const auto [status, resp] = lane_change_right_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        lane_change_right_->callService(request, responses);
         break;
       }
       case Module::AVOIDANCE_LEFT: {
-        const auto [status, resp] = avoidance_left_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        avoidance_left_->callService(request, responses);
         break;
       }
       case Module::AVOIDANCE_RIGHT: {
-        const auto [status, resp] = avoidance_right_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        avoidance_right_->callService(request, responses);
         break;
       }
       case Module::PULL_OVER: {
-        const auto [status, resp] = pull_over_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        pull_over_->callService(request, responses);
         break;
       }
       case Module::PULL_OUT: {
-        const auto [status, resp] = pull_out_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        pull_out_->callService(request, responses);
         break;
       }
       case Module::TRAFFIC_LIGHT: {
-        const auto [status, resp] = traffic_light_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        traffic_light_->callService(request, responses);
         break;
       }
       case Module::INTERSECTION: {
-        const auto [status, resp] = intersection_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        intersection_->callService(request, responses);
         break;
       }
       case Module::CROSSWALK: {
-        const auto [status, resp] = crosswalk_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        crosswalk_->callService(request, responses);
         break;
       }
       case Module::BLIND_SPOT: {
-        const auto [status, resp] = blind_spot_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        blind_spot_->callService(request, responses);
         break;
       }
       case Module::DETECTION_AREA: {
-        const auto [status, resp] = detection_area_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        detection_area_->callService(request, responses);
         break;
       }
       case Module::NO_STOPPING_AREA: {
-        const auto [status, resp] = no_stopping_area_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        no_stopping_area_->callService(request, responses);
         break;
       }
       case Module::OCCLUSION_SPOT: {
-        const auto [status, resp] = occlusion_spot_->cli_set_module_->call(request);
-        if (!tier4_api_utils::is_success(status)) {
-          break;
-        }
-        responses->responses.insert(
-          responses->responses.end(), resp->responses.begin(), resp->responses.end());
+        occlusion_spot_->callService(request, responses);
         break;
       }
         // virtual_traffic not found

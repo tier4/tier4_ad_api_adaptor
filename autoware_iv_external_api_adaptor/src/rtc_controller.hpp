@@ -47,6 +47,7 @@ public:
   RTCModule(rclcpp::Node * node,  const std::string & node_name, const std::string & name);
   void moduleCallback(const CooperateStatusArray::ConstSharedPtr message);
   void insertMessage(std::vector<CooperateStatus> & cooperate_statuses);
+  void callService(CooperateCommands::Request::SharedPtr request, const CooperateCommands::Response::SharedPtr & responses);
 };
 } // namespace
 
