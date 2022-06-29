@@ -24,6 +24,7 @@
 #include "tier4_rtc_msgs/msg/module.hpp"
 #include "tier4_rtc_msgs/srv/cooperate_commands.hpp"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -32,25 +33,25 @@ using CooperateStatusArray = tier4_rtc_msgs::msg::CooperateStatusArray;
 using CooperateStatus = tier4_rtc_msgs::msg::CooperateStatus;
 using Module = tier4_rtc_msgs::msg::Module;
 
-std::string BEHAVIOR_PLANNING_NAMESPACE =
-    "/planning/scenario_planning/lane_driving/behavior_planning";
-
 namespace
 {
 class RTCModule
 {
 public:
+  std::string BEHAVIOR_PLANNING_NAMESPACE =
+    "/planning/scenario_planning/lane_driving/behavior_planning";
   std::vector<CooperateStatus> module_statuses_;
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr module_sub_;
   tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_module_;
 
-  RTCModule(rclcpp::Node * node,  const std::string & node_name, const std::string & name);
+  RTCModule(rclcpp::Node * node, const std::string & node_name, const std::string & name);
   void moduleCallback(const CooperateStatusArray::ConstSharedPtr message);
   void insertMessage(std::vector<CooperateStatus> & cooperate_statuses);
-  void callService(CooperateCommands::Request::SharedPtr request, const CooperateCommands::Response::SharedPtr & responses);
+  void callService(
+    CooperateCommands::Request::SharedPtr request,
+    const CooperateCommands::Response::SharedPtr & responses);
 };
-} // namespace
-
+}  // namespace
 
 namespace external_api
 {

@@ -143,5 +143,4 @@
   </group>
 
   <include file="$(find-pkg-share awapi_awiv_adapter)/launch/awapi_relay_container.launch.py"/>
-
 </launch>

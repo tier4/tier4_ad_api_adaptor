@@ -18,7 +18,7 @@
 
 namespace
 {
-RTCModule::RTCModule(rclcpp::Node * node,  const std::string & node_name, const std::string & name)
+RTCModule::RTCModule(rclcpp::Node * node, const std::string & node_name, const std::string & name)
 {
   using namespace std::literals::chrono_literals;
   using std::placeholders::_1;
@@ -39,12 +39,16 @@ void RTCModule::moduleCallback(const CooperateStatusArray::ConstSharedPtr messag
   module_statuses_ = message->statuses;
 }
 
-void RTCModule::insertMessage(std::vector<CooperateStatus> & cooperate_statuses) {
+void RTCModule::insertMessage(std::vector<CooperateStatus> & cooperate_statuses)
+{
   cooperate_statuses.insert(
     cooperate_statuses.end(), module_statuses_.begin(), module_statuses_.end());
 }
 
-void RTCModule::callService(CooperateCommands::Request::SharedPtr request, const CooperateCommands::Response::SharedPtr & responses){
+void RTCModule::callService(
+  CooperateCommands::Request::SharedPtr request,
+  const CooperateCommands::Response::SharedPtr & responses)
+{
   const auto [status, resp] = cli_set_module_->call(request);
   if (!tier4_api_utils::is_success(status)) {
     return;
@@ -53,8 +57,7 @@ void RTCModule::callService(CooperateCommands::Request::SharedPtr request, const
     responses->responses.end(), resp->responses.begin(), resp->responses.end());
 }
 
-} // namespace
-
+}  // namespace
 
 namespace external_api
 {
@@ -66,20 +69,26 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
-  blind_spot_ = std::make_unique<RTCModule>(this,  "behavior_velocity_planner", "blind_spot");
-  crosswalk_ = std::make_unique<RTCModule>(this,  "behavior_velocity_planner", "crosswalk");
-  detection_area_ = std::make_unique<RTCModule>(this,  "behavior_velocity_planner", "detection_area");
-  intersection_ = std::make_unique<RTCModule>(this,  "behavior_velocity_planner", "intersection");
-  no_stopping_area_ = std::make_unique<RTCModule>(this,  "behavior_velocity_planner", "no_stopping_area");
-  occlusion_spot_ = std::make_unique<RTCModule>(this,  "behavior_velocity_planner", "occlusion_spot");
-  traffic_light_ = std::make_unique<RTCModule>(this,  "behavior_velocity_planner", "traffic_light");
-  virtual_traffic_light_ = std::make_unique<RTCModule>(this,  "behavior_velocity_planner", "virtual_traffic_light");
-  lane_change_left_ = std::make_unique<RTCModule>(this,  "behavior_path_planner", "lane_change_left");
-  lane_change_right_ = std::make_unique<RTCModule>(this,  "behavior_path_planner", "lane_change_right");
-  avoidance_left_ = std::make_unique<RTCModule>(this,  "behavior_path_planner", "avoidance_left");
-  avoidance_right_ = std::make_unique<RTCModule>(this,  "behavior_path_planner", "avoidance_right");
-  pull_over_ = std::make_unique<RTCModule>(this,  "behavior_path_planner", "pull_over");
-  pull_out_ = std::make_unique<RTCModule>(this,  "behavior_path_planner", "pull_out");
+  blind_spot_ = std::make_unique<RTCModule>(this, "behavior_velocity_planner", "blind_spot");
+  crosswalk_ = std::make_unique<RTCModule>(this, "behavior_velocity_planner", "crosswalk");
+  detection_area_ =
+    std::make_unique<RTCModule>(this, "behavior_velocity_planner", "detection_area");
+  intersection_ = std::make_unique<RTCModule>(this, "behavior_velocity_planner", "intersection");
+  no_stopping_area_ =
+    std::make_unique<RTCModule>(this, "behavior_velocity_planner", "no_stopping_area");
+  occlusion_spot_ =
+    std::make_unique<RTCModule>(this, "behavior_velocity_planner", "occlusion_spot");
+  traffic_light_ = std::make_unique<RTCModule>(this, "behavior_velocity_planner", "traffic_light");
+  virtual_traffic_light_ =
+    std::make_unique<RTCModule>(this, "behavior_velocity_planner", "virtual_traffic_light");
+  lane_change_left_ =
+    std::make_unique<RTCModule>(this, "behavior_path_planner", "lane_change_left");
+  lane_change_right_ =
+    std::make_unique<RTCModule>(this, "behavior_path_planner", "lane_change_right");
+  avoidance_left_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "avoidance_left");
+  avoidance_right_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "avoidance_right");
+  pull_over_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "pull_over");
+  pull_out_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "pull_out");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
