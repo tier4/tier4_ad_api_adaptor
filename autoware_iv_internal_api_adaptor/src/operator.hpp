@@ -88,8 +88,8 @@ private:
   void publishOperator();
   void publishObserver();
   void setVehicleEngage(bool engage);
-  void setVehicleOperationMode(uint8_t mode);
   void setGateMode(tier4_control_msgs::msg::GateMode::_data_type data);
+  tier4_external_api_msgs::msg::ResponseStatus setVehicleOperationMode(uint8_t mode);
   tier4_external_api_msgs::msg::ResponseStatus setExternalSelect(
     tier4_control_msgs::msg::ExternalCommandSelectorMode::_data_type data);
 };
