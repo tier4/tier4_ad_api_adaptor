@@ -66,20 +66,20 @@ void Operator::setOperator(
 {
   switch (request->mode.mode) {
     case tier4_external_api_msgs::msg::Operator::DRIVER:
-      setVehicleEngage(false);  // TODO(horibe): keep for backward compatibility. WIll be removed.
+      setVehicleEngage(false);  // TODO(horibe): keep for backward compatibility. Will be removed.
       response->status = setVehicleOperationMode(OperationMode::MANUAL_DIRECT);
       return;
 
     case tier4_external_api_msgs::msg::Operator::AUTONOMOUS:
       setGateMode(tier4_control_msgs::msg::GateMode::AUTO);
-      setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. WIll be removed.
+      setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. Will be removed.
       response->status = setVehicleOperationMode(OperationMode::AUTONOMOUS);
       return;
 
     case tier4_external_api_msgs::msg::Operator::OBSERVER:
       // TODO(Takagi, Isamu): prohibit transition when none observer type is added
       setGateMode(tier4_control_msgs::msg::GateMode::EXTERNAL);
-      setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. WIll be removed.
+      setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. Will be removed.
       response->status = setVehicleOperationMode(OperationMode::REMOTE_OPERATOR);
       return;
 
