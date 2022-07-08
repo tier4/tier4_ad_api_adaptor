@@ -16,8 +16,6 @@
 
 #include <memory>
 
-namespace
-{
 RTCModule::RTCModule(rclcpp::Node * node, const std::string & node_name, const std::string & name)
 {
   using namespace std::literals::chrono_literals;
@@ -56,8 +54,6 @@ void RTCModule::callService(
   responses->responses.insert(
     responses->responses.end(), resp->responses.begin(), resp->responses.end());
 }
-
-}  // namespace
 
 namespace external_api
 {

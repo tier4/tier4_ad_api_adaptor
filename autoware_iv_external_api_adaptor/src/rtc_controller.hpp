@@ -33,8 +33,6 @@ using CooperateStatusArray = tier4_rtc_msgs::msg::CooperateStatusArray;
 using CooperateStatus = tier4_rtc_msgs::msg::CooperateStatus;
 using Module = tier4_rtc_msgs::msg::Module;
 
-namespace
-{
 class RTCModule
 {
 public:
@@ -51,7 +49,6 @@ public:
     CooperateCommands::Request::SharedPtr request,
     const CooperateCommands::Response::SharedPtr & responses);
 };
-}  // namespace
 
 namespace external_api
 {
