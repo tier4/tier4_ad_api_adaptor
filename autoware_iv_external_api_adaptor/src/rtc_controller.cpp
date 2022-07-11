@@ -121,7 +121,7 @@ void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & st
   }
 }
 
-void RTCController::checkInfDistance(CooperateStatus & status)
+void RTCController::checkInfDistance(CooperateStatus & status) // Temporary fix for ROS2 humble
 {
   if (!std::isfinite(status.distance)) {
     status.distance = -100000.0;
