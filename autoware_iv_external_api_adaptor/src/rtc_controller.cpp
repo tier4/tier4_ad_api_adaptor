@@ -105,6 +105,13 @@ void RTCController::insertionSort(std::vector<CooperateStatus> & statuses_vector
 {
   tier4_rtc_msgs::msg::CooperateStatus current_status;
   for (size_t i = 1; i < statuses_vector.size(); i++) {
+    if (std::isfinite(statuses_vector[i].distance)) {
+      RCLCPP_INFO(get_logger(), "Distance%f", statuses_vector[i].distance);
+    } else {
+      RCLCPP_INFO(get_logger(), "inf%f\n", statuses_vector[i].distance);
+      statuses_vector[i].distance = -1000.0;
+      RCLCPP_INFO(get_logger(), "update%f\n", statuses_vector[i].distance);
+    }
     current_status = statuses_vector[i];
     int j = i - 1;
 
@@ -135,6 +142,9 @@ void RTCController::onTimer()
   pull_out_->insertMessage(cooperate_statuses);
 
   insertionSort(cooperate_statuses);
+  // RCLCPP_INFO(get_logger(), "cooperate_statuses[0].distance%f\n", cooperate_statuses[0].distance);
+  insertionLogger(cooperate_statuses);
+
   CooperateStatusArray msg;
   msg.stamp = now();
   msg.statuses = cooperate_statuses;
