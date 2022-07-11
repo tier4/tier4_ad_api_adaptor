@@ -31,7 +31,7 @@ LocalizationScore::LocalizationScore(const rclcpp::NodeOptions & options)
 
   // Publisher
   pub_localization_scores_ =
-    this->create_publisher<LocalizationScoreArray>("api/get/localization_scores", 1);
+    this->create_publisher<LocalizationScoreArray>("/api/external/get/localization_scores", 1);
 
   // Subscriber
   sub_transform_probability_ = this->create_subscription<Float32Stamped>(
