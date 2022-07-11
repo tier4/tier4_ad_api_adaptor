@@ -105,21 +105,27 @@ void RTCController::insertionSort(std::vector<CooperateStatus> & statuses_vector
 {
   tier4_rtc_msgs::msg::CooperateStatus current_status;
   for (size_t i = 1; i < statuses_vector.size(); i++) {
-    if (std::isfinite(statuses_vector[i].distance)) {
-      RCLCPP_INFO(get_logger(), "Distance%f", statuses_vector[i].distance);
-    } else {
-      RCLCPP_INFO(get_logger(), "inf%f\n", statuses_vector[i].distance);
-      statuses_vector[i].distance = -1000.0;
-      RCLCPP_INFO(get_logger(), "update%f\n", statuses_vector[i].distance);
-    }
+    checkInfDistance(statuses_vector[i]);
     current_status = statuses_vector[i];
     int j = i - 1;
+    checkInfDistance(statuses_vector[j]);
 
     while (j >= 0 && current_status.distance < statuses_vector[j].distance) {
       statuses_vector[j + 1] = statuses_vector[j];
       j = j - 1;
     }
     statuses_vector[j + 1] = current_status;
+  }
+}
+
+void RTCController::checkInfDistance(CooperateStatus & status)
+{
+  if (std::isfinite(status.distance)) {
+    RCLCPP_INFO(get_logger(), "Distance%f", status.distance);
+  } else {
+    RCLCPP_INFO(get_logger(), "inf%f\n", status.distance);
+    status.distance = -1000.0;
+    RCLCPP_INFO(get_logger(), "update%f\n", status.distance);
   }
 }
 
@@ -143,7 +149,7 @@ void RTCController::onTimer()
 
   insertionSort(cooperate_statuses);
   // RCLCPP_INFO(get_logger(), "cooperate_statuses[0].distance%f\n", cooperate_statuses[0].distance);
-  insertionLogger(cooperate_statuses);
+  // insertionLogger(cooperate_statuses);
 
   CooperateStatusArray msg;
   msg.stamp = now();

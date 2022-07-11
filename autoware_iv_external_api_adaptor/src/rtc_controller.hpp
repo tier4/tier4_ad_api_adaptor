@@ -86,6 +86,7 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 
   void insertionSort(std::vector<CooperateStatus> & statuses_vector);
+  void checkInfDistance(CooperateStatus & status);
 
   void setRTC(
     const CooperateCommands::Request::SharedPtr requests,
