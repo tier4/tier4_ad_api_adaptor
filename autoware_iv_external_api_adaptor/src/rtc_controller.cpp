@@ -103,12 +103,15 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
 
 void RTCController::insertionSort(std::vector<CooperateStatus> & statuses_vector)
 {
+  if (statuses_vector.empty()) {
+    return;
+  }
   tier4_rtc_msgs::msg::CooperateStatus current_status;
+  checkInfDistance(statuses_vector[0]);
   for (size_t i = 1; i < statuses_vector.size(); i++) {
     checkInfDistance(statuses_vector[i]);
     current_status = statuses_vector[i];
     int j = i - 1;
-    checkInfDistance(statuses_vector[j]);
 
     while (j >= 0 && current_status.distance < statuses_vector[j].distance) {
       statuses_vector[j + 1] = statuses_vector[j];
