@@ -101,7 +101,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
 }
 
-void RTCController::insertionSort(std::vector<CooperateStatus> & statuses_vector)
+void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & statuses_vector)
 {
   if (statuses_vector.empty()) {
     return;
@@ -123,12 +123,8 @@ void RTCController::insertionSort(std::vector<CooperateStatus> & statuses_vector
 
 void RTCController::checkInfDistance(CooperateStatus & status)
 {
-  if (std::isfinite(status.distance)) {
-    RCLCPP_INFO(get_logger(), "Distance%f", status.distance);
-  } else {
-    RCLCPP_INFO(get_logger(), "inf%f\n", status.distance);
-    status.distance = -1000.0;
-    RCLCPP_INFO(get_logger(), "update%f\n", status.distance);
+  if (!std::isfinite(status.distance)) {
+    status.distance = -100000.0;
   }
 }
 
@@ -150,9 +146,7 @@ void RTCController::onTimer()
   pull_over_->insertMessage(cooperate_statuses);
   pull_out_->insertMessage(cooperate_statuses);
 
-  insertionSort(cooperate_statuses);
-  // RCLCPP_INFO(get_logger(), "cooperate_statuses[0].distance%f\n", cooperate_statuses[0].distance);
-  // insertionLogger(cooperate_statuses);
+  insertionSortAndValidation(cooperate_statuses);
 
   CooperateStatusArray msg;
   msg.stamp = now();
