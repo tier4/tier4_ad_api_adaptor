@@ -61,20 +61,20 @@ void LocalizationScore::callbackNvtlScore(const Float32Stamped::ConstSharedPtr m
 
 void LocalizationScore::callbackTimer()
 {
-  LocalizationScoreArray localizatoin_scores_msg;
+  LocalizationScoreArray localization_scores_msg;
 
   if (is_tp_received_) {
-    localizatoin_scores_msg.values.emplace_back(score_tp_);
+    localization_scores_msg.values.emplace_back(score_tp_);
     is_tp_received_ = false;
   }
 
   if (is_nvtl_received_) {
-    localizatoin_scores_msg.values.emplace_back(score_nvtl_);
+    localization_scores_msg.values.emplace_back(score_nvtl_);
     is_nvtl_received_ = false;
   }
 
-  if (!localizatoin_scores_msg.values.empty()) {
-    pub_localization_scores_->publish(localizatoin_scores_msg);
+  if (!localization_scores_msg.values.empty()) {
+    pub_localization_scores_->publish(localization_scores_msg);
   }
 }
 
