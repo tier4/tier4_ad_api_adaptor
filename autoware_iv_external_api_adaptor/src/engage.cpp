@@ -41,6 +41,7 @@ Engage::Engage(const rclcpp::NodeOptions & options) : Node("external_api_engage"
     "/autoware/state", rclcpp::QoS(1), std::bind(&Engage::onAutowareState, this, _1));
 
   waiting_for_engage_ = false;
+  driving_ = false;
   auto_operator_change_ = declare_parameter("auto_operator_change", false);
 }
 
@@ -48,6 +49,11 @@ void Engage::setEngage(
   const tier4_external_api_msgs::srv::Engage::Request::SharedPtr request,
   const tier4_external_api_msgs::srv::Engage::Response::SharedPtr response)
 {
+  if (request->engage && driving_) {
+    response->status = tier4_api_utils::response_ignored("It is already engaged.");
+    return;
+  }
+
   if (request->engage && !waiting_for_engage_) {
     response->status = tier4_api_utils::response_error("It is not ready to engage.");
     return;
@@ -84,6 +90,7 @@ void Engage::onAutowareState(const autoware_auto_system_msgs::msg::AutowareState
 {
   using autoware_auto_system_msgs::msg::AutowareState;
   waiting_for_engage_ = (message->state == AutowareState::WAITING_FOR_ENGAGE);
+  driving_ = (message->state == AutowareState::DRIVING);
 }
 
 }  // namespace external_api

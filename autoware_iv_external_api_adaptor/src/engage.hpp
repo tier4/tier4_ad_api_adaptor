@@ -50,6 +50,7 @@ private:
 
   // class state
   bool waiting_for_engage_;
+  bool driving_;
   bool auto_operator_change_;
 
   // ros callback
