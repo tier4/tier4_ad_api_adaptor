@@ -23,6 +23,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/engage.cpp
   src/fail_safe_state.cpp
   src/initial_pose.cpp
+  src/localization_score.cpp
   src/map.cpp
   src/metadata_packages.cpp
   src/operator.cpp
@@ -43,6 +44,7 @@ rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Emergency")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Engage")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::FailSafeState")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::InitialPose")
+rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::LocalizationScore")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Map")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::MetadataPackages")
 rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Operator")

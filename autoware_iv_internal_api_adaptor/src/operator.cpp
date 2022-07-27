@@ -35,6 +35,8 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
 
   cli_external_select_ = proxy.create_client<tier4_control_msgs::srv::ExternalCommandSelect>(
     "/control/external_cmd_selector/select_external_command");
+  cli_operation_mode_ = proxy.create_client<tier4_system_msgs::srv::OperationModeRequest>(
+    "/system/operation_mode_request");
   pub_gate_mode_ =
     create_publisher<tier4_control_msgs::msg::GateMode>("/control/gate_mode_cmd", rclcpp::QoS(1));
   pub_vehicle_engage_ =
@@ -64,21 +66,21 @@ void Operator::setOperator(
 {
   switch (request->mode.mode) {
     case tier4_external_api_msgs::msg::Operator::DRIVER:
-      setVehicleEngage(false);
-      response->status = tier4_api_utils::response_success();
+      setVehicleEngage(false);  // TODO(horibe): keep for backward compatibility. Will be removed.
+      response->status = setVehicleOperationMode(OperationMode::MANUAL_DIRECT);
       return;
 
     case tier4_external_api_msgs::msg::Operator::AUTONOMOUS:
       setGateMode(tier4_control_msgs::msg::GateMode::AUTO);
-      setVehicleEngage(true);
-      response->status = tier4_api_utils::response_success();
+      setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. Will be removed.
+      response->status = setVehicleOperationMode(OperationMode::AUTONOMOUS);
       return;
 
     case tier4_external_api_msgs::msg::Operator::OBSERVER:
       // TODO(Takagi, Isamu): prohibit transition when none observer type is added
       setGateMode(tier4_control_msgs::msg::GateMode::EXTERNAL);
-      setVehicleEngage(true);
-      response->status = tier4_api_utils::response_success();
+      setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. Will be removed.
+      response->status = setVehicleOperationMode(OperationMode::REMOTE_OPERATOR);
       return;
 
     default:
@@ -183,6 +185,23 @@ void Operator::setVehicleEngage(bool engage)
                      .stamp(now())
                      .engage(engage);
   pub_vehicle_engage_->publish(msg);
+}
+
+tier4_external_api_msgs::msg::ResponseStatus Operator::setVehicleOperationMode(uint8_t mode)
+{
+  const auto req = std::make_shared<tier4_system_msgs::srv::OperationModeRequest::Request>();
+  req->mode.mode = mode;
+
+  const auto [status, resp] = cli_operation_mode_->call(req);
+  if (!tier4_api_utils::is_success(status)) {
+    return status;
+  }
+
+  if (resp->success) {
+    return tier4_api_utils::response_success("set OperationMode succeeded");
+  } else {
+    return tier4_api_utils::response_error("set OperationMode failed.");
+  }
 }
 
 void Operator::setGateMode(tier4_control_msgs::msg::GateMode::_data_type data)
