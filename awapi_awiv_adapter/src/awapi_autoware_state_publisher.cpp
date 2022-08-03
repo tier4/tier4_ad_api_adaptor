@@ -81,8 +81,7 @@ void AutowareIvAutowareStatePublisher::getControlModeInfo(
   }
 
   // get control mode
-  using tier4_auto_msgs_converter::convert;
-  status->control_mode = convert(*control_mode_ptr).data;
+  status->control_mode = control_mode_ptr->mode;
 }
 
 void AutowareIvAutowareStatePublisher::getGateModeInfo(
