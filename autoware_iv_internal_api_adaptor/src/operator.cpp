@@ -25,6 +25,8 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
   using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
+  send_engage_in_emergency_ = declare_parameter("send_engage_in_emergency", false);
+
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_operator_ = proxy.create_service<tier4_external_api_msgs::srv::SetOperator>(
     "/api/autoware/set/operator", std::bind(&Operator::setOperator, this, _1, _2),
@@ -56,6 +58,8 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
     create_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
       "/vehicle/status/control_mode", rclcpp::QoS(1),
       std::bind(&Operator::onVehicleControlMode, this, _1));
+  sub_emergency_ = create_subscription<tier4_external_api_msgs::msg::Emergency>(
+    "/api/autoware/get/emergency", 10, std::bind(&Operator::onEmergencyStatus, this, _1));
 
   timer_ = rclcpp::create_timer(this, get_clock(), 200ms, std::bind(&Operator::onTimer, this));
 }
@@ -71,6 +75,12 @@ void Operator::setOperator(
       return;
 
     case tier4_external_api_msgs::msg::Operator::AUTONOMOUS:
+      if (!send_engage_in_emergency_ && emergency_status_->emergency) {
+        // do not send engage command when the status is emergency
+        response->status =
+          tier4_api_utils::response_error("ignored request because the status is emergency.");
+        return;
+      }
       setGateMode(tier4_control_msgs::msg::GateMode::AUTO);
       setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. Will be removed.
       response->status = setVehicleOperationMode(OperationMode::AUTONOMOUS);
@@ -125,6 +135,11 @@ void Operator::onVehicleControlMode(
   const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr message)
 {
   vehicle_control_mode_ = message;
+}
+
+void Operator::onEmergencyStatus(const tier4_external_api_msgs::msg::Emergency::ConstSharedPtr msg)
+{
+  emergency_status_ = msg;
 }
 
 void Operator::onTimer()
