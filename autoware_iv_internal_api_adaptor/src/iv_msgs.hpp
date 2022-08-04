@@ -41,6 +41,10 @@ private:
   rclcpp::Subscription<AutowareStateAuto>::SharedPtr sub_state_;
   rclcpp::Publisher<AutowareStateIV>::SharedPtr pub_state_;
 
+  using ControlModeAuto = autoware_auto_vehicle_msgs::msg::ControlModeReport;
+  rclcpp::Subscription<ControlModeAuto>::SharedPtr sub_control_mode_;
+  rclcpp::Publisher<ControlModeAuto>::SharedPtr pub_control_mode_;
+
   using TrajectoryAuto = autoware_auto_planning_msgs::msg::Trajectory;
   using TrajectoryIV = tier4_planning_msgs::msg::Trajectory;
   rclcpp::Subscription<TrajectoryAuto>::SharedPtr sub_trajectory_;
@@ -53,6 +57,7 @@ private:
 
   void onState(const AutowareStateAuto::ConstSharedPtr message);
   void onEmergency(const EmergencyStateAuto::ConstSharedPtr message);
+  void onControlMode(const ControlModeAuto::ConstSharedPtr message);
   void onTrajectory(const TrajectoryAuto::ConstSharedPtr message);
   void onTrackedObjects(const TrackedObjectsAuto::ConstSharedPtr message);
 
