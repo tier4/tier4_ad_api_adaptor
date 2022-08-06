@@ -1,0 +1,10 @@
+syntax = "proto3";
+package std_msgs.msg;
+
+import "autoware_protobuf/std_msgs/msg/time.proto";
+
+message Header
+{
+    Time stamp = 1;
+    string frame_id = 2;
+}

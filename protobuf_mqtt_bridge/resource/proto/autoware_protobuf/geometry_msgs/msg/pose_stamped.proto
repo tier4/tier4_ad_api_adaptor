@@ -1,0 +1,31 @@
+syntax = "proto3";
+package geometry_msgs.msg;
+
+import "autoware_protobuf/std_msgs/msg/header.proto";
+
+message PoseStamped
+{
+    std_msgs.msg.Header header = 1;
+    Pose pose = 2;
+}
+
+message Pose
+{
+    Point position = 1;
+    Quaternion orientation = 2;
+}
+
+message Point
+{
+    double x = 1;
+    double y = 2;
+    double z = 3;
+}
+
+message Quaternion
+{
+    double x = 1;
+    double y = 2;
+    double z = 3;
+    double w = 4;
+}

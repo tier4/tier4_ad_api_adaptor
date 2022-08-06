@@ -1,0 +1,1 @@
+export PYTHONPATH="/home/isamu-takagi/projects/autoware/src/universe/external/tier4_ad_api_adaptor/protobuf_mqtt_bridge/resource/python:$PYTHONPATH"

@@ -1,0 +1,8 @@
+syntax = "proto3";
+package std_msgs.msg;
+
+message Time
+{
+    int32 sec = 1;
+    uint32 nanosec = 2;
+}
