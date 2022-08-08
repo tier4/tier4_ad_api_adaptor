@@ -1,21 +1,19 @@
-const uint32 = require('./autoware_protobuf/uint32.pbjs');
-// const uint32 = require('../../resource/proto/autoware_protobuf/std_msgs/msg/uint32.proto');
+const autoware_protobuf = require('./autoware_protobuf');
 const mqtt = require('mqtt')
 const client  = mqtt.connect('mqtt://localhost')
-const protobuf = require("protobufjs");
-
-protobuf.load(uint32, function(err, root) {
-    console.log('load');
-    if (err) { throw err; }
-})
 
 client.on('connect', function () {
-    console.log('connect');
+    console.log('connected');
     client.subscribe('/uint32')
-    console.log('subscribe');
+    client.subscribe('/string')
 })
 
 client.on('message', function (topic, payload) {
     console.log(topic, payload)
-    client.end()
+    if (topic == '/uint32') {
+        console.log(autoware_protobuf.std_msgs.msg.UInt32.decode(payload).data)
+    }
+    if (topic == '/string') {
+        console.log(autoware_protobuf.std_msgs.msg.String.decode(payload).data)
+    }
 })

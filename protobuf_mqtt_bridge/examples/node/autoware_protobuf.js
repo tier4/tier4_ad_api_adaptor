@@ -1,0 +1,1 @@
+../../resource/autoware_protobuf.js
