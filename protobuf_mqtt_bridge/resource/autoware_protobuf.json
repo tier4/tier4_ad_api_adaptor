@@ -1,0 +1,120 @@
+{
+  "nested": {
+    "std_msgs": {
+      "nested": {
+        "msg": {
+          "nested": {
+            "Header": {
+              "fields": {
+                "stamp": {
+                  "type": "Time",
+                  "id": 1
+                },
+                "frame_id": {
+                  "type": "string",
+                  "id": 2
+                }
+              }
+            },
+            "Time": {
+              "fields": {
+                "sec": {
+                  "type": "int32",
+                  "id": 1
+                },
+                "nanosec": {
+                  "type": "uint32",
+                  "id": 2
+                }
+              }
+            },
+            "UInt32": {
+              "fields": {
+                "data": {
+                  "type": "uint32",
+                  "id": 2
+                }
+              }
+            },
+            "String": {
+              "fields": {
+                "data": {
+                  "type": "string",
+                  "id": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "geometry_msgs": {
+      "nested": {
+        "msg": {
+          "nested": {
+            "PoseStamped": {
+              "fields": {
+                "header": {
+                  "type": "std_msgs.msg.Header",
+                  "id": 1
+                },
+                "pose": {
+                  "type": "Pose",
+                  "id": 2
+                }
+              }
+            },
+            "Pose": {
+              "fields": {
+                "position": {
+                  "type": "Point",
+                  "id": 1
+                },
+                "orientation": {
+                  "type": "Quaternion",
+                  "id": 2
+                }
+              }
+            },
+            "Point": {
+              "fields": {
+                "x": {
+                  "type": "double",
+                  "id": 1
+                },
+                "y": {
+                  "type": "double",
+                  "id": 2
+                },
+                "z": {
+                  "type": "double",
+                  "id": 3
+                }
+              }
+            },
+            "Quaternion": {
+              "fields": {
+                "x": {
+                  "type": "double",
+                  "id": 1
+                },
+                "y": {
+                  "type": "double",
+                  "id": 2
+                },
+                "z": {
+                  "type": "double",
+                  "id": 3
+                },
+                "w": {
+                  "type": "double",
+                  "id": 4
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

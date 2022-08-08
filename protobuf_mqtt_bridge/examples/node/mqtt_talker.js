@@ -4,6 +4,7 @@ const client  = mqtt.connect('mqtt://localhost')
 
 client.on('connect', function () {
     console.log('connected');
+    setInterval(loop, 100);
 })
 
 let count = 0
@@ -30,5 +31,3 @@ const loop = function()
     client.publish("/pose_stamped", payload);
     count = (count + 10) % 360
 }
-
-setInterval(loop, 100);

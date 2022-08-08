@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+message std_msgs {
+
+    message msg {
+
+        message Header {
+
+            Time stamp = 1;
+            string frame_id = 2;
+        }
+
+        message Time {
+
+            int32 sec = 1;
+            uint32 nanosec = 2;
+        }
+
+        message UInt32 {
+
+            uint32 data = 2;
+        }
+
+        message String {
+
+            string data = 1;
+        }
+    }
+}
+
+message geometry_msgs {
+
+    message msg {
+
+        message PoseStamped {
+
+            std_msgs.msg.Header header = 1;
+            Pose pose = 2;
+        }
+
+        message Pose {
+
+            Point position = 1;
+            Quaternion orientation = 2;
+        }
+
+        message Point {
+
+            double x = 1;
+            double y = 2;
+            double z = 3;
+        }
+
+        message Quaternion {
+
+            double x = 1;
+            double y = 2;
+            double z = 3;
+            double w = 4;
+        }
+    }
+}

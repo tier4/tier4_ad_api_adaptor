@@ -14,6 +14,7 @@ sudo apt-get install mosquitto-clients  # 確認用なので入れなくても�
 
 ```bash
 mosquitto
+mosquitto -c mosquitto.conf  # ブラウザを使う場合
 ```
 
 ## ROS-MQTT 変換
@@ -28,6 +29,8 @@ pip install protobuf      # こっちだけで良いかも
 ```
 
 ### 起動
+
+※ /pose_stamped は rviz2 でみる。
 
 ```bash
 source python-path.bash
@@ -68,3 +71,20 @@ npm i
 node examples/node/mqtt_listener.js  # 端末１
 node examples/node/mqtt_talker.js    # 端末２
 ```
+
+## ブラウザで使う場合
+
+### 準備
+
+```bash
+python3 -m http.server 8085 -d examples/browser
+```
+
+### 起動
+
+ブラウザから `http://localhost:8085/` にアクセスする。
+
+## License
+
+paho-mqtt: Eclipse Public License 2.0
+protobufjs-cli: BSD 3-Clause License

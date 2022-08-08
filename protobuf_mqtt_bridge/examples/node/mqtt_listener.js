@@ -9,7 +9,6 @@ client.on('connect', function () {
 })
 
 client.on('message', function (topic, payload) {
-    console.log(topic, payload)
     if (topic == '/uint32') {
         console.log(autoware_protobuf.std_msgs.msg.UInt32.decode(payload).data)
     }
