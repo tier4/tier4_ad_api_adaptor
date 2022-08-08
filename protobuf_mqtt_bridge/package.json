@@ -1,0 +1,23 @@
+{
+  "name": "protobuf_mqtt_bridge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "protobufjs": "^7.0.0",
+    "protobufjs-cli": "^1.0.0"
+  },
+  "dependencies": {
+    "mqtt": "^4.3.7"
+  }
+}
