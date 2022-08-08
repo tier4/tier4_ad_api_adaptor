@@ -12,3 +12,9 @@ pip install paho-mqtt
 pip install grpcio
 pip install grpcio-tools
 ```
+
+```
+npm install mqtt
+npm install protobufjs  (?)
+npm install -g goog
+```
