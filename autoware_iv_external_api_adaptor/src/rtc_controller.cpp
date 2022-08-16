@@ -16,8 +16,6 @@
 
 #include <memory>
 
-namespace
-{
 RTCModule::RTCModule(rclcpp::Node * node, const std::string & node_name, const std::string & name)
 {
   using namespace std::literals::chrono_literals;
@@ -56,8 +54,6 @@ void RTCModule::callService(
   responses->responses.insert(
     responses->responses.end(), resp->responses.begin(), resp->responses.end());
 }
-
-}  // namespace
 
 namespace external_api
 {
@@ -101,10 +97,15 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
 }
 
-void RTCController::insertionSort(std::vector<CooperateStatus> & statuses_vector)
+void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & statuses_vector)
 {
+  if (statuses_vector.empty()) {
+    return;
+  }
   tier4_rtc_msgs::msg::CooperateStatus current_status;
+  checkInfDistance(statuses_vector[0]);
   for (size_t i = 1; i < statuses_vector.size(); i++) {
+    checkInfDistance(statuses_vector[i]);
     current_status = statuses_vector[i];
     int j = i - 1;
 
@@ -113,6 +114,13 @@ void RTCController::insertionSort(std::vector<CooperateStatus> & statuses_vector
       j = j - 1;
     }
     statuses_vector[j + 1] = current_status;
+  }
+}
+
+void RTCController::checkInfDistance(CooperateStatus & status) // Temporary fix for ROS2 humble
+{
+  if (!std::isfinite(status.distance)) {
+    status.distance = -100000.0;
   }
 }
 
@@ -134,7 +142,8 @@ void RTCController::onTimer()
   pull_over_->insertMessage(cooperate_statuses);
   pull_out_->insertMessage(cooperate_statuses);
 
-  insertionSort(cooperate_statuses);
+  insertionSortAndValidation(cooperate_statuses);
+
   CooperateStatusArray msg;
   msg.stamp = now();
   msg.statuses = cooperate_statuses;
