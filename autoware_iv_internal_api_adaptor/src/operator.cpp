@@ -75,7 +75,7 @@ void Operator::setOperator(
       return;
 
     case tier4_external_api_msgs::msg::Operator::AUTONOMOUS:
-      if (!send_engage_in_emergency_ && emergency_status_->emergency) {
+      if (!send_engage_in_emergency_ && emergency_status_ && emergency_status_->emergency) {
         // do not send engage command when the status is emergency
         response->status =
           tier4_api_utils::response_error("ignored request because the status is emergency.");
