@@ -25,7 +25,7 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
   using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
-  send_engage_in_emergency_ = declare_parameter("send_engage_in_emergency", true);
+  send_engage_in_emergency_ = declare_parameter("send_engage_in_emergency", false);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_operator_ = proxy.create_service<tier4_external_api_msgs::srv::SetOperator>(
