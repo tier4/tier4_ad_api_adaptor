@@ -23,6 +23,7 @@
 #include <tier4_control_msgs/msg/external_command_selector_mode.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_control_msgs/srv/external_command_select.hpp>
+#include <tier4_external_api_msgs/msg/emergency.hpp>
 #include <tier4_external_api_msgs/msg/observer.hpp>
 #include <tier4_external_api_msgs/msg/operator.hpp>
 #include <tier4_external_api_msgs/srv/set_observer.hpp>
@@ -63,6 +64,7 @@ private:
   rclcpp::Subscription<ExternalCommandSelectorMode>::SharedPtr sub_external_select_;
   rclcpp::Subscription<GateMode>::SharedPtr sub_gate_mode_;
   rclcpp::Subscription<VehicleControlMode>::SharedPtr sub_vehicle_control_mode_;
+  rclcpp::Subscription<tier4_external_api_msgs::msg::Emergency>::SharedPtr sub_emergency_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   // ros callback
@@ -77,12 +79,15 @@ private:
   void onGateMode(const tier4_control_msgs::msg::GateMode::ConstSharedPtr message);
   void onVehicleControlMode(
     const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr message);
+  void onEmergencyStatus(const tier4_external_api_msgs::msg::Emergency::ConstSharedPtr msg);
   void onTimer();
 
   // class field
   tier4_control_msgs::msg::ExternalCommandSelectorMode::ConstSharedPtr external_select_;
   tier4_control_msgs::msg::GateMode::ConstSharedPtr gate_mode_;
   autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr vehicle_control_mode_;
+  tier4_external_api_msgs::msg::Emergency::ConstSharedPtr emergency_status_;
+  bool send_engage_in_emergency_;
 
   // class method
   void publishOperator();
