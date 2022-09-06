@@ -18,6 +18,9 @@
 
 namespace internal_api
 {
+
+constexpr auto initial_pose_timeout = std::chrono::seconds(300);
+
 InitialPose::InitialPose(const rclcpp::NodeOptions & options)
 : Node("internal_api_initial_pose", options)
 {
@@ -72,7 +75,7 @@ void InitialPose::setInitializePose(
   if (init_localization_pose_) {
     const auto req = std::make_shared<PoseWithCovarianceStampedSrv::Request>();
     req->pose_with_covariance = request->pose;
-    const auto [status, resp] = cli_set_initialize_pose_->call(req);
+    const auto [status, resp] = cli_set_initialize_pose_->call(req, initial_pose_timeout);
     if (!tier4_api_utils::is_success(status)) {
       response->status = status;
       return;
@@ -92,7 +95,7 @@ void InitialPose::setInitializePoseAuto(
   response->status = tier4_api_utils::response_ignored("No processing.");
 
   if (init_localization_pose_) {
-    const auto [status, resp] = cli_set_initialize_pose_auto_->call(request);
+    const auto [status, resp] = cli_set_initialize_pose_auto_->call(request, initial_pose_timeout);
     if (!tier4_api_utils::is_success(status)) {
       response->status = status;
       return;
