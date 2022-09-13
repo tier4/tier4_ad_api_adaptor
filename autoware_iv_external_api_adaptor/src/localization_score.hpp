@@ -26,9 +26,9 @@
 
 namespace external_api
 {
-using tier4_external_api_msgs::msg::LocalizationScoreArray;
 using geometry_msgs::msg::PoseWithCovarianceStamped;
 using tier4_debug_msgs::msg::Float32Stamped;
+using tier4_external_api_msgs::msg::LocalizationScoreArray;
 
 class LocalizationScore : public rclcpp::Node
 {
@@ -54,6 +54,6 @@ private:
   bool is_nvtl_received_;
 };
 
-}  // namespace default_ad_api
+}  // namespace external_api
 
 #endif  // LOCALIZATION_SCORE_HPP_

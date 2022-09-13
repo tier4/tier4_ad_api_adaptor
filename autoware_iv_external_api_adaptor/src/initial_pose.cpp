@@ -19,6 +19,8 @@
 namespace external_api
 {
 
+constexpr auto initial_pose_timeout = std::chrono::seconds(300);
+
 InitialPose::InitialPose(const rclcpp::NodeOptions & options)
 : Node("external_api_initial_pose", options)
 {
@@ -44,7 +46,7 @@ void InitialPose::setInitializePose(
   const tier4_external_api_msgs::srv::InitializePose::Request::SharedPtr request,
   const tier4_external_api_msgs::srv::InitializePose::Response::SharedPtr response)
 {
-  const auto [status, resp] = cli_set_initialize_pose_->call(request);
+  const auto [status, resp] = cli_set_initialize_pose_->call(request, initial_pose_timeout);
   if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;
@@ -56,7 +58,7 @@ void InitialPose::setInitializePoseAuto(
   const tier4_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
   const tier4_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response)
 {
-  const auto [status, resp] = cli_set_initialize_pose_auto_->call(request);
+  const auto [status, resp] = cli_set_initialize_pose_auto_->call(request, initial_pose_timeout);
   if (!tier4_api_utils::is_success(status)) {
     response->status = status;
     return;

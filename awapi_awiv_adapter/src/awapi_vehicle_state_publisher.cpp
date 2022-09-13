@@ -58,7 +58,6 @@ tier4_api_msgs::msg::AwapiVehicleStatus AutowareIvVehicleStatePublisher::initVeh
   tier4_api_msgs::msg::AwapiVehicleStatus status;
   // set default value
   status.energy_level = -1;
-  
   return status;
 }
 

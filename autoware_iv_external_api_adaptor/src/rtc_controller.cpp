@@ -109,7 +109,7 @@ void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & st
     current_status = statuses_vector[i];
     int j = i - 1;
 
-    while (j >= 0 && current_status.distance < statuses_vector[j].distance) {
+    while (j >= 0 && current_status.start_distance < statuses_vector[j].start_distance) {
       statuses_vector[j + 1] = statuses_vector[j];
       j = j - 1;
     }
@@ -117,10 +117,13 @@ void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & st
   }
 }
 
-void RTCController::checkInfDistance(CooperateStatus & status) // Temporary fix for ROS2 humble
+void RTCController::checkInfDistance(CooperateStatus & status)  // Temporary fix for ROS2 humble
 {
-  if (!std::isfinite(status.distance)) {
-    status.distance = -100000.0;
+  if (!std::isfinite(status.start_distance)) {
+    status.start_distance = -100000.0;
+  }
+  if (!std::isfinite(status.finish_distance)) {
+    status.finish_distance = -100000.0;
   }
 }
 
