@@ -16,12 +16,25 @@
 
 #include "converter/response_status.hpp"
 
+#include <array>
 #include <memory>
 
 namespace external_api
 {
 
 constexpr double initial_pose_timeout = 300;
+
+// clang-format off
+const std::array<double, 36> particle_covariance =
+{
+  1.00, 0.00, 0.00, 0.00, 0.00,  0.00,
+  0.00, 1.00, 0.00, 0.00, 0.00,  0.00,
+  0.00, 0.00, 0.01, 0.00, 0.00,  0.00,
+  0.00, 0.00, 0.00, 0.01, 0.00,  0.00,
+  0.00, 0.00, 0.00, 0.00, 0.01,  0.00,
+  0.00, 0.00, 0.00, 0.00, 0.00, 10.00,
+};
+// clang-format on
 
 InitialPose::InitialPose(const rclcpp::NodeOptions & options)
 : Node("external_api_initial_pose", options)
@@ -49,6 +62,7 @@ void InitialPose::setInitializePose(
 {
   const auto req = std::make_shared<localization_interface::Initialize::Service::Request>();
   req->pose.push_back(request->pose);
+  req->pose.back().pose.covariance = particle_covariance;
 
   try {
     const auto res = cli_localization_initialize_->call(req, initial_pose_timeout);
