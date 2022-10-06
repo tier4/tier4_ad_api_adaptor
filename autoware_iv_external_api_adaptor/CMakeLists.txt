@@ -1,18 +1,8 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)
 project(autoware_iv_external_api_adaptor)
 
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
-
-find_package(ament_cmake_auto REQUIRED)
-ament_auto_find_build_dependencies()
+find_package(autoware_cmake REQUIRED)
+autoware_package()
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/calibration_status.cpp
@@ -36,30 +26,28 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/velocity.cpp
   src/version.cpp
 )
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::CalibrationStatus")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::CpuUsage")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Diagnostics")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Door")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Emergency")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Engage")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::FailSafeState")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::InitialPose")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::LocalizationScore")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Map")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::MetadataPackages")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Operator")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::RosbagLoggingMode")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Route")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::RTCController")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Service")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Start")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::VehicleStatus")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Velocity")
-rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Version")
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
+rclcpp_components_register_nodes(${PROJECT_NAME}
+  "external_api::CalibrationStatus"
+  "external_api::CpuUsage"
+  "external_api::Diagnostics"
+  "external_api::Door"
+  "external_api::Emergency"
+  "external_api::Engage"
+  "external_api::FailSafeState"
+  "external_api::InitialPose"
+  "external_api::LocalizationScore"
+  "external_api::Map"
+  "external_api::MetadataPackages"
+  "external_api::Operator"
+  "external_api::RosbagLoggingMode"
+  "external_api::Route"
+  "external_api::RTCController"
+  "external_api::Service"
+  "external_api::Start"
+  "external_api::VehicleStatus"
+  "external_api::Velocity"
+  "external_api::Version"
+)
 
 ament_auto_package()
