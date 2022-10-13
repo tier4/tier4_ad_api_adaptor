@@ -5,7 +5,6 @@ find_package(autoware_cmake REQUIRED)
 autoware_package()
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
-  src/initial_pose.cpp
   src/iv_msgs.cpp
   src/operator.cpp
   src/route.cpp
@@ -13,7 +12,6 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 )
 
 rclcpp_components_register_nodes(${PROJECT_NAME}
-  "internal_api::InitialPose"
   "internal_api::IVMsgs"
   "internal_api::Operator"
   "internal_api::Route"

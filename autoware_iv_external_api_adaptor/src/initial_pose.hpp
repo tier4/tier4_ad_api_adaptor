@@ -15,11 +15,13 @@
 #ifndef INITIAL_POSE_HPP_
 #define INITIAL_POSE_HPP_
 
-#include "rclcpp/rclcpp.hpp"
-#include "tier4_api_utils/tier4_api_utils.hpp"
+#include <component_interface_specs/localization.hpp>
+#include <component_interface_utils/rclcpp.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <tier4_api_utils/tier4_api_utils.hpp>
 
-#include "tier4_external_api_msgs/srv/initialize_pose.hpp"
-#include "tier4_external_api_msgs/srv/initialize_pose_auto.hpp"
+#include <tier4_external_api_msgs/srv/initialize_pose.hpp>
+#include <tier4_external_api_msgs/srv/initialize_pose_auto.hpp>
 
 namespace external_api
 {
@@ -37,8 +39,8 @@ private:
   rclcpp::CallbackGroup::SharedPtr group_;
   tier4_api_utils::Service<InitializePose>::SharedPtr srv_set_initialize_pose_;
   tier4_api_utils::Service<InitializePoseAuto>::SharedPtr srv_set_initialize_pose_auto_;
-  tier4_api_utils::Client<InitializePose>::SharedPtr cli_set_initialize_pose_;
-  tier4_api_utils::Client<InitializePoseAuto>::SharedPtr cli_set_initialize_pose_auto_;
+  component_interface_utils::Client<localization_interface::Initialize>::SharedPtr
+    cli_localization_initialize_;
 
   // ros callback
   void setInitializePose(
