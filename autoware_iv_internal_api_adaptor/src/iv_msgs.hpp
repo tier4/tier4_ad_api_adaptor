@@ -25,7 +25,6 @@
 #include <tier4_perception_msgs/msg/dynamic_object_array.hpp>
 #include <tier4_planning_msgs/msg/trajectory.hpp>
 #include <tier4_system_msgs/msg/autoware_state.hpp>
-#include <tier4_vehicle_msgs/msg/control_mode.hpp>
 
 namespace internal_api
 {
@@ -43,9 +42,8 @@ private:
   rclcpp::Publisher<AutowareStateIV>::SharedPtr pub_state_;
 
   using ControlModeAuto = autoware_auto_vehicle_msgs::msg::ControlModeReport;
-  using ControlModeIV = tier4_vehicle_msgs::msg::ControlMode;
   rclcpp::Subscription<ControlModeAuto>::SharedPtr sub_control_mode_;
-  rclcpp::Publisher<ControlModeIV>::SharedPtr pub_control_mode_;
+  rclcpp::Publisher<ControlModeAuto>::SharedPtr pub_control_mode_;
 
   using TrajectoryAuto = autoware_auto_planning_msgs::msg::Trajectory;
   using TrajectoryIV = tier4_planning_msgs::msg::Trajectory;
