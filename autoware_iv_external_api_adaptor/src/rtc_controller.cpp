@@ -16,7 +16,7 @@
 
 #include <memory>
 
-RTCModule::RTCModule(rclcpp::Node * node, const std::string & node_name, const std::string & name)
+RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
 {
   using namespace std::literals::chrono_literals;
   using std::placeholders::_1;
@@ -24,12 +24,11 @@ RTCModule::RTCModule(rclcpp::Node * node, const std::string & node_name, const s
   tier4_api_utils::ServiceProxyNodeInterface proxy(node);
 
   module_sub_ = node->create_subscription<CooperateStatusArray>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/" + node_name + "/" + name + "/cooperate_status",
-    rclcpp::QoS(1), std::bind(&RTCModule::moduleCallback, this, _1));
+    cooperate_status_namespace_ + "/" + name, rclcpp::QoS(1),
+    std::bind(&RTCModule::moduleCallback, this, _1));
 
   cli_set_module_ = proxy.create_client<CooperateCommands>(
-    BEHAVIOR_PLANNING_NAMESPACE + "/" + node_name + "/" + name + "/cooperate_commands",
-    rmw_qos_profile_services_default);
+    cooperate_commands_namespace_ + "/" + name, rmw_qos_profile_services_default);
 }
 
 void RTCModule::moduleCallback(const CooperateStatusArray::ConstSharedPtr message)
@@ -65,26 +64,20 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
-  blind_spot_ = std::make_unique<RTCModule>(this, "behavior_velocity_planner", "blind_spot");
-  crosswalk_ = std::make_unique<RTCModule>(this, "behavior_velocity_planner", "crosswalk");
-  detection_area_ =
-    std::make_unique<RTCModule>(this, "behavior_velocity_planner", "detection_area");
-  intersection_ = std::make_unique<RTCModule>(this, "behavior_velocity_planner", "intersection");
-  no_stopping_area_ =
-    std::make_unique<RTCModule>(this, "behavior_velocity_planner", "no_stopping_area");
-  occlusion_spot_ =
-    std::make_unique<RTCModule>(this, "behavior_velocity_planner", "occlusion_spot");
-  traffic_light_ = std::make_unique<RTCModule>(this, "behavior_velocity_planner", "traffic_light");
-  virtual_traffic_light_ =
-    std::make_unique<RTCModule>(this, "behavior_velocity_planner", "virtual_traffic_light");
-  lane_change_left_ =
-    std::make_unique<RTCModule>(this, "behavior_path_planner", "lane_change_left");
-  lane_change_right_ =
-    std::make_unique<RTCModule>(this, "behavior_path_planner", "lane_change_right");
-  avoidance_left_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "avoidance_left");
-  avoidance_right_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "avoidance_right");
-  pull_over_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "pull_over");
-  pull_out_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "pull_out");
+  blind_spot_ = std::make_unique<RTCModule>(this, "blind_spot");
+  crosswalk_ = std::make_unique<RTCModule>(this, "crosswalk");
+  detection_area_ = std::make_unique<RTCModule>(this, "detection_area");
+  intersection_ = std::make_unique<RTCModule>(this, "intersection");
+  no_stopping_area_ = std::make_unique<RTCModule>(this, "no_stopping_area");
+  occlusion_spot_ = std::make_unique<RTCModule>(this, "occlusion_spot");
+  traffic_light_ = std::make_unique<RTCModule>(this, "traffic_light");
+  virtual_traffic_light_ = std::make_unique<RTCModule>(this, "virtual_traffic_light");
+  lane_change_left_ = std::make_unique<RTCModule>(this, "lane_change_left");
+  lane_change_right_ = std::make_unique<RTCModule>(this, "lane_change_right");
+  avoidance_left_ = std::make_unique<RTCModule>(this, "avoidance_left");
+  avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
+  pull_over_ = std::make_unique<RTCModule>(this, "pull_over");
+  pull_out_ = std::make_unique<RTCModule>(this, "pull_out");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
