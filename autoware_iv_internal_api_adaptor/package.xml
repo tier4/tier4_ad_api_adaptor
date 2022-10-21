@@ -9,6 +9,8 @@
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
+  <build_depend>autoware_cmake</build_depend>
+
   <depend>autoware_auto_perception_msgs</depend>
   <depend>autoware_auto_planning_msgs</depend>
   <depend>autoware_auto_system_msgs</depend>
@@ -25,18 +27,9 @@
   <depend>tier4_perception_msgs</depend>
   <depend>tier4_planning_msgs</depend>
   <depend>tier4_system_msgs</depend>
-  <depend>tier4_vehicle_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>autoware_lint_common</test_depend>
-
-  <!-- for backward compatibility -->
-  <!-- nolint -->
-  <!-- nolint -->
-  <!-- nolint -->
-  <!-- nolint -->
-  <!-- nolint -->
-  <!-- nolint -->
 
   <export>
     <build_type>ament_cmake</build_type>
