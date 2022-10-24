@@ -54,10 +54,16 @@ void Route::setRoute(
   const tier4_external_api_msgs::srv::SetRoute::Request::SharedPtr request,
   const tier4_external_api_msgs::srv::SetRoute::Response::SharedPtr response)
 {
-  const auto req = std::make_shared<autoware_ad_api::routing::SetRoute::Service::Request>();
-  *req = converter::convert(*request);
+  // clear to overwrite
+  {
+    const auto req = std::make_shared<tier4_external_api_msgs::srv::ClearRoute::Request>();
+    const auto res = std::make_shared<tier4_external_api_msgs::srv::ClearRoute::Response>();
+    clearRoute(req, res);
+  }
 
   try {
+    const auto req = std::make_shared<autoware_ad_api::routing::SetRoute::Service::Request>();
+    *req = converter::convert(*request);
     const auto res = cli_set_route_->call(req);
     response->status = converter::convert(res->status);
   } catch (const component_interface_utils::ServiceException & error) {
@@ -69,9 +75,8 @@ void Route::clearRoute(
   const tier4_external_api_msgs::srv::ClearRoute::Request::SharedPtr,
   const tier4_external_api_msgs::srv::ClearRoute::Response::SharedPtr response)
 {
-  const auto req = std::make_shared<autoware_ad_api::routing::ClearRoute::Service::Request>();
-
   try {
+    const auto req = std::make_shared<autoware_ad_api::routing::ClearRoute::Service::Request>();
     const auto res = cli_clear_route_->call(req);
     response->status = converter::convert(res->status);
   } catch (const component_interface_utils::ServiceException & error) {
