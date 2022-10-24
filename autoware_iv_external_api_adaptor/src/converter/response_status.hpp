@@ -23,15 +23,15 @@
 namespace external_api::converter
 {
 
-namespace adapi = autoware_adapi_v1_msgs::msg;
-namespace tier4 = tier4_external_api_msgs::msg;
+using AdResponseStatus = autoware_adapi_v1_msgs::msg::ResponseStatus;
+using T4ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
 
-tier4::ResponseStatus convert(const adapi::ResponseStatus & in)
+inline T4ResponseStatus convert(const AdResponseStatus & ad)
 {
-  if (in.success) {
-    return tier4_api_utils::response_success(in.message);
+  if (ad.success) {
+    return tier4_api_utils::response_success(ad.message);
   } else {
-    return tier4_api_utils::response_error(in.message);
+    return tier4_api_utils::response_error(ad.message);
   }
 }
 
