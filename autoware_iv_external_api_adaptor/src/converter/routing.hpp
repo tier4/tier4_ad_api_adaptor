@@ -45,7 +45,7 @@ inline AdSegment convert(const T4Segment & t4)
     }
   }
   return ad;
-};
+}
 
 inline T4Segment convert(const AdSegment & ad)
 {
