@@ -19,7 +19,7 @@
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
 #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/engage.hpp>
+#include <autoware_auto_vehicle_msgs/srv/control_mode_command.hpp>
 #include <tier4_control_msgs/msg/external_command_selector_mode.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_control_msgs/srv/external_command_select.hpp>
@@ -28,8 +28,6 @@
 #include <tier4_external_api_msgs/msg/operator.hpp>
 #include <tier4_external_api_msgs/srv/set_observer.hpp>
 #include <tier4_external_api_msgs/srv/set_operator.hpp>
-#include <tier4_system_msgs/msg/operation_mode.hpp>
-#include <tier4_system_msgs/srv/operation_mode_request.hpp>
 
 namespace internal_api
 {
@@ -46,24 +44,22 @@ private:
   using ExternalCommandSelect = tier4_control_msgs::srv::ExternalCommandSelect;
   using ExternalCommandSelectorMode = tier4_control_msgs::msg::ExternalCommandSelectorMode;
   using GateMode = tier4_control_msgs::msg::GateMode;
-  using OperationMode = tier4_system_msgs::msg::OperationMode;
-  using OperationModeRequest = tier4_system_msgs::srv::OperationModeRequest;
-  using VehicleEngage = autoware_auto_vehicle_msgs::msg::Engage;
-  using VehicleControlMode = autoware_auto_vehicle_msgs::msg::ControlModeReport;
+  using ControlModeCommand = autoware_auto_vehicle_msgs::srv::ControlModeCommand;
+  using ControlModeReport = autoware_auto_vehicle_msgs::msg::ControlModeReport;
+  using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
   tier4_api_utils::Service<SetOperator>::SharedPtr srv_set_operator_;
   tier4_api_utils::Service<SetObserver>::SharedPtr srv_set_observer_;
   tier4_api_utils::Client<ExternalCommandSelect>::SharedPtr cli_external_select_;
-  tier4_api_utils::Client<OperationModeRequest>::SharedPtr cli_operation_mode_;
+  tier4_api_utils::Client<ControlModeCommand>::SharedPtr cli_control_mode_;
   rclcpp::Publisher<GateMode>::SharedPtr pub_gate_mode_;
-  rclcpp::Publisher<VehicleEngage>::SharedPtr pub_vehicle_engage_;
   rclcpp::Publisher<GetOperator>::SharedPtr pub_operator_;
   rclcpp::Publisher<GetObserver>::SharedPtr pub_observer_;
   rclcpp::Subscription<ExternalCommandSelectorMode>::SharedPtr sub_external_select_;
   rclcpp::Subscription<GateMode>::SharedPtr sub_gate_mode_;
-  rclcpp::Subscription<VehicleControlMode>::SharedPtr sub_vehicle_control_mode_;
+  rclcpp::Subscription<ControlModeReport>::SharedPtr sub_vehicle_control_mode_;
   rclcpp::Subscription<tier4_external_api_msgs::msg::Emergency>::SharedPtr sub_emergency_;
   rclcpp::TimerBase::SharedPtr timer_;
 
@@ -92,11 +88,9 @@ private:
   // class method
   void publishOperator();
   void publishObserver();
-  void setVehicleEngage(bool engage);
   void setGateMode(tier4_control_msgs::msg::GateMode::_data_type data);
-  tier4_external_api_msgs::msg::ResponseStatus setVehicleOperationMode(uint8_t mode);
-  tier4_external_api_msgs::msg::ResponseStatus setExternalSelect(
-    tier4_control_msgs::msg::ExternalCommandSelectorMode::_data_type data);
+  ResponseStatus setVehicleEngage(bool engage);
+  ResponseStatus setExternalSelect(ExternalCommandSelectorMode::_data_type data);
 };
 
 }  // namespace internal_api

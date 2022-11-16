@@ -37,12 +37,10 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
 
   cli_external_select_ = proxy.create_client<tier4_control_msgs::srv::ExternalCommandSelect>(
     "/control/external_cmd_selector/select_external_command");
-  cli_operation_mode_ = proxy.create_client<tier4_system_msgs::srv::OperationModeRequest>(
-    "/system/operation_mode_request");
+  cli_control_mode_ = proxy.create_client<autoware_auto_vehicle_msgs::srv::ControlModeCommand>(
+    "/control/control_mode_request");
   pub_gate_mode_ =
     create_publisher<tier4_control_msgs::msg::GateMode>("/control/gate_mode_cmd", rclcpp::QoS(1));
-  pub_vehicle_engage_ =
-    create_publisher<autoware_auto_vehicle_msgs::msg::Engage>("/vehicle/engage", rclcpp::QoS(1));
 
   pub_operator_ = create_publisher<tier4_external_api_msgs::msg::Operator>(
     "/api/autoware/get/operator", rclcpp::QoS(1));
@@ -70,8 +68,7 @@ void Operator::setOperator(
 {
   switch (request->mode.mode) {
     case tier4_external_api_msgs::msg::Operator::DRIVER:
-      setVehicleEngage(false);  // TODO(horibe): keep for backward compatibility. Will be removed.
-      response->status = setVehicleOperationMode(OperationMode::MANUAL_DIRECT);
+      response->status = setVehicleEngage(false);
       return;
 
     case tier4_external_api_msgs::msg::Operator::AUTONOMOUS:
@@ -82,15 +79,12 @@ void Operator::setOperator(
         return;
       }
       setGateMode(tier4_control_msgs::msg::GateMode::AUTO);
-      setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. Will be removed.
-      response->status = setVehicleOperationMode(OperationMode::AUTONOMOUS);
+      response->status = setVehicleEngage(true);
       return;
 
     case tier4_external_api_msgs::msg::Operator::OBSERVER:
-      // TODO(Takagi, Isamu): prohibit transition when none observer type is added
       setGateMode(tier4_control_msgs::msg::GateMode::EXTERNAL);
-      setVehicleEngage(true);  // TODO(horibe): keep for backward compatibility. Will be removed.
-      response->status = setVehicleOperationMode(OperationMode::REMOTE_OPERATOR);
+      response->status = setVehicleEngage(true);
       return;
 
     default:
@@ -194,39 +188,35 @@ void Operator::publishObserver()
   RCLCPP_ERROR(get_logger(), "Unknown observer.");
 }
 
-void Operator::setVehicleEngage(bool engage)
-{
-  const auto msg = autoware_auto_vehicle_msgs::build<autoware_auto_vehicle_msgs::msg::Engage>()
-                     .stamp(now())
-                     .engage(engage);
-  pub_vehicle_engage_->publish(msg);
-}
-
-tier4_external_api_msgs::msg::ResponseStatus Operator::setVehicleOperationMode(uint8_t mode)
-{
-  const auto req = std::make_shared<tier4_system_msgs::srv::OperationModeRequest::Request>();
-  req->mode.mode = mode;
-
-  const auto [status, resp] = cli_operation_mode_->call(req);
-  if (!tier4_api_utils::is_success(status)) {
-    return status;
-  }
-
-  if (resp->success) {
-    return tier4_api_utils::response_success("set OperationMode succeeded");
-  } else {
-    return tier4_api_utils::response_error("set OperationMode failed.");
-  }
-}
-
 void Operator::setGateMode(tier4_control_msgs::msg::GateMode::_data_type data)
 {
   const auto msg = tier4_control_msgs::build<tier4_control_msgs::msg::GateMode>().data(data);
   pub_gate_mode_->publish(msg);
 }
 
+tier4_external_api_msgs::msg::ResponseStatus Operator::setVehicleEngage(bool engage)
+{
+  const auto req = std::make_shared<ControlModeCommand::Request>();
+  if (engage) {
+    req->mode = ControlModeCommand::Request::AUTONOMOUS;
+  } else {
+    req->mode = ControlModeCommand::Request::MANUAL;
+  }
+
+  const auto [status, resp] = cli_control_mode_->call(req);
+  if (!tier4_api_utils::is_success(status)) {
+    return status;
+  }
+
+  if (resp->success) {
+    return tier4_api_utils::response_success();
+  } else {
+    return tier4_api_utils::response_error("failed to set control mode");
+  }
+}
+
 tier4_external_api_msgs::msg::ResponseStatus Operator::setExternalSelect(
-  tier4_control_msgs::msg::ExternalCommandSelectorMode::_data_type data)
+  ExternalCommandSelectorMode::_data_type data)
 {
   const auto req = std::make_shared<tier4_control_msgs::srv::ExternalCommandSelect::Request>();
   req->mode.data = data;
