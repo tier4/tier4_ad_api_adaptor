@@ -37,8 +37,8 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
 
   cli_external_select_ = proxy.create_client<tier4_control_msgs::srv::ExternalCommandSelect>(
     "/control/external_cmd_selector/select_external_command");
-  cli_control_mode_ = proxy.create_client<autoware_auto_vehicle_msgs::srv::ControlModeCommand>(
-    "/control/control_mode_request");
+  cli_autoware_control_ = proxy.create_client<tier4_system_msgs::srv::ChangeAutowareControl>(
+    "/system/operation_mode/change_autoware_control");
   pub_gate_mode_ =
     create_publisher<tier4_control_msgs::msg::GateMode>("/control/gate_mode_cmd", rclcpp::QoS(1));
 
@@ -196,22 +196,18 @@ void Operator::setGateMode(tier4_control_msgs::msg::GateMode::_data_type data)
 
 tier4_external_api_msgs::msg::ResponseStatus Operator::setVehicleEngage(bool engage)
 {
-  const auto req = std::make_shared<ControlModeCommand::Request>();
-  if (engage) {
-    req->mode = ControlModeCommand::Request::AUTONOMOUS;
-  } else {
-    req->mode = ControlModeCommand::Request::MANUAL;
-  }
+  const auto req = std::make_shared<ChangeAutowareControl::Request>();
+  req->autoware_control = engage;
 
-  const auto [status, resp] = cli_control_mode_->call(req);
+  const auto [status, resp] = cli_autoware_control_->call(req);
   if (!tier4_api_utils::is_success(status)) {
     return status;
   }
 
-  if (resp->success) {
-    return tier4_api_utils::response_success();
+  if (resp->status.success) {
+    return tier4_api_utils::response_success(resp->status.message);
   } else {
-    return tier4_api_utils::response_error("failed to set control mode");
+    return tier4_api_utils::response_error(resp->status.message);
   }
 }
 
