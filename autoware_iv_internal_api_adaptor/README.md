@@ -1,1 +1,1 @@
-[See Github Pages](https://tier4.github.io/autoware.proj/tree/main/design/apis/ja/concept/)
+[See Github Pages](https://tier4.github.io/autoware-documentation/tier4-main/design/autoware-interfaces/prototyping/)
