@@ -73,7 +73,7 @@ struct AutowareInfo
   tier4_system_msgs::msg::AutowareState::ConstSharedPtr autoware_state_ptr;
   autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr control_mode_ptr;
   tier4_control_msgs::msg::GateMode::ConstSharedPtr gate_mode_ptr;
-  autoware_adapi_v1_msgs::msg::MrmState::ConstSharedPtr emergency_state_ptr;
+  autoware_adapi_v1_msgs::msg::MrmState::ConstSharedPtr mrm_state_ptr;
   autoware_auto_system_msgs::msg::HazardStatusStamped::ConstSharedPtr hazard_status_ptr;
   tier4_planning_msgs::msg::StopReasonArray::ConstSharedPtr stop_reason_ptr;
   tier4_v2x_msgs::msg::InfrastructureCommandArray::ConstSharedPtr v2x_command_ptr;

@@ -124,7 +124,7 @@ private:
   void callbackControlMode(
     const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr msg_ptr);
   void callbackGateMode(const tier4_control_msgs::msg::GateMode::ConstSharedPtr msg_ptr);
-  void callbackEmergencyState(const autoware_adapi_v1_msgs::msg::MrmState::ConstSharedPtr msg_ptr);
+  void callbackMrmState(const autoware_adapi_v1_msgs::msg::MrmState::ConstSharedPtr msg_ptr);
   void callbackHazardStatus(
     const autoware_auto_system_msgs::msg::HazardStatusStamped::ConstSharedPtr msg_ptr);
   void callbackStopReason(const tier4_planning_msgs::msg::StopReasonArray::ConstSharedPtr msg_ptr);
