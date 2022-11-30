@@ -26,7 +26,7 @@ IVMsgs::IVMsgs(const rclcpp::NodeOptions & options) : Node("external_api_iv_msgs
   sub_state_ = create_subscription<AutowareStateAuto>(
     "/autoware/state", rclcpp::QoS(1), std::bind(&IVMsgs::onState, this, _1));
   sub_emergency_ = create_subscription<EmergencyStateAuto>(
-    "/system/emergency/emergency_state", rclcpp::QoS(1), std::bind(&IVMsgs::onEmergency, this, _1));
+    "/system/fail_safe/mrm_state", rclcpp::QoS(1), std::bind(&IVMsgs::onEmergency, this, _1));
 
   pub_control_mode_ =
     create_publisher<ControlModeAuto>("/api/iv_msgs/vehicle/status/control_mode", rclcpp::QoS(1));
@@ -44,24 +44,23 @@ IVMsgs::IVMsgs(const rclcpp::NodeOptions & options) : Node("external_api_iv_msgs
   sub_tracked_objects_ = create_subscription<TrackedObjectsAuto>(
     "/perception/object_recognition/tracking/objects", rclcpp::QoS(1),
     std::bind(&IVMsgs::onTrackedObjects, this, _1));
+
+  is_emergency_ = false;
 }
 
 void IVMsgs::onState(const AutowareStateAuto::ConstSharedPtr message)
 {
   auto state = tier4_auto_msgs_converter::convert(*message);
-  if (emergency_) {
-    switch (emergency_->state) {
-      case EmergencyStateAuto::MRM_OPERATING:
-      case EmergencyStateAuto::MRM_SUCCEEDED:
-      case EmergencyStateAuto::MRM_FAILED:
-        state.state = AutowareStateIV::EMERGENCY;
-        break;
-    }
+  if (is_emergency_) {
+    state.state = AutowareStateIV::EMERGENCY;
   }
   pub_state_->publish(state);
 }
 
-void IVMsgs::onEmergency(const EmergencyStateAuto::ConstSharedPtr message) { emergency_ = message; }
+void IVMsgs::onEmergency(const EmergencyStateAuto::ConstSharedPtr message)
+{
+  is_emergency_ = message->state != EmergencyStateAuto::NORMAL;
+}
 
 void IVMsgs::onControlMode(const ControlModeAuto::ConstSharedPtr message)
 {
