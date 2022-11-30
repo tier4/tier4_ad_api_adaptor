@@ -84,7 +84,7 @@ AutowareIvAdapter::AutowareIvAdapter()
     "input/control_mode", 1, std::bind(&AutowareIvAdapter::callbackControlMode, this, _1));
   sub_gate_mode_ = this->create_subscription<tier4_control_msgs::msg::GateMode>(
     "input/gate_mode", durable_qos, std::bind(&AutowareIvAdapter::callbackGateMode, this, _1));
-  sub_emergency_ = this->create_subscription<autoware_auto_system_msgs::msg::EmergencyState>(
+  sub_emergency_ = this->create_subscription<autoware_adapi_v1_msgs::msg::MrmState>(
     "input/emergency_state", 1, std::bind(&AutowareIvAdapter::callbackEmergencyState, this, _1));
   sub_hazard_status_ =
     this->create_subscription<autoware_auto_system_msgs::msg::HazardStatusStamped>(
@@ -250,7 +250,7 @@ void AutowareIvAdapter::callbackGateMode(
 }
 
 void AutowareIvAdapter::callbackEmergencyState(
-  const autoware_auto_system_msgs::msg::EmergencyState::ConstSharedPtr msg_ptr)
+  const autoware_adapi_v1_msgs::msg::MrmState::ConstSharedPtr msg_ptr)
 {
   aw_info_.emergency_state_ptr = msg_ptr;
 }

@@ -16,7 +16,7 @@
   <arg name="input_autoware_state" default="/api/iv_msgs/autoware/state"/>
   <arg name="input_control_mode" default="/vehicle/status/control_mode"/>
   <arg name="input_gate_mode" default="/control/current_gate_mode"/>
-  <arg name="input_emergency_state" default="/system/emergency/emergency_state"/>
+  <arg name="input_emergency_state" default="/system/fail_safe/mrm_state"/>
   <arg name="input_hazard_status" default="/system/emergency/hazard_status"/>
   <arg name="input_stop_reason" default="/planning/scenario_planning/status/stop_reasons"/>
   <arg name="input_v2x_command" default="/planning/scenario_planning/status/infrastructure_commands"/>
