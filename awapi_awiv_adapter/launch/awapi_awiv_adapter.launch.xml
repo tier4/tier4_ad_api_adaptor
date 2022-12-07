@@ -61,7 +61,7 @@
   <arg name="output_overwrite_traffic_signals" default="/external/traffic_light_recognition/traffic_signals"/>
 
   <arg name="node_emergency_stop" default="/control/vehicle_cmd_gate"/>
-  <arg name="param_emergency_stop" default="use_external_emergency_stop"/>
+  <arg name="param_emergency_stop" default="check_external_emergency_heartbeat"/>
   <arg name="node_max_velocity" default="/planning/scenario_planning/motion_velocity_smoother"/>
   <arg name="param_max_velocity" default="max_velocity"/>
 
