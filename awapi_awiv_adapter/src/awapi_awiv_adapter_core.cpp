@@ -138,7 +138,7 @@ AutowareIvAdapter::AutowareIvAdapter()
 void AutowareIvAdapter::emergencyParamCheck(const bool emergency_stop_param)
 {
   if (!emergency_stop_param) {
-    RCLCPP_WARN_STREAM(get_logger(), "parameter[use_external_emergency_stop] is false.");
+    RCLCPP_WARN_STREAM(get_logger(), "parameter[check_external_emergency_heartbeat] is false.");
     RCLCPP_WARN_STREAM(get_logger(), "autoware/put/emergency is not valid");
   }
 }
