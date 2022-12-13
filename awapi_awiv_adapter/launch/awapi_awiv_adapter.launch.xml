@@ -16,7 +16,7 @@
   <arg name="input_autoware_state" default="/api/iv_msgs/autoware/state"/>
   <arg name="input_control_mode" default="/vehicle/status/control_mode"/>
   <arg name="input_gate_mode" default="/control/current_gate_mode"/>
-  <arg name="input_emergency_state" default="/system/emergency/emergency_state"/>
+  <arg name="input_mrm_state" default="/system/fail_safe/mrm_state"/>
   <arg name="input_hazard_status" default="/system/emergency/hazard_status"/>
   <arg name="input_stop_reason" default="/planning/scenario_planning/status/stop_reasons"/>
   <arg name="input_v2x_command" default="/planning/scenario_planning/status/infrastructure_commands"/>
@@ -61,7 +61,7 @@
   <arg name="output_overwrite_traffic_signals" default="/external/traffic_light_recognition/traffic_signals"/>
 
   <arg name="node_emergency_stop" default="/control/vehicle_cmd_gate"/>
-  <arg name="param_emergency_stop" default="use_external_emergency_stop"/>
+  <arg name="param_emergency_stop" default="check_external_emergency_heartbeat"/>
   <arg name="node_max_velocity" default="/planning/scenario_planning/motion_velocity_smoother"/>
   <arg name="param_max_velocity" default="max_velocity"/>
 
@@ -110,7 +110,7 @@
       <remap from="input/autoware_state" to="$(var input_autoware_state)"/>
       <remap from="input/control_mode" to="$(var input_control_mode)"/>
       <remap from="input/gate_mode" to="$(var input_gate_mode)"/>
-      <remap from="input/emergency_state" to="$(var input_emergency_state)"/>
+      <remap from="input/mrm_state" to="$(var input_mrm_state)"/>
       <remap from="input/hazard_status" to="$(var input_hazard_status)"/>
       <remap from="input/stop_reason" to="$(var input_stop_reason)"/>
       <remap from="input/v2x_command" to="$(var input_v2x_command)"/>

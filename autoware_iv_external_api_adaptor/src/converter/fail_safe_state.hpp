@@ -15,7 +15,7 @@
 #ifndef CONVERTER__FAIL_SAFE_STATE_HPP_
 #define CONVERTER__FAIL_SAFE_STATE_HPP_
 
-#include "autoware_auto_system_msgs/msg/emergency_state.hpp"
+#include "autoware_adapi_v1_msgs/msg/mrm_state.hpp"
 #include "tier4_external_api_msgs/msg/fail_safe_state.hpp"
 #include "tier4_external_api_msgs/msg/fail_safe_state_stamped.hpp"
 
@@ -24,7 +24,7 @@ namespace external_api::converter
 
 using ExternalFailSafeStateStamped = tier4_external_api_msgs::msg::FailSafeStateStamped;
 using ExternalFailSafeState = tier4_external_api_msgs::msg::FailSafeState;
-using InternalFailSafeState = autoware_auto_system_msgs::msg::EmergencyState;
+using InternalFailSafeState = autoware_adapi_v1_msgs::msg::MrmState;
 
 ExternalFailSafeState to_external_state(const InternalFailSafeState & msg)
 {
@@ -35,8 +35,6 @@ ExternalFailSafeState to_external_state(const InternalFailSafeState & msg)
   switch (msg.state) {
     case Internal::NORMAL:
       return builder.state(External::NORMAL);
-    case Internal::OVERRIDE_REQUESTING:
-      return builder.state(External::OVERRIDE_REQUESTING);
     case Internal::MRM_OPERATING:
       return builder.state(External::MRM_OPERATING);
     case Internal::MRM_SUCCEEDED:

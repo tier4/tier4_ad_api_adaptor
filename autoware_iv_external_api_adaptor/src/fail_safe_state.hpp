@@ -18,7 +18,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
-#include "autoware_auto_system_msgs/msg/emergency_state.hpp"
+#include "autoware_adapi_v1_msgs/msg/mrm_state.hpp"
 #include "tier4_external_api_msgs/msg/fail_safe_state_stamped.hpp"
 
 namespace external_api
@@ -31,7 +31,7 @@ public:
 
 private:
   rclcpp::Publisher<tier4_external_api_msgs::msg::FailSafeStateStamped>::SharedPtr pub_state_;
-  rclcpp::Subscription<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr sub_state_;
+  rclcpp::Subscription<autoware_adapi_v1_msgs::msg::MrmState>::SharedPtr sub_state_;
 };
 
 }  // namespace external_api
