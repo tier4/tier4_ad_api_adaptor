@@ -58,8 +58,7 @@ void RTCModule::callService(
 }
 
 void RTCModule::callAutoModeService(
-  const AutoMode::Request::SharedPtr request,
-  const AutoMode::Response::SharedPtr response)
+  const AutoMode::Request::SharedPtr request, const AutoMode::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_auto_mode_->call(request);
   if (!tier4_api_utils::is_success(status)) {
@@ -90,6 +89,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   lane_change_right_ = std::make_unique<RTCModule>(this, "lane_change_right");
   avoidance_left_ = std::make_unique<RTCModule>(this, "avoidance_left");
   avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
+  avoidance_by_lc_left_ = std::make_unique<RTCModule>(this, "avoidance_by_lc_left");
+  avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lc_right");
   pull_over_ = std::make_unique<RTCModule>(this, "pull_over");
   pull_out_ = std::make_unique<RTCModule>(this, "pull_out");
 
@@ -152,6 +153,8 @@ void RTCController::onTimer()
   lane_change_right_->insertMessage(cooperate_statuses);
   avoidance_left_->insertMessage(cooperate_statuses);
   avoidance_right_->insertMessage(cooperate_statuses);
+  avoidance_by_lc_left_->insertMessage(cooperate_statuses);
+  avoidance_by_lc_right_->insertMessage(cooperate_statuses);
   pull_over_->insertMessage(cooperate_statuses);
   pull_out_->insertMessage(cooperate_statuses);
 
@@ -173,10 +176,12 @@ void RTCController::setRTC(
     switch (command.module.type) {
       case Module::LANE_CHANGE_LEFT: {
         lane_change_left_->callService(request, responses);
+        avoidance_by_lc_left_->callService(request, responses);
         break;
       }
       case Module::LANE_CHANGE_RIGHT: {
         lane_change_right_->callService(request, responses);
+        avoidance_by_lc_right_->callService(request, responses);
         break;
       }
       case Module::AVOIDANCE_LEFT: {
@@ -238,10 +243,12 @@ void RTCController::setRTCAutoMode(
   switch (request->module.type) {
     case Module::LANE_CHANGE_LEFT: {
       lane_change_left_->callAutoModeService(auto_mode_request, auto_mode_response);
+      avoidance_by_lc_left_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::LANE_CHANGE_RIGHT: {
       lane_change_right_->callAutoModeService(auto_mode_request, auto_mode_response);
+      avoidance_by_lc_right_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::AVOIDANCE_LEFT: {

@@ -22,9 +22,9 @@
 #include "tier4_rtc_msgs/msg/cooperate_status.hpp"
 #include "tier4_rtc_msgs/msg/cooperate_status_array.hpp"
 #include "tier4_rtc_msgs/msg/module.hpp"
-#include "tier4_rtc_msgs/srv/cooperate_commands.hpp"
 #include "tier4_rtc_msgs/srv/auto_mode.hpp"
 #include "tier4_rtc_msgs/srv/auto_mode_with_module.hpp"
+#include "tier4_rtc_msgs/srv/cooperate_commands.hpp"
 
 #include <memory>
 #include <string>
@@ -55,8 +55,7 @@ public:
     CooperateCommands::Request::SharedPtr request,
     const CooperateCommands::Response::SharedPtr & responses);
   void callAutoModeService(
-    const AutoMode::Request::SharedPtr request,
-    const AutoMode::Response::SharedPtr response);
+    const AutoMode::Request::SharedPtr request, const AutoMode::Response::SharedPtr response);
 };
 
 namespace external_api
@@ -79,6 +78,8 @@ private:
   std::unique_ptr<RTCModule> lane_change_right_;
   std::unique_ptr<RTCModule> avoidance_left_;
   std::unique_ptr<RTCModule> avoidance_right_;
+  std::unique_ptr<RTCModule> avoidance_by_lc_left_;
+  std::unique_ptr<RTCModule> avoidance_by_lc_right_;
   std::unique_ptr<RTCModule> pull_over_;
   std::unique_ptr<RTCModule> pull_out_;
 
