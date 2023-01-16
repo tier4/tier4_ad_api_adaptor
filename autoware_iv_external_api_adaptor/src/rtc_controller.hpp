@@ -70,6 +70,8 @@ private:
   std::unique_ptr<RTCModule> lane_change_right_;
   std::unique_ptr<RTCModule> avoidance_left_;
   std::unique_ptr<RTCModule> avoidance_right_;
+  std::unique_ptr<RTCModule> avoidance_by_lc_left_;
+  std::unique_ptr<RTCModule> avoidance_by_lc_right_;
   std::unique_ptr<RTCModule> pull_over_;
   std::unique_ptr<RTCModule> pull_out_;
 

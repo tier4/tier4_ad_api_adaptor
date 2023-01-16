@@ -83,6 +83,10 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     std::make_unique<RTCModule>(this, "behavior_path_planner", "lane_change_right");
   avoidance_left_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "avoidance_left");
   avoidance_right_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "avoidance_right");
+  avoidance_by_lc_left_ =
+    std::make_unique<RTCModule>(this, "behavior_path_planner", "avoidance_by_lc_left");
+  avoidance_by_lc_right_ =
+    std::make_unique<RTCModule>(this, "behavior_path_planner", "avoidance_by_lc_right");
   pull_over_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "pull_over");
   pull_out_ = std::make_unique<RTCModule>(this, "behavior_path_planner", "pull_out");
 
@@ -117,7 +121,7 @@ void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & st
   }
 }
 
-void RTCController::checkInfDistance(CooperateStatus & status) // Temporary fix for ROS2 humble
+void RTCController::checkInfDistance(CooperateStatus & status)  // Temporary fix for ROS2 humble
 {
   if (!std::isfinite(status.distance)) {
     status.distance = -100000.0;
@@ -139,6 +143,8 @@ void RTCController::onTimer()
   lane_change_right_->insertMessage(cooperate_statuses);
   avoidance_left_->insertMessage(cooperate_statuses);
   avoidance_right_->insertMessage(cooperate_statuses);
+  avoidance_by_lc_left_->insertMessage(cooperate_statuses);
+  avoidance_by_lc_right_->insertMessage(cooperate_statuses);
   pull_over_->insertMessage(cooperate_statuses);
   pull_out_->insertMessage(cooperate_statuses);
 
@@ -160,10 +166,12 @@ void RTCController::setRTC(
     switch (command.module.type) {
       case Module::LANE_CHANGE_LEFT: {
         lane_change_left_->callService(request, responses);
+        avoidance_by_lc_left_->callService(request, responses);
         break;
       }
       case Module::LANE_CHANGE_RIGHT: {
         lane_change_right_->callService(request, responses);
+        avoidance_by_lc_right_->callService(request, responses);
         break;
       }
       case Module::AVOIDANCE_LEFT: {
