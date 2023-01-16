@@ -77,6 +77,8 @@ private:
   std::unique_ptr<RTCModule> virtual_traffic_light_;
   std::unique_ptr<RTCModule> lane_change_left_;
   std::unique_ptr<RTCModule> lane_change_right_;
+  std::unique_ptr<RTCModule> ext_request_lane_change_left_;
+  std::unique_ptr<RTCModule> ext_request_lane_change_right_;
   std::unique_ptr<RTCModule> avoidance_left_;
   std::unique_ptr<RTCModule> avoidance_right_;
   std::unique_ptr<RTCModule> pull_over_;

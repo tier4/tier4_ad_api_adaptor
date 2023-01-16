@@ -88,6 +88,9 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   virtual_traffic_light_ = std::make_unique<RTCModule>(this, "virtual_traffic_light");
   lane_change_left_ = std::make_unique<RTCModule>(this, "lane_change_left");
   lane_change_right_ = std::make_unique<RTCModule>(this, "lane_change_right");
+  ext_request_lane_change_left_ = std::make_unique<RTCModule>(this, "ext_request_lane_change_left");
+  ext_request_lane_change_right_ =
+    std::make_unique<RTCModule>(this, "ext_request_lane_change_right");
   avoidance_left_ = std::make_unique<RTCModule>(this, "avoidance_left");
   avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
   pull_over_ = std::make_unique<RTCModule>(this, "pull_over");
@@ -150,6 +153,8 @@ void RTCController::onTimer()
   virtual_traffic_light_->insertMessage(cooperate_statuses);
   lane_change_left_->insertMessage(cooperate_statuses);
   lane_change_right_->insertMessage(cooperate_statuses);
+  ext_request_lane_change_left_->insertMessage(cooperate_statuses);
+  ext_request_lane_change_right_->insertMessage(cooperate_statuses);
   avoidance_left_->insertMessage(cooperate_statuses);
   avoidance_right_->insertMessage(cooperate_statuses);
   pull_over_->insertMessage(cooperate_statuses);
@@ -177,6 +182,14 @@ void RTCController::setRTC(
       }
       case Module::LANE_CHANGE_RIGHT: {
         lane_change_right_->callService(request, responses);
+        break;
+      }
+      case Module::EXT_REQUEST_LANE_CHANGE_LEFT: {
+        ext_request_lane_change_left_->callService(request, responses);
+        break;
+      }
+      case Module::EXT_REQUEST_LANE_CHANGE_RIGHT: {
+        ext_request_lane_change_right_->callService(request, responses);
         break;
       }
       case Module::AVOIDANCE_LEFT: {
