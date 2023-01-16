@@ -78,7 +78,7 @@ void LocalizationScore::callbackTimer()
   }
 }
 
-}  // namespace default_ad_api
+}  // namespace external_api
 
 #include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(external_api::LocalizationScore)
