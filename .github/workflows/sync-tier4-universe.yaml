@@ -28,4 +28,3 @@ jobs:
           pr-labels: |
             bot
             sync-micro-bus
-          auto-merge-method: merge
