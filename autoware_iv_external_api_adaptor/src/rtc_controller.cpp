@@ -166,12 +166,10 @@ void RTCController::setRTC(
     switch (command.module.type) {
       case Module::LANE_CHANGE_LEFT: {
         lane_change_left_->callService(request, responses);
-        avoidance_by_lc_left_->callService(request, responses);
         break;
       }
       case Module::LANE_CHANGE_RIGHT: {
         lane_change_right_->callService(request, responses);
-        avoidance_by_lc_right_->callService(request, responses);
         break;
       }
       case Module::AVOIDANCE_LEFT: {
@@ -216,6 +214,14 @@ void RTCController::setRTC(
       }
       case Module::OCCLUSION_SPOT: {
         occlusion_spot_->callService(request, responses);
+        break;
+      }
+      case Module::AVOIDANCE_BY_LC_LEFT: {
+        avoidance_by_lc_left_->callService(request, responses);
+        break;
+      }
+      case Module::AVOIDANCE_BY_LC_RIGHT: {
+        avoidance_by_lc_right_->callService(request, responses);
         break;
       }
         // virtual_traffic not found
