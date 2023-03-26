@@ -58,8 +58,7 @@ void RTCModule::callService(
 }
 
 void RTCModule::callAutoModeService(
-  const AutoMode::Request::SharedPtr request,
-  const AutoMode::Response::SharedPtr response)
+  const AutoMode::Request::SharedPtr request, const AutoMode::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_auto_mode_->call(request);
   if (!tier4_api_utils::is_success(status)) {
@@ -93,6 +92,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     std::make_unique<RTCModule>(this, "ext_request_lane_change_right");
   avoidance_left_ = std::make_unique<RTCModule>(this, "avoidance_left");
   avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
+  avoidance_by_lc_left_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_left");
+  avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_right");
   pull_over_ = std::make_unique<RTCModule>(this, "pull_over");
   pull_out_ = std::make_unique<RTCModule>(this, "pull_out");
 
@@ -157,6 +158,8 @@ void RTCController::onTimer()
   ext_request_lane_change_right_->insertMessage(cooperate_statuses);
   avoidance_left_->insertMessage(cooperate_statuses);
   avoidance_right_->insertMessage(cooperate_statuses);
+  avoidance_by_lc_left_->insertMessage(cooperate_statuses);
+  avoidance_by_lc_right_->insertMessage(cooperate_statuses);
   pull_over_->insertMessage(cooperate_statuses);
   pull_out_->insertMessage(cooperate_statuses);
 
@@ -198,6 +201,14 @@ void RTCController::setRTC(
       }
       case Module::AVOIDANCE_RIGHT: {
         avoidance_right_->callService(request, responses);
+        break;
+      }
+      case Module::AVOIDANCE_BY_LC_LEFT: {
+        avoidance_by_lc_left_->callService(request, responses);
+        break;
+      }
+      case Module::AVOIDANCE_BY_LC_RIGHT: {
+        avoidance_by_lc_right_->callService(request, responses);
         break;
       }
       case Module::PULL_OVER: {
@@ -263,6 +274,14 @@ void RTCController::setRTCAutoMode(
     }
     case Module::AVOIDANCE_RIGHT: {
       avoidance_right_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::AVOIDANCE_BY_LC_LEFT: {
+      avoidance_by_lc_left_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::AVOIDANCE_BY_LC_RIGHT: {
+      avoidance_by_lc_right_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::PULL_OVER: {
