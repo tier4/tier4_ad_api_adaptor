@@ -78,6 +78,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
   pull_over_ = std::make_unique<RTCModule>(this, "pull_over");
   pull_out_ = std::make_unique<RTCModule>(this, "pull_out");
+  bus_stop_ = std::make_unique<RTCModule>(this, "bus_stop");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
@@ -137,6 +138,7 @@ void RTCController::onTimer()
   avoidance_right_->insertMessage(cooperate_statuses);
   pull_over_->insertMessage(cooperate_statuses);
   pull_out_->insertMessage(cooperate_statuses);
+  bus_stop_->insertMessage(cooperate_statuses);
 
   insertionSortAndValidation(cooperate_statuses);
 
@@ -204,6 +206,10 @@ void RTCController::setRTC(
       }
       case Module::OCCLUSION_SPOT: {
         occlusion_spot_->callService(request, responses);
+        break;
+      }
+      case Module::BUS_STOP: {
+        bus_stop_->callService(request, responses);
         break;
       }
         // virtual_traffic not found
