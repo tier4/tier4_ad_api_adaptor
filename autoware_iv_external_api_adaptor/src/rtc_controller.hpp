@@ -72,6 +72,7 @@ private:
   std::unique_ptr<RTCModule> avoidance_right_;
   std::unique_ptr<RTCModule> pull_over_;
   std::unique_ptr<RTCModule> pull_out_;
+  std::unique_ptr<RTCModule> bus_stop_;
 
   /* publishers */
   rclcpp::Publisher<CooperateStatusArray>::SharedPtr rtc_status_pub_;
