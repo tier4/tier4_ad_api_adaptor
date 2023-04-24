@@ -87,9 +87,9 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   virtual_traffic_light_ = std::make_unique<RTCModule>(this, "virtual_traffic_light");
   lane_change_left_ = std::make_unique<RTCModule>(this, "lane_change_left");
   lane_change_right_ = std::make_unique<RTCModule>(this, "lane_change_right");
-  ext_request_lane_change_left_ = std::make_unique<RTCModule>(this, "ext_request_lane_change_left");
+  ext_request_lane_change_left_ = std::make_unique<RTCModule>(this, "external_request_lane_change_left");
   ext_request_lane_change_right_ =
-    std::make_unique<RTCModule>(this, "ext_request_lane_change_right");
+    std::make_unique<RTCModule>(this, "external_request_lane_change_right");
   avoidance_left_ = std::make_unique<RTCModule>(this, "avoidance_left");
   avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
   avoidance_by_lc_left_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_left");
