@@ -82,6 +82,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   crosswalk_ = std::make_unique<RTCModule>(this, "crosswalk");
   detection_area_ = std::make_unique<RTCModule>(this, "detection_area");
   intersection_ = std::make_unique<RTCModule>(this, "intersection");
+  intersection_occlusion_ = std::make_unique<RTCModule>(this, "intersection_occlusion");
   no_stopping_area_ = std::make_unique<RTCModule>(this, "no_stopping_area");
   occlusion_spot_ = std::make_unique<RTCModule>(this, "occlusion_spot");
   traffic_light_ = std::make_unique<RTCModule>(this, "traffic_light");
@@ -147,6 +148,7 @@ void RTCController::onTimer()
   crosswalk_->insertMessage(cooperate_statuses);
   detection_area_->insertMessage(cooperate_statuses);
   intersection_->insertMessage(cooperate_statuses);
+  intersection_occlusion_->insertMessage(cooperate_statuses);
   no_stopping_area_->insertMessage(cooperate_statuses);
   occlusion_spot_->insertMessage(cooperate_statuses);
   traffic_light_->insertMessage(cooperate_statuses);
@@ -216,6 +218,10 @@ void RTCController::setRTC(
         intersection_->callService(request, responses);
         break;
       }
+      case Module::INTERSECTION_OCCLUSION: {
+        intersection_occlusion_->callService(request, responses);
+        break;
+      }
       case Module::CROSSWALK: {
         crosswalk_->callService(request, responses);
         break;
@@ -279,6 +285,10 @@ void RTCController::setRTCAutoMode(
     }
     case Module::INTERSECTION: {
       intersection_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::INTERSECTION_OCCLUSION: {
+      intersection_occlusion_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::CROSSWALK: {
