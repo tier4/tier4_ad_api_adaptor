@@ -96,7 +96,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
   avoidance_by_lc_left_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_left");
   avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_right");
-  pull_over_ = std::make_unique<RTCModule>(this, "pull_over");
+  goal_planner_ = std::make_unique<RTCModule>(this, "goal_planner");
   pull_out_ = std::make_unique<RTCModule>(this, "pull_out");
 
   rtc_status_pub_ =
@@ -163,7 +163,7 @@ void RTCController::onTimer()
   avoidance_right_->insertMessage(cooperate_statuses);
   avoidance_by_lc_left_->insertMessage(cooperate_statuses);
   avoidance_by_lc_right_->insertMessage(cooperate_statuses);
-  pull_over_->insertMessage(cooperate_statuses);
+  goal_planner_->insertMessage(cooperate_statuses);
   pull_out_->insertMessage(cooperate_statuses);
 
   insertionSortAndValidation(cooperate_statuses);
@@ -214,8 +214,8 @@ void RTCController::setRTC(
         avoidance_by_lc_right_->callService(request, responses);
         break;
       }
-      case Module::PULL_OVER: {
-        pull_over_->callService(request, responses);
+      case Module::GOAL_PLANNER: {
+        goal_planner_->callService(request, responses);
         break;
       }
       case Module::PULL_OUT: {
@@ -291,8 +291,8 @@ void RTCController::setRTCAutoMode(
       avoidance_by_lc_right_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
-    case Module::PULL_OVER: {
-      pull_over_->callAutoModeService(auto_mode_request, auto_mode_response);
+    case Module::GOAL_PLANNER: {
+      goal_planner_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::PULL_OUT: {
