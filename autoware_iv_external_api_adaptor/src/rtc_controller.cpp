@@ -98,7 +98,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_right");
   goal_planner_ = std::make_unique<RTCModule>(this, "goal_planner");
   pull_out_ = std::make_unique<RTCModule>(this, "pull_out");
-  invalid_lanelet_ = std::make_unique<RTCModule>(this, "invalid_lanelet");
+  no_drivable_lane_ = std::make_unique<RTCModule>(this, "no_drivable_lane");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
@@ -166,7 +166,7 @@ void RTCController::onTimer()
   avoidance_by_lc_right_->insertMessage(cooperate_statuses);
   goal_planner_->insertMessage(cooperate_statuses);
   pull_out_->insertMessage(cooperate_statuses);
-  invalid_lanelet_->insertMessage(cooperate_statuses);
+  no_drivable_lane_->insertMessage(cooperate_statuses);
 
   insertionSortAndValidation(cooperate_statuses);
 
@@ -256,8 +256,8 @@ void RTCController::setRTC(
         occlusion_spot_->callService(request, responses);
         break;
       }
-      case Module::INVALID_LANELET: {
-        invalid_lanelet_->callService(request, responses);
+      case Module::NO_DRIVABLE_LANE: {
+        no_drivable_lane_->callService(request, responses);
         break;
       }
         // virtual_traffic not found
@@ -337,8 +337,8 @@ void RTCController::setRTCAutoMode(
       occlusion_spot_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
-    case Module::INVALID_LANELET: {
-      invalid_lanelet_->callAutoModeService(auto_mode_request, auto_mode_response);
+    case Module::NO_DRIVABLE_LANE: {
+      no_drivable_lane_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
       // virtual_traffic not found

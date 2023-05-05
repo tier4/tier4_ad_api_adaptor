@@ -85,7 +85,7 @@ private:
   std::unique_ptr<RTCModule> avoidance_by_lc_right_;
   std::unique_ptr<RTCModule> goal_planner_;
   std::unique_ptr<RTCModule> pull_out_;
-  std::unique_ptr<RTCModule> invalid_lanelet_;
+  std::unique_ptr<RTCModule> no_drivable_lane_;
 
   /* publishers */
   rclcpp::Publisher<CooperateStatusArray>::SharedPtr rtc_status_pub_;
