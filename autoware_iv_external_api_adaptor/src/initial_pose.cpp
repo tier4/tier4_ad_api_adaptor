@@ -49,8 +49,7 @@ InitialPose::InitialPose(const rclcpp::NodeOptions & options)
     rclcpp::ServicesQoS(), group_);
   srv_set_initialize_pose_auto_ = proxy.create_service<InitializePoseAuto>(
     "/api/external/set/initialize_pose_auto",
-    std::bind(&InitialPose::setInitializePoseAuto, this, _1, _2), rclcpp::ServicesQoS(),
-    group_);
+    std::bind(&InitialPose::setInitializePoseAuto, this, _1, _2), rclcpp::ServicesQoS(), group_);
 
   const auto adaptor = component_interface_utils::NodeAdaptor(this);
   adaptor.init_cli(cli_localization_initialize_);

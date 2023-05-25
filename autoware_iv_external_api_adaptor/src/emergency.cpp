@@ -29,8 +29,8 @@ Emergency::Emergency(const rclcpp::NodeOptions & options) : Node("external_api_e
   srv_ = proxy.create_service<tier4_external_api_msgs::srv::SetEmergency>(
     "/api/external/set/emergency", std::bind(&Emergency::setEmergency, this, _1, _2),
     rclcpp::ServicesQoS(), group_);
-  cli_ = proxy.create_client<tier4_external_api_msgs::srv::SetEmergency>(
-    "/api/autoware/set/emergency");
+  cli_ =
+    proxy.create_client<tier4_external_api_msgs::srv::SetEmergency>("/api/autoware/set/emergency");
   pub_emergency_ = create_publisher<tier4_external_api_msgs::msg::Emergency>(
     "/api/external/get/emergency", rclcpp::QoS(1));
   sub_emergency_ = create_subscription<tier4_external_api_msgs::msg::Emergency>(

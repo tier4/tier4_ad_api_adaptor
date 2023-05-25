@@ -29,11 +29,10 @@ RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
     cooperate_status_namespace_ + "/" + name, rclcpp::QoS(1),
     std::bind(&RTCModule::moduleCallback, this, _1));
 
-  cli_set_module_ = proxy.create_client<CooperateCommands>(
-    cooperate_commands_namespace_ + "/" + name);
+  cli_set_module_ =
+    proxy.create_client<CooperateCommands>(cooperate_commands_namespace_ + "/" + name);
 
-  cli_set_auto_mode_ = proxy.create_client<AutoMode>(
-    enable_auto_mode_namespace_ + "/" + name);
+  cli_set_auto_mode_ = proxy.create_client<AutoMode>(enable_auto_mode_namespace_ + "/" + name);
 }
 
 void RTCModule::moduleCallback(const CooperateStatusArray::ConstSharedPtr message)

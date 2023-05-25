@@ -27,12 +27,12 @@ Engage::Engage(const rclcpp::NodeOptions & options) : Node("external_api_engage"
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_engage_ = proxy.create_service<tier4_external_api_msgs::srv::Engage>(
-    "/api/external/set/engage", std::bind(&Engage::setEngage, this, _1, _2),
-    rclcpp::ServicesQoS(), group_);
-  cli_engage_ = proxy.create_client<tier4_external_api_msgs::srv::Engage>(
-    "/api/autoware/set/engage");
-  cli_set_operator_ = proxy.create_client<tier4_external_api_msgs::srv::SetOperator>(
-    "/api/autoware/set/operator");
+    "/api/external/set/engage", std::bind(&Engage::setEngage, this, _1, _2), rclcpp::ServicesQoS(),
+    group_);
+  cli_engage_ =
+    proxy.create_client<tier4_external_api_msgs::srv::Engage>("/api/autoware/set/engage");
+  cli_set_operator_ =
+    proxy.create_client<tier4_external_api_msgs::srv::SetOperator>("/api/autoware/set/operator");
   pub_engage_status_ = create_publisher<tier4_external_api_msgs::msg::EngageStatus>(
     "/api/external/get/engage", rclcpp::QoS(1));
   sub_engage_status_ = create_subscription<autoware_auto_vehicle_msgs::msg::Engage>(

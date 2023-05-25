@@ -28,8 +28,8 @@ RosbagLoggingMode::RosbagLoggingMode(const rclcpp::NodeOptions & options)
   srv_set_rosbag_logging_mode_ =
     proxy.create_service<tier4_external_api_msgs::srv::SetRosbagLoggingMode>(
       "/api/external/set/rosbag_logging_mode",
-      std::bind(&RosbagLoggingMode::setRosbagLoggingMode, this, _1, _2),
-      rclcpp::ServicesQoS(), group_);
+      std::bind(&RosbagLoggingMode::setRosbagLoggingMode, this, _1, _2), rclcpp::ServicesQoS(),
+      group_);
   cli_set_rosbag_logging_mode_ =
     proxy.create_client<tier4_external_api_msgs::srv::SetRosbagLoggingMode>(
       "/api/autoware/set/rosbag_logging_mode");

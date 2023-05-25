@@ -25,10 +25,9 @@ Door::Door(const rclcpp::NodeOptions & options) : Node("external_api_door", opti
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<tier4_external_api_msgs::srv::SetDoor>(
-    "/api/external/set/door", std::bind(&Door::setDoor, this, _1, _2),
-    rclcpp::ServicesQoS(), group_);
-  cli_ = proxy.create_client<tier4_external_api_msgs::srv::SetDoor>(
-    "/api/vehicle/set/door");
+    "/api/external/set/door", std::bind(&Door::setDoor, this, _1, _2), rclcpp::ServicesQoS(),
+    group_);
+  cli_ = proxy.create_client<tier4_external_api_msgs::srv::SetDoor>("/api/vehicle/set/door");
   pub_door_status_ = create_publisher<tier4_external_api_msgs::msg::DoorStatus>(
     "/api/external/get/door", rclcpp::QoS(1));
   sub_door_status_ = create_subscription<tier4_api_msgs::msg::DoorStatus>(

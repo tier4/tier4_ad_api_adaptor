@@ -32,8 +32,8 @@ Route::Route(const rclcpp::NodeOptions & options) : Node("external_api_route", o
     tier4_api_utils::ServiceProxyNodeInterface proxy(this);
     group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     srv_set_route_ = proxy.create_service<tier4_external_api_msgs::srv::SetRoute>(
-      "/api/external/set/route", std::bind(&Route::setRoute, this, _1, _2),
-      rclcpp::ServicesQoS(), group_);
+      "/api/external/set/route", std::bind(&Route::setRoute, this, _1, _2), rclcpp::ServicesQoS(),
+      group_);
     srv_clear_route_ = proxy.create_service<tier4_external_api_msgs::srv::ClearRoute>(
       "/api/external/set/clear_route", std::bind(&Route::clearRoute, this, _1, _2),
       rclcpp::ServicesQoS(), group_);
