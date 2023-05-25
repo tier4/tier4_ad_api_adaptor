@@ -26,9 +26,9 @@ Map::Map(const rclcpp::NodeOptions & options) : Node("external_api_map", options
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_lanelet_xml_ = proxy.create_service<tier4_external_api_msgs::srv::GetTextFile>(
     "/api/external/get/map/lanelet/xml", std::bind(&Map::getLaneletXml, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
   cli_lanelet_xml_ = proxy.create_client<tier4_external_api_msgs::srv::GetTextFile>(
-    "/api/autoware/get/map/lanelet/xml", rmw_qos_profile_services_default);
+    "/api/autoware/get/map/lanelet/xml");
 
   pub_map_info_ = create_publisher<tier4_external_api_msgs::msg::MapHash>(
     "/api/external/get/map/info/hash", rclcpp::QoS(1).transient_local());

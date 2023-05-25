@@ -26,7 +26,7 @@ Version::Version(const rclcpp::NodeOptions & options) : Node("external_api_versi
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<autoware_external_api_msgs::srv::GetVersion>(
     "/api/external/get/version", std::bind(&Version::getVersion, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
 }
 
 void Version::getVersion(

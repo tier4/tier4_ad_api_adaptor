@@ -31,10 +31,10 @@ CalibrationStatus::CalibrationStatus(const rclcpp::NodeOptions & options)
     proxy.create_service<tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData>(
       "/api/external/get/accel_brake_map_calibrator/data",
       std::bind(&CalibrationStatus::getAccelBrakeMapCalibrationData, this, _1, _2),
-      rmw_qos_profile_services_default, group_);
+      rclcpp::ServicesQoS(), group_);
   cli_get_accel_brake_map_calibration_data_ =
     proxy.create_client<tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData>(
-      "/accel_brake_map_calibrator/get_data_service", rmw_qos_profile_services_default);
+      "/accel_brake_map_calibrator/get_data_service");
 
   using namespace std::literals::chrono_literals;
 

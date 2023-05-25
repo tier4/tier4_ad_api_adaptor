@@ -33,10 +33,10 @@ Route::Route(const rclcpp::NodeOptions & options) : Node("external_api_route", o
     group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     srv_set_route_ = proxy.create_service<tier4_external_api_msgs::srv::SetRoute>(
       "/api/external/set/route", std::bind(&Route::setRoute, this, _1, _2),
-      rmw_qos_profile_services_default, group_);
+      rclcpp::ServicesQoS(), group_);
     srv_clear_route_ = proxy.create_service<tier4_external_api_msgs::srv::ClearRoute>(
       "/api/external/set/clear_route", std::bind(&Route::clearRoute, this, _1, _2),
-      rmw_qos_profile_services_default, group_);
+      rclcpp::ServicesQoS(), group_);
     pub_get_route_ = create_publisher<tier4_external_api_msgs::msg::Route>(
       "/api/external/get/route", rclcpp::QoS(1).transient_local());
   }

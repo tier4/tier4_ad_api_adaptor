@@ -26,14 +26,14 @@ Velocity::Velocity(const rclcpp::NodeOptions & options) : Node("external_api_vel
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_pause_ = proxy.create_service<tier4_external_api_msgs::srv::PauseDriving>(
     "/api/external/set/pause_driving", std::bind(&Velocity::setPauseDriving, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
   cli_pause_ = proxy.create_client<tier4_external_api_msgs::srv::PauseDriving>(
-    "/api/autoware/set/pause_driving", rmw_qos_profile_services_default);
+    "/api/autoware/set/pause_driving");
   srv_velocity_ = proxy.create_service<tier4_external_api_msgs::srv::SetVelocityLimit>(
     "/api/external/set/velocity_limit", std::bind(&Velocity::setVelocityLimit, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
   cli_velocity_ = proxy.create_client<tier4_external_api_msgs::srv::SetVelocityLimit>(
-    "/api/autoware/set/velocity_limit", rmw_qos_profile_services_default);
+    "/api/autoware/set/velocity_limit");
 }
 
 void Velocity::setPauseDriving(

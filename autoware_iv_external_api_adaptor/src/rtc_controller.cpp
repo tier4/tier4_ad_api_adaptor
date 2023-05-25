@@ -14,6 +14,8 @@
 
 #include "rtc_controller.hpp"
 
+#include <rclcpp/version.h>
+
 #include <memory>
 
 RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
@@ -28,10 +30,10 @@ RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
     std::bind(&RTCModule::moduleCallback, this, _1));
 
   cli_set_module_ = proxy.create_client<CooperateCommands>(
-    cooperate_commands_namespace_ + "/" + name, rmw_qos_profile_services_default);
+    cooperate_commands_namespace_ + "/" + name);
 
   cli_set_auto_mode_ = proxy.create_client<AutoMode>(
-    enable_auto_mode_namespace_ + "/" + name, rmw_qos_profile_services_default);
+    enable_auto_mode_namespace_ + "/" + name);
 }
 
 void RTCModule::moduleCallback(const CooperateStatusArray::ConstSharedPtr message)
@@ -103,12 +105,21 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+#if RCLCPP_VERSION_GTE(17, 0, 0)
+  srv_set_rtc_ = proxy.create_service<CooperateCommands>(
+    "/api/external/set/rtc_commands", std::bind(&RTCController::setRTC, this, _1, _2),
+    rclcpp::ServicesQoS(), group_);
+  srv_set_rtc_auto_mode_ = proxy.create_service<AutoModeWithModule>(
+    "/api/external/set/rtc_auto_mode", std::bind(&RTCController::setRTCAutoMode, this, _1, _2),
+    rclcpp::ServicesQoS(), group_);
+#else
   srv_set_rtc_ = proxy.create_service<CooperateCommands>(
     "/api/external/set/rtc_commands", std::bind(&RTCController::setRTC, this, _1, _2),
     rmw_qos_profile_services_default, group_);
   srv_set_rtc_auto_mode_ = proxy.create_service<AutoModeWithModule>(
     "/api/external/set/rtc_auto_mode", std::bind(&RTCController::setRTCAutoMode, this, _1, _2),
     rmw_qos_profile_services_default, group_);
+#endif
 
   timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
 }

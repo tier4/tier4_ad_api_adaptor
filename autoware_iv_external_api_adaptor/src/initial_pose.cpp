@@ -46,10 +46,10 @@ InitialPose::InitialPose(const rclcpp::NodeOptions & options)
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_initialize_pose_ = proxy.create_service<InitializePose>(
     "/api/external/set/initialize_pose", std::bind(&InitialPose::setInitializePose, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
   srv_set_initialize_pose_auto_ = proxy.create_service<InitializePoseAuto>(
     "/api/external/set/initialize_pose_auto",
-    std::bind(&InitialPose::setInitializePoseAuto, this, _1, _2), rmw_qos_profile_services_default,
+    std::bind(&InitialPose::setInitializePoseAuto, this, _1, _2), rclcpp::ServicesQoS(),
     group_);
 
   const auto adaptor = component_interface_utils::NodeAdaptor(this);

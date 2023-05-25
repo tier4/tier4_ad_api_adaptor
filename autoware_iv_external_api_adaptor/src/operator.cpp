@@ -26,14 +26,14 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_operator_ = proxy.create_service<tier4_external_api_msgs::srv::SetOperator>(
     "/api/external/set/operator", std::bind(&Operator::setOperator, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
   srv_set_observer_ = proxy.create_service<tier4_external_api_msgs::srv::SetObserver>(
     "/api/external/set/observer", std::bind(&Operator::setObserver, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
   cli_set_operator_ = proxy.create_client<tier4_external_api_msgs::srv::SetOperator>(
-    "/api/autoware/set/operator", rmw_qos_profile_services_default);
+    "/api/autoware/set/operator");
   cli_set_observer_ = proxy.create_client<tier4_external_api_msgs::srv::SetObserver>(
-    "/api/autoware/set/observer", rmw_qos_profile_services_default);
+    "/api/autoware/set/observer");
 
   pub_get_operator_ = create_publisher<tier4_external_api_msgs::msg::Operator>(
     "/api/external/get/operator", rclcpp::QoS(1));

@@ -44,7 +44,7 @@ MetadataPackages::MetadataPackages(const rclcpp::NodeOptions & options)
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<tier4_external_api_msgs::srv::GetMetadataPackages>(
     "/api/external/get/metadata/packages", std::bind(&MetadataPackages::getVersions, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
 }
 
 void MetadataPackages::getVersions(

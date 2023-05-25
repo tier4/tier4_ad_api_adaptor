@@ -30,10 +30,10 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_operator_ = proxy.create_service<tier4_external_api_msgs::srv::SetOperator>(
     "/api/autoware/set/operator", std::bind(&Operator::setOperator, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
   srv_set_observer_ = proxy.create_service<tier4_external_api_msgs::srv::SetObserver>(
     "/api/autoware/set/observer", std::bind(&Operator::setObserver, this, _1, _2),
-    rmw_qos_profile_services_default, group_);
+    rclcpp::ServicesQoS(), group_);
 
   cli_external_select_ = proxy.create_client<tier4_control_msgs::srv::ExternalCommandSelect>(
     "/control/external_cmd_selector/select_external_command");
