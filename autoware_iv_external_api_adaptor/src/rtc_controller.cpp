@@ -97,7 +97,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   avoidance_by_lc_left_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_left");
   avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_right");
   goal_planner_ = std::make_unique<RTCModule>(this, "goal_planner");
-  pull_out_ = std::make_unique<RTCModule>(this, "pull_out");
+  start_planner_ = std::make_unique<RTCModule>(this, "start_planner");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
@@ -164,7 +164,7 @@ void RTCController::onTimer()
   avoidance_by_lc_left_->insertMessage(cooperate_statuses);
   avoidance_by_lc_right_->insertMessage(cooperate_statuses);
   goal_planner_->insertMessage(cooperate_statuses);
-  pull_out_->insertMessage(cooperate_statuses);
+  start_planner_->insertMessage(cooperate_statuses);
 
   insertionSortAndValidation(cooperate_statuses);
 
@@ -218,8 +218,8 @@ void RTCController::setRTC(
         goal_planner_->callService(request, responses);
         break;
       }
-      case Module::PULL_OUT: {
-        pull_out_->callService(request, responses);
+      case Module::START_PLANNER: {
+        start_planner_->callService(request, responses);
         break;
       }
       case Module::TRAFFIC_LIGHT: {
@@ -295,8 +295,8 @@ void RTCController::setRTCAutoMode(
       goal_planner_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
-    case Module::PULL_OUT: {
-      pull_out_->callAutoModeService(auto_mode_request, auto_mode_response);
+    case Module::START_PLANNER: {
+      start_planner_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::TRAFFIC_LIGHT: {
