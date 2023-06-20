@@ -18,12 +18,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
-#include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"
 #include "autoware_auto_vehicle_msgs/msg/gear_report.hpp"
 #include "autoware_auto_vehicle_msgs/msg/hazard_lights_report.hpp"
 #include "autoware_auto_vehicle_msgs/msg/steering_report.hpp"
 #include "autoware_auto_vehicle_msgs/msg/turn_indicators_report.hpp"
 #include "autoware_auto_vehicle_msgs/msg/velocity_report.hpp"
+#include "autoware_control_msgs/msg/control.hpp"
 #include "tier4_external_api_msgs/msg/vehicle_command_stamped.hpp"
 #include "tier4_external_api_msgs/msg/vehicle_status_stamped.hpp"
 
@@ -49,8 +49,7 @@ private:
 
   // ros interface for vehicle command
   rclcpp::Publisher<tier4_external_api_msgs::msg::VehicleCommandStamped>::SharedPtr pub_cmd_;
-  rclcpp::Subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
-    sub_cmd_;
+  rclcpp::Subscription<autoware_control_msgs::msg::Control>::SharedPtr sub_cmd_;
 
   // ros callback
   void onTimer();
