@@ -29,8 +29,7 @@ AutowareIvAdapter::AutowareIvAdapter()
   status_pub_hz_ = this->declare_parameter("status_pub_hz", 5.0);
   stop_reason_timeout_ = this->declare_parameter("stop_reason_timeout", 0.5);
   stop_reason_thresh_dist_ = this->declare_parameter("stop_reason_thresh_dist", 100.0);
-  const double default_max_velocity = waitForParam<double>(
-    this, declare_parameter("node/max_velocity", ""), declare_parameter("param/max_velocity", ""));
+  const double default_max_velocity = 11.11;
   const bool em_stop_param = waitForParam<bool>(
     this, declare_parameter("node/emergency_stop", ""),
     declare_parameter("param/emergency_stop", ""));
