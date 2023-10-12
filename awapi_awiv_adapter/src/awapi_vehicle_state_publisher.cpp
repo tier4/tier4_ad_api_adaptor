@@ -56,10 +56,7 @@ void AutowareIvVehicleStatePublisher::statePublisher(const AutowareInfo & aw_inf
 tier4_api_msgs::msg::AwapiVehicleStatus AutowareIvVehicleStatePublisher::initVehicleStatus()
 {
   tier4_api_msgs::msg::AwapiVehicleStatus status;
-  // set default value
-  if (std::numeric_limits<float>::has_quiet_NaN) {
-    status.energy_level = std::numeric_limits<float>::quiet_NaN();
-  }
+  status.energy_level = -1.0;
   return status;
 }
 
