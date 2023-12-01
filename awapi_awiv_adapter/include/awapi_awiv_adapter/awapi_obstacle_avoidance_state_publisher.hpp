@@ -40,7 +40,7 @@ private:
     const tier4_planning_msgs::msg::IsAvoidancePossible::ConstSharedPtr & ready_ptr,
     tier4_api_msgs::msg::ObstacleAvoidanceStatus * status);
   void getCandidatePathInfo(
-    const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr & path_ptr,
+    const autoware_planning_msgs::msg::Trajectory::ConstSharedPtr & path_ptr,
     tier4_api_msgs::msg::ObstacleAvoidanceStatus * status);
 };
 

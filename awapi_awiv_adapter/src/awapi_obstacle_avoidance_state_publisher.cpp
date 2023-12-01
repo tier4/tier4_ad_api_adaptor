@@ -58,7 +58,7 @@ void AutowareIvObstacleAvoidanceStatePublisher::getObstacleAvoidReadyInfo(
 }
 
 void AutowareIvObstacleAvoidanceStatePublisher::getCandidatePathInfo(
-  const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr & path_ptr,
+  const autoware_planning_msgs::msg::Trajectory::ConstSharedPtr & path_ptr,
   tier4_api_msgs::msg::ObstacleAvoidanceStatus * status)
 {
   if (!path_ptr) {

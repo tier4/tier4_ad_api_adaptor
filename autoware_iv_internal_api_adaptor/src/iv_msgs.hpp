@@ -19,7 +19,7 @@
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
 #include <autoware_auto_perception_msgs/msg/tracked_objects.hpp>
-#include <autoware_auto_planning_msgs/msg/trajectory.hpp>
+#include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_auto_system_msgs/msg/autoware_state.hpp>
 #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
 #include <tier4_perception_msgs/msg/dynamic_object_array.hpp>
@@ -45,7 +45,7 @@ private:
   rclcpp::Subscription<ControlModeAuto>::SharedPtr sub_control_mode_;
   rclcpp::Publisher<ControlModeAuto>::SharedPtr pub_control_mode_;
 
-  using TrajectoryAuto = autoware_auto_planning_msgs::msg::Trajectory;
+  using TrajectoryAuto = autoware_planning_msgs::msg::Trajectory;
   using TrajectoryIV = tier4_planning_msgs::msg::Trajectory;
   rclcpp::Subscription<TrajectoryAuto>::SharedPtr sub_trajectory_;
   rclcpp::Publisher<TrajectoryIV>::SharedPtr pub_trajectory_;

@@ -28,8 +28,8 @@
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
 #include <autoware_auto_control_msgs/msg/ackermann_control_command.hpp>
-#include <autoware_auto_planning_msgs/msg/path.hpp>
-#include <autoware_auto_planning_msgs/msg/trajectory.hpp>
+#include <autoware_planning_msgs/msg/path.hpp>
+#include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
 #include <autoware_auto_vehicle_msgs/msg/gear_report.hpp>
 #include <autoware_auto_vehicle_msgs/msg/hazard_lights_report.hpp>
@@ -85,17 +85,17 @@ private:
     sub_lane_change_available_;
   rclcpp::Subscription<tier4_planning_msgs::msg::LaneChangeStatus>::SharedPtr
     sub_lane_change_ready_;
-  rclcpp::Subscription<autoware_auto_planning_msgs::msg::Path>::SharedPtr
+  rclcpp::Subscription<autoware_planning_msgs::msg::Path>::SharedPtr
     sub_lane_change_candidate_;
   rclcpp::Subscription<tier4_planning_msgs::msg::IsAvoidancePossible>::SharedPtr
     sub_obstacle_avoid_ready_;
-  rclcpp::Subscription<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr
+  rclcpp::Subscription<autoware_planning_msgs::msg::Trajectory>::SharedPtr
     sub_obstacle_avoid_candidate_;
   rclcpp::Subscription<tier4_api_msgs::msg::VelocityLimit>::SharedPtr sub_max_velocity_;
   rclcpp::Subscription<tier4_planning_msgs::msg::VelocityLimit>::SharedPtr
     sub_current_max_velocity_;
   rclcpp::Subscription<tier4_api_msgs::msg::StopCommand>::SharedPtr sub_temporary_stop_;
-  rclcpp::Subscription<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr sub_autoware_traj_;
+  rclcpp::Subscription<autoware_planning_msgs::msg::Trajectory>::SharedPtr sub_autoware_traj_;
 
   // publisher
   rclcpp::Publisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>::SharedPtr pub_v2x_command_;
@@ -138,17 +138,17 @@ private:
   void callbackLaneChangeReady(
     const tier4_planning_msgs::msg::LaneChangeStatus::ConstSharedPtr msg_ptr);
   void callbackLaneChangeCandidatePath(
-    const autoware_auto_planning_msgs::msg::Path::ConstSharedPtr msg_ptr);
+    const autoware_planning_msgs::msg::Path::ConstSharedPtr msg_ptr);
   void callbackLaneObstacleAvoidReady(
     const tier4_planning_msgs::msg::IsAvoidancePossible::ConstSharedPtr msg_ptr);
   void callbackLaneObstacleAvoidCandidatePath(
-    const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr);
+    const autoware_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr);
   void callbackMaxVelocity(const tier4_api_msgs::msg::VelocityLimit::ConstSharedPtr msg_ptr);
   void callbackCurrentMaxVelocity(
     const tier4_planning_msgs::msg::VelocityLimit::ConstSharedPtr msg_ptr);
   void callbackTemporaryStop(const tier4_api_msgs::msg::StopCommand::ConstSharedPtr msg_ptr);
   void callbackAutowareTrajectory(
-    const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr);
+    const autoware_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr);
 
   // timer function
   void timerCallback();

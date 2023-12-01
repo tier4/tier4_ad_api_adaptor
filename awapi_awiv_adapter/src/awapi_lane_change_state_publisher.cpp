@@ -72,7 +72,7 @@ void AutowareIvLaneChangeStatePublisher::getLaneChangeReadyInfo(
 }
 
 void AutowareIvLaneChangeStatePublisher::getCandidatePathInfo(
-  const autoware_auto_planning_msgs::msg::Path::ConstSharedPtr & path_ptr,
+  const autoware_planning_msgs::msg::Path::ConstSharedPtr & path_ptr,
   tier4_api_msgs::msg::LaneChangeStatus * status)
 {
   if (!path_ptr) {

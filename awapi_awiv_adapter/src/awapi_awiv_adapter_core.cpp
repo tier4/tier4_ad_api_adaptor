@@ -103,7 +103,7 @@ AutowareIvAdapter::AutowareIvAdapter()
       std::bind(&AutowareIvAdapter::callbackLaneChangeAvailable, this, _1));
   sub_lane_change_ready_ = this->create_subscription<tier4_planning_msgs::msg::LaneChangeStatus>(
     "input/lane_change_ready", 1, std::bind(&AutowareIvAdapter::callbackLaneChangeReady, this, _1));
-  sub_lane_change_candidate_ = this->create_subscription<autoware_auto_planning_msgs::msg::Path>(
+  sub_lane_change_candidate_ = this->create_subscription<autoware_planning_msgs::msg::Path>(
     "input/lane_change_candidate_path", 1,
     std::bind(&AutowareIvAdapter::callbackLaneChangeCandidatePath, this, _1));
   sub_obstacle_avoid_ready_ =
@@ -111,7 +111,7 @@ AutowareIvAdapter::AutowareIvAdapter()
       "input/obstacle_avoid_ready", durable_qos,
       std::bind(&AutowareIvAdapter::callbackLaneObstacleAvoidReady, this, _1));
   sub_obstacle_avoid_candidate_ =
-    this->create_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
+    this->create_subscription<autoware_planning_msgs::msg::Trajectory>(
       "input/obstacle_avoid_candidate_path", durable_qos,
       std::bind(&AutowareIvAdapter::callbackLaneObstacleAvoidCandidatePath, this, _1));
   sub_max_velocity_ = this->create_subscription<tier4_api_msgs::msg::VelocityLimit>(
@@ -121,7 +121,7 @@ AutowareIvAdapter::AutowareIvAdapter()
     std::bind(&AutowareIvAdapter::callbackCurrentMaxVelocity, this, _1));
   sub_temporary_stop_ = this->create_subscription<tier4_api_msgs::msg::StopCommand>(
     "input/temporary_stop", 1, std::bind(&AutowareIvAdapter::callbackTemporaryStop, this, _1));
-  sub_autoware_traj_ = this->create_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
+  sub_autoware_traj_ = this->create_subscription<autoware_planning_msgs::msg::Trajectory>(
     "input/autoware_trajectory", 1,
     std::bind(&AutowareIvAdapter::callbackAutowareTrajectory, this, _1));
 
@@ -298,7 +298,7 @@ void AutowareIvAdapter::callbackLaneChangeReady(
 }
 
 void AutowareIvAdapter::callbackLaneChangeCandidatePath(
-  const autoware_auto_planning_msgs::msg::Path::ConstSharedPtr msg_ptr)
+  const autoware_planning_msgs::msg::Path::ConstSharedPtr msg_ptr)
 {
   aw_info_.lane_change_candidate_ptr = msg_ptr;
 }
@@ -310,7 +310,7 @@ void AutowareIvAdapter::callbackLaneObstacleAvoidReady(
 }
 
 void AutowareIvAdapter::callbackLaneObstacleAvoidCandidatePath(
-  const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr)
+  const autoware_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr)
 {
   aw_info_.obstacle_avoid_candidate_ptr = msg_ptr;
 }
@@ -343,7 +343,7 @@ void AutowareIvAdapter::callbackTemporaryStop(
 }
 
 void AutowareIvAdapter::callbackAutowareTrajectory(
-  const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr)
+  const autoware_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr)
 {
   aw_info_.autoware_planning_traj_ptr = msg_ptr;
 }
