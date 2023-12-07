@@ -108,12 +108,12 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
 
   pub_cmd_ = create_publisher<tier4_external_api_msgs::msg::VehicleCommandStamped>(
     "/api/external/get/command/selected/vehicle", rclcpp::QoS(1));
-  sub_cmd_ = create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+  sub_cmd_ = create_subscription<autoware_control_msgs::msg::Control>(
     "/control/command/control_cmd", rclcpp::QoS(1),
-    [this](const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg) {
+    [this](const autoware_control_msgs::msg::Control::ConstSharedPtr msg) {
       tier4_external_api_msgs::msg::VehicleCommandStamped cmd;
       cmd.stamp = msg->stamp;
-      cmd.command.velocity = msg->longitudinal.speed;
+      cmd.command.velocity = msg->longitudinal.velocity;
       cmd.command.acceleration = msg->longitudinal.acceleration;
       pub_cmd_->publish(cmd);
     });

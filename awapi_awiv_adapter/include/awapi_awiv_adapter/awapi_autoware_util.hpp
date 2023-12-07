@@ -18,7 +18,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
-#include <autoware_auto_control_msgs/msg/ackermann_control_command.hpp>
+#include <autoware_control_msgs/msg/control.hpp>
 #include <autoware_planning_msgs/msg/path.hpp>
 #include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_auto_system_msgs/msg/hazard_status_stamped.hpp>
@@ -63,7 +63,7 @@ struct AutowareInfo
 {
   std::shared_ptr<geometry_msgs::msg::PoseStamped> current_pose_ptr;
   autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr steer_ptr;
-  autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr vehicle_cmd_ptr;
+  autoware_control_msgs::msg::Control::ConstSharedPtr vehicle_cmd_ptr;
   autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr turn_indicators_ptr;
   autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr hazard_lights_ptr;
   nav_msgs::msg::Odometry::ConstSharedPtr odometry_ptr;

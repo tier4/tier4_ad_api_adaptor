@@ -27,7 +27,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
-#include <autoware_auto_control_msgs/msg/ackermann_control_command.hpp>
+#include <autoware_control_msgs/msg/control.hpp>
 #include <autoware_planning_msgs/msg/path.hpp>
 #include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
@@ -59,7 +59,7 @@ public:
 private:
   // subscriber
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr sub_steer_;
-  rclcpp::Subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
+  rclcpp::Subscription<autoware_control_msgs::msg::Control>::SharedPtr
     sub_vehicle_cmd_;
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>::SharedPtr
     sub_turn_indicators_;
@@ -111,7 +111,7 @@ private:
   // callback function
   void callbackSteer(const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg_ptr);
   void callbackVehicleCmd(
-    const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg_ptr);
+    const autoware_control_msgs::msg::Control::ConstSharedPtr msg_ptr);
   void callbackTurnIndicators(
     const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg_ptr);
   void callbackHazardLights(
