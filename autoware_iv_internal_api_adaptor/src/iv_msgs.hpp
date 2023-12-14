@@ -20,7 +20,7 @@
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
 #include <autoware_auto_perception_msgs/msg/tracked_objects.hpp>
 #include <autoware_planning_msgs/msg/trajectory.hpp>
-#include <autoware_auto_system_msgs/msg/autoware_state.hpp>
+#include <autoware_system_msgs/msg/autoware_state.hpp>
 #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
 #include <tier4_perception_msgs/msg/dynamic_object_array.hpp>
 #include <tier4_planning_msgs/msg/trajectory.hpp>
@@ -35,7 +35,7 @@ public:
 
 private:
   using EmergencyStateAuto = autoware_adapi_v1_msgs::msg::MrmState;
-  using AutowareStateAuto = autoware_auto_system_msgs::msg::AutowareState;
+  using AutowareStateAuto = autoware_system_msgs::msg::AutowareState;
   using AutowareStateIV = tier4_system_msgs::msg::AutowareState;
   rclcpp::Subscription<EmergencyStateAuto>::SharedPtr sub_emergency_;
   rclcpp::Subscription<AutowareStateAuto>::SharedPtr sub_state_;

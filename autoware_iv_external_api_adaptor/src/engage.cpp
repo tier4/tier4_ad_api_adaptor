@@ -37,7 +37,7 @@ Engage::Engage(const rclcpp::NodeOptions & options) : Node("external_api_engage"
     "/api/external/get/engage", rclcpp::QoS(1));
   sub_engage_status_ = create_subscription<autoware_auto_vehicle_msgs::msg::Engage>(
     "/api/autoware/get/engage", rclcpp::QoS(1), std::bind(&Engage::onEngageStatus, this, _1));
-  sub_autoware_state_ = create_subscription<autoware_auto_system_msgs::msg::AutowareState>(
+  sub_autoware_state_ = create_subscription<autoware_system_msgs::msg::AutowareState>(
     "/autoware/state", rclcpp::QoS(1), std::bind(&Engage::onAutowareState, this, _1));
 
   waiting_for_engage_ = false;
@@ -86,9 +86,9 @@ void Engage::onEngageStatus(const autoware_auto_vehicle_msgs::msg::Engage::Share
   pub_engage_status_->publish(msg);
 }
 
-void Engage::onAutowareState(const autoware_auto_system_msgs::msg::AutowareState::SharedPtr message)
+void Engage::onAutowareState(const autoware_system_msgs::msg::AutowareState::SharedPtr message)
 {
-  using autoware_auto_system_msgs::msg::AutowareState;
+  using autoware_system_msgs::msg::AutowareState;
   waiting_for_engage_ = (message->state == AutowareState::WAITING_FOR_ENGAGE);
   driving_ = (message->state == AutowareState::DRIVING);
 }

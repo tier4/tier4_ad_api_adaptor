@@ -20,7 +20,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
-#include "autoware_auto_system_msgs/msg/autoware_state.hpp"
+#include "autoware_system_msgs/msg/autoware_state.hpp"
 #include "tier4_external_api_msgs/msg/route.hpp"
 #include "tier4_external_api_msgs/srv/clear_route.hpp"
 #include "tier4_external_api_msgs/srv/set_route.hpp"
@@ -37,7 +37,7 @@ private:
   using SetRoute = tier4_external_api_msgs::srv::SetRoute;
   using ClearRoute = tier4_external_api_msgs::srv::ClearRoute;
   using RouteMsg = tier4_external_api_msgs::msg::Route;
-  using AutowareState = autoware_auto_system_msgs::msg::AutowareState;
+  using AutowareState = autoware_system_msgs::msg::AutowareState;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
