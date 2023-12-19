@@ -53,7 +53,7 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
   sub_gate_mode_ = create_subscription<tier4_control_msgs::msg::GateMode>(
     "/control/current_gate_mode", rclcpp::QoS(1), std::bind(&Operator::onGateMode, this, _1));
   sub_vehicle_control_mode_ =
-    create_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
+    create_subscription<autoware_vehicle_msgs::msg::ControlModeReport>(
       "/vehicle/status/control_mode", rclcpp::QoS(1),
       std::bind(&Operator::onVehicleControlMode, this, _1));
   sub_emergency_ = create_subscription<tier4_external_api_msgs::msg::Emergency>(
@@ -126,7 +126,7 @@ void Operator::onGateMode(const tier4_control_msgs::msg::GateMode::ConstSharedPt
 }
 
 void Operator::onVehicleControlMode(
-  const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr message)
+  const autoware_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr message)
 {
   vehicle_control_mode_ = message;
 }
@@ -151,7 +151,7 @@ void Operator::publishOperator()
     return;
   }
 
-  if (vehicle_control_mode_->mode == autoware_auto_vehicle_msgs::msg::ControlModeReport::MANUAL) {
+  if (vehicle_control_mode_->mode == autoware_vehicle_msgs::msg::ControlModeReport::MANUAL) {
     pub_operator_->publish(build<OperatorMsg>().mode(OperatorMsg::DRIVER));
     return;
   }

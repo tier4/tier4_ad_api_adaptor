@@ -22,11 +22,11 @@
 #include <autoware_planning_msgs/msg/path.hpp>
 #include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_system_msgs/msg/hazard_status_stamped.hpp>
-#include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/gear_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/hazard_lights_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/steering_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/turn_indicators_report.hpp>
+#include <autoware_vehicle_msgs/msg/control_mode_report.hpp>
+#include <autoware_vehicle_msgs/msg/gear_report.hpp>
+#include <autoware_vehicle_msgs/msg/hazard_lights_report.hpp>
+#include <autoware_vehicle_msgs/msg/steering_report.hpp>
+#include <autoware_vehicle_msgs/msg/turn_indicators_report.hpp>
 #include <diagnostic_msgs/msg/diagnostic_array.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <nav_msgs/msg/odometry.hpp>
@@ -62,16 +62,16 @@ namespace autoware_api
 struct AutowareInfo
 {
   std::shared_ptr<geometry_msgs::msg::PoseStamped> current_pose_ptr;
-  autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr steer_ptr;
+  autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr steer_ptr;
   autoware_control_msgs::msg::Control::ConstSharedPtr vehicle_cmd_ptr;
-  autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr turn_indicators_ptr;
-  autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr hazard_lights_ptr;
+  autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr turn_indicators_ptr;
+  autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr hazard_lights_ptr;
   nav_msgs::msg::Odometry::ConstSharedPtr odometry_ptr;
-  autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr gear_ptr;
+  autoware_vehicle_msgs::msg::GearReport::ConstSharedPtr gear_ptr;
   tier4_vehicle_msgs::msg::BatteryStatus::ConstSharedPtr battery_ptr;
   sensor_msgs::msg::NavSatFix::ConstSharedPtr nav_sat_ptr;
   tier4_system_msgs::msg::AutowareState::ConstSharedPtr autoware_state_ptr;
-  autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr control_mode_ptr;
+  autoware_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr control_mode_ptr;
   tier4_control_msgs::msg::GateMode::ConstSharedPtr gate_mode_ptr;
   autoware_adapi_v1_msgs::msg::MrmState::ConstSharedPtr mrm_state_ptr;
   autoware_system_msgs::msg::HazardStatusStamped::ConstSharedPtr hazard_status_ptr;

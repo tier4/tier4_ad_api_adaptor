@@ -58,21 +58,21 @@ AutowareIvAdapter::AutowareIvAdapter()
 
   auto durable_qos = rclcpp::QoS{1}.transient_local();
 
-  sub_steer_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
+  sub_steer_ = this->create_subscription<autoware_vehicle_msgs::msg::SteeringReport>(
     "input/steer", 1, std::bind(&AutowareIvAdapter::callbackSteer, this, _1));
   sub_vehicle_cmd_ =
     this->create_subscription<autoware_control_msgs::msg::Control>(
       "input/vehicle_cmd", durable_qos,
       std::bind(&AutowareIvAdapter::callbackVehicleCmd, this, _1));
   sub_turn_indicators_ =
-    this->create_subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>(
+    this->create_subscription<autoware_vehicle_msgs::msg::TurnIndicatorsReport>(
       "input/turn_indicators", 1, std::bind(&AutowareIvAdapter::callbackTurnIndicators, this, _1));
   sub_hazard_lights_ =
-    this->create_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsReport>(
+    this->create_subscription<autoware_vehicle_msgs::msg::HazardLightsReport>(
       "input/hazard_lights", 1, std::bind(&AutowareIvAdapter::callbackHazardLights, this, _1));
   sub_odometry_ = this->create_subscription<nav_msgs::msg::Odometry>(
     "input/odometry", 1, std::bind(&AutowareIvAdapter::callbackTwist, this, _1));
-  sub_gear_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::GearReport>(
+  sub_gear_ = this->create_subscription<autoware_vehicle_msgs::msg::GearReport>(
     "input/gear", 1, std::bind(&AutowareIvAdapter::callbackGear, this, _1));
   sub_battery_ = this->create_subscription<tier4_vehicle_msgs::msg::BatteryStatus>(
     "input/battery", 1, std::bind(&AutowareIvAdapter::callbackBattery, this, _1));
@@ -80,7 +80,7 @@ AutowareIvAdapter::AutowareIvAdapter()
     "input/nav_sat", 1, std::bind(&AutowareIvAdapter::callbackNavSat, this, _1));
   sub_autoware_state_ = this->create_subscription<tier4_system_msgs::msg::AutowareState>(
     "input/autoware_state", 1, std::bind(&AutowareIvAdapter::callbackAutowareState, this, _1));
-  sub_control_mode_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
+  sub_control_mode_ = this->create_subscription<autoware_vehicle_msgs::msg::ControlModeReport>(
     "input/control_mode", 1, std::bind(&AutowareIvAdapter::callbackControlMode, this, _1));
   sub_gate_mode_ = this->create_subscription<tier4_control_msgs::msg::GateMode>(
     "input/gate_mode", durable_qos, std::bind(&AutowareIvAdapter::callbackGateMode, this, _1));
@@ -170,7 +170,7 @@ void AutowareIvAdapter::timerCallback()
 }
 
 void AutowareIvAdapter::callbackSteer(
-  const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg_ptr)
+  const autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg_ptr)
 {
   aw_info_.steer_ptr = msg_ptr;
 }
@@ -182,13 +182,13 @@ void AutowareIvAdapter::callbackVehicleCmd(
 }
 
 void AutowareIvAdapter::callbackTurnIndicators(
-  const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg_ptr)
+  const autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg_ptr)
 {
   aw_info_.turn_indicators_ptr = msg_ptr;
 }
 
 void AutowareIvAdapter::callbackHazardLights(
-  const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr msg_ptr)
+  const autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr msg_ptr)
 {
   aw_info_.hazard_lights_ptr = msg_ptr;
 }
@@ -199,7 +199,7 @@ void AutowareIvAdapter::callbackTwist(const nav_msgs::msg::Odometry::ConstShared
 }
 
 void AutowareIvAdapter::callbackGear(
-  const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr msg_ptr)
+  const autoware_vehicle_msgs::msg::GearReport::ConstSharedPtr msg_ptr)
 {
   aw_info_.gear_ptr = msg_ptr;
 }
@@ -238,7 +238,7 @@ void AutowareIvAdapter::callbackAutowareState(
   aw_info_.autoware_state_ptr = msg_ptr;
 }
 void AutowareIvAdapter::callbackControlMode(
-  const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr msg_ptr)
+  const autoware_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr msg_ptr)
 {
   aw_info_.control_mode_ptr = msg_ptr;
 }

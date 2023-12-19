@@ -18,7 +18,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
-#include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
+#include <autoware_vehicle_msgs/msg/control_mode_report.hpp>
 #include <tier4_control_msgs/msg/external_command_selector_mode.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_control_msgs/srv/external_command_select.hpp>
@@ -44,7 +44,7 @@ private:
   using ExternalCommandSelect = tier4_control_msgs::srv::ExternalCommandSelect;
   using ExternalCommandSelectorMode = tier4_control_msgs::msg::ExternalCommandSelectorMode;
   using GateMode = tier4_control_msgs::msg::GateMode;
-  using ControlModeReport = autoware_auto_vehicle_msgs::msg::ControlModeReport;
+  using ControlModeReport = autoware_vehicle_msgs::msg::ControlModeReport;
   using ChangeAutowareControl = tier4_system_msgs::srv::ChangeAutowareControl;
   using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
 
@@ -74,14 +74,14 @@ private:
     const tier4_control_msgs::msg::ExternalCommandSelectorMode::ConstSharedPtr message);
   void onGateMode(const tier4_control_msgs::msg::GateMode::ConstSharedPtr message);
   void onVehicleControlMode(
-    const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr message);
+    const autoware_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr message);
   void onEmergencyStatus(const tier4_external_api_msgs::msg::Emergency::ConstSharedPtr msg);
   void onTimer();
 
   // class field
   tier4_control_msgs::msg::ExternalCommandSelectorMode::ConstSharedPtr external_select_;
   tier4_control_msgs::msg::GateMode::ConstSharedPtr gate_mode_;
-  autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr vehicle_control_mode_;
+  autoware_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr vehicle_control_mode_;
   tier4_external_api_msgs::msg::Emergency::ConstSharedPtr emergency_status_;
   bool send_engage_in_emergency_;
 

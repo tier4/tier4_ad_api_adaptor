@@ -83,7 +83,7 @@ void AutowareIvVehicleStatePublisher::getPoseInfo(
 }
 
 void AutowareIvVehicleStatePublisher::getSteerInfo(
-  const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr & steer_ptr,
+  const autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr & steer_ptr,
   tier4_api_msgs::msg::AwapiVehicleStatus * status)
 {
   if (!steer_ptr) {
@@ -128,8 +128,8 @@ void AutowareIvVehicleStatePublisher::getVehicleCmdInfo(
 }
 
 void AutowareIvVehicleStatePublisher::getTurnSignalInfo(
-  const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr & turn_indicators_ptr,
-  const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr & hazard_lights_ptr,
+  const autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr & turn_indicators_ptr,
+  const autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr & hazard_lights_ptr,
   tier4_api_msgs::msg::AwapiVehicleStatus * status)
 {
   if (!turn_indicators_ptr) {
@@ -181,7 +181,7 @@ void AutowareIvVehicleStatePublisher::getTwistInfo(
 }
 
 void AutowareIvVehicleStatePublisher::getGearInfo(
-  const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr & gear_ptr,
+  const autoware_vehicle_msgs::msg::GearReport::ConstSharedPtr & gear_ptr,
   tier4_api_msgs::msg::AwapiVehicleStatus * status)
 {
   if (!gear_ptr) {

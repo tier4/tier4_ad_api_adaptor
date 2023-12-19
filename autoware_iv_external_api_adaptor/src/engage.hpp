@@ -19,7 +19,7 @@
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
 #include "autoware_system_msgs/msg/autoware_state.hpp"
-#include "autoware_auto_vehicle_msgs/msg/engage.hpp"
+#include "autoware_vehicle_msgs/msg/engage.hpp"
 #include "tier4_external_api_msgs/msg/engage_status.hpp"
 #include "tier4_external_api_msgs/srv/engage.hpp"
 #include "tier4_external_api_msgs/srv/set_operator.hpp"
@@ -36,7 +36,7 @@ private:
   using ExternalEngage = tier4_external_api_msgs::srv::Engage;
   using ExternalEngageStatus = tier4_external_api_msgs::msg::EngageStatus;
   using SetOperator = tier4_external_api_msgs::srv::SetOperator;
-  using VehicleEngageStatus = autoware_auto_vehicle_msgs::msg::Engage;
+  using VehicleEngageStatus = autoware_vehicle_msgs::msg::Engage;
   using AutowareState = autoware_system_msgs::msg::AutowareState;
 
   // ros interface
@@ -57,7 +57,7 @@ private:
   void setEngage(
     const tier4_external_api_msgs::srv::Engage::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::Engage::Response::SharedPtr response);
-  void onEngageStatus(const autoware_auto_vehicle_msgs::msg::Engage::SharedPtr message);
+  void onEngageStatus(const autoware_vehicle_msgs::msg::Engage::SharedPtr message);
   void onAutowareState(const autoware_system_msgs::msg::AutowareState::SharedPtr message);
 };
 
