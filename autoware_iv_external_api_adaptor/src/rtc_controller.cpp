@@ -57,7 +57,7 @@ void RTCModule::insertMessage(std::vector<CooperateStatus> & cooperate_statuses)
 
 void RTCModule::insertAutoModeMessage(std::vector<AutoModeStatus> & auto_mode_status)
 {
-  auto_mode_status.insert(auto_mode_status.begin(),auto_mode_status_);
+  auto_mode_status.insert(auto_mode_status.begin(), auto_mode_status_);
 }
 
 void RTCModule::callService(
@@ -128,7 +128,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     rmw_qos_profile_services_default, group_);
 
   timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
-  auto_mode_timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onAutoModeTimer, this));
+  auto_mode_timer_ = rclcpp::create_timer(
+    this, get_clock(), 100ms, std::bind(&RTCController::onAutoModeTimer, this));
 }
 
 void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & statuses_vector)

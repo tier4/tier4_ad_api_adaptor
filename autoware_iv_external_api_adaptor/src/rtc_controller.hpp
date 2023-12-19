@@ -18,11 +18,11 @@
 #include <rclcpp/rclcpp.hpp>
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
+#include "tier4_rtc_msgs/msg/auto_mode_status.hpp"
+#include "tier4_rtc_msgs/msg/auto_mode_status_array.hpp"
 #include "tier4_rtc_msgs/msg/cooperate_command.hpp"
 #include "tier4_rtc_msgs/msg/cooperate_status.hpp"
 #include "tier4_rtc_msgs/msg/cooperate_status_array.hpp"
-#include "tier4_rtc_msgs/msg/auto_mode_status.hpp"
-#include "tier4_rtc_msgs/msg/auto_mode_status_array.hpp"
 #include "tier4_rtc_msgs/msg/module.hpp"
 #include "tier4_rtc_msgs/srv/auto_mode.hpp"
 #include "tier4_rtc_msgs/srv/auto_mode_with_module.hpp"
