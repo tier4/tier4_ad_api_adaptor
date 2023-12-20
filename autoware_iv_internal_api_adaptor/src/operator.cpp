@@ -37,8 +37,8 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
 
   cli_external_select_ = proxy.create_client<tier4_control_msgs::srv::ExternalCommandSelect>(
     "/control/external_cmd_selector/select_external_command");
-  cli_autoware_control_ = proxy.create_client<tier4_system_msgs::srv::ChangeAutowareControl>(
-    "/system/operation_mode/change_autoware_control");
+  cli_control_mode_ = proxy.create_client<autoware_auto_vehicle_msgs::srv::ControlModeCommand>(
+    "/control/control_mode_request");
   pub_gate_mode_ =
     create_publisher<tier4_control_msgs::msg::GateMode>("/control/gate_mode_cmd", rclcpp::QoS(1));
 
@@ -52,10 +52,9 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
     std::bind(&Operator::onExternalSelect, this, _1));
   sub_gate_mode_ = create_subscription<tier4_control_msgs::msg::GateMode>(
     "/control/current_gate_mode", rclcpp::QoS(1), std::bind(&Operator::onGateMode, this, _1));
-  sub_vehicle_control_mode_ =
-    create_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
-      "/vehicle/status/control_mode", rclcpp::QoS(1),
-      std::bind(&Operator::onVehicleControlMode, this, _1));
+  sub_control_mode_ = create_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
+    "/vehicle/status/control_mode", rclcpp::QoS(1),
+    std::bind(&Operator::onVehicleControlMode, this, _1));
   sub_emergency_ = create_subscription<tier4_external_api_msgs::msg::Emergency>(
     "/api/autoware/get/emergency", 10, std::bind(&Operator::onEmergencyStatus, this, _1));
 
@@ -196,18 +195,23 @@ void Operator::setGateMode(tier4_control_msgs::msg::GateMode::_data_type data)
 
 tier4_external_api_msgs::msg::ResponseStatus Operator::setVehicleEngage(bool engage)
 {
-  const auto req = std::make_shared<ChangeAutowareControl::Request>();
-  req->autoware_control = engage;
+  const auto req = std::make_shared<ControlModeCommand::Request>();
+  req->stamp = now();
+  if (engage) {
+    req->mode = ControlModeCommand::Request::AUTONOMOUS;
+  } else {
+    req->mode = ControlModeCommand::Request::MANUAL;
+  }
 
-  const auto [status, resp] = cli_autoware_control_->call(req);
+  const auto [status, resp] = cli_control_mode_->call(req);
   if (!tier4_api_utils::is_success(status)) {
     return status;
   }
 
-  if (resp->status.success) {
-    return tier4_api_utils::response_success(resp->status.message);
+  if (resp->success) {
+    return tier4_api_utils::response_success();
   } else {
-    return tier4_api_utils::response_error(resp->status.message);
+    return tier4_api_utils::response_error("control mode change failed");
   }
 }
 

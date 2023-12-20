@@ -19,6 +19,7 @@
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
 #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
+#include <autoware_auto_vehicle_msgs/srv/control_mode_command.hpp>
 #include <tier4_control_msgs/msg/external_command_selector_mode.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <tier4_control_msgs/srv/external_command_select.hpp>
@@ -27,7 +28,6 @@
 #include <tier4_external_api_msgs/msg/operator.hpp>
 #include <tier4_external_api_msgs/srv/set_observer.hpp>
 #include <tier4_external_api_msgs/srv/set_operator.hpp>
-#include <tier4_system_msgs/srv/change_autoware_control.hpp>
 
 namespace internal_api
 {
@@ -44,8 +44,8 @@ private:
   using ExternalCommandSelect = tier4_control_msgs::srv::ExternalCommandSelect;
   using ExternalCommandSelectorMode = tier4_control_msgs::msg::ExternalCommandSelectorMode;
   using GateMode = tier4_control_msgs::msg::GateMode;
+  using ControlModeCommand = autoware_auto_vehicle_msgs::srv::ControlModeCommand;
   using ControlModeReport = autoware_auto_vehicle_msgs::msg::ControlModeReport;
-  using ChangeAutowareControl = tier4_system_msgs::srv::ChangeAutowareControl;
   using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
 
   // ros interface
@@ -53,13 +53,13 @@ private:
   tier4_api_utils::Service<SetOperator>::SharedPtr srv_set_operator_;
   tier4_api_utils::Service<SetObserver>::SharedPtr srv_set_observer_;
   tier4_api_utils::Client<ExternalCommandSelect>::SharedPtr cli_external_select_;
-  tier4_api_utils::Client<ChangeAutowareControl>::SharedPtr cli_autoware_control_;
+  tier4_api_utils::Client<ControlModeCommand>::SharedPtr cli_control_mode_;
   rclcpp::Publisher<GateMode>::SharedPtr pub_gate_mode_;
   rclcpp::Publisher<GetOperator>::SharedPtr pub_operator_;
   rclcpp::Publisher<GetObserver>::SharedPtr pub_observer_;
   rclcpp::Subscription<ExternalCommandSelectorMode>::SharedPtr sub_external_select_;
   rclcpp::Subscription<GateMode>::SharedPtr sub_gate_mode_;
-  rclcpp::Subscription<ControlModeReport>::SharedPtr sub_vehicle_control_mode_;
+  rclcpp::Subscription<ControlModeReport>::SharedPtr sub_control_mode_;
   rclcpp::Subscription<tier4_external_api_msgs::msg::Emergency>::SharedPtr sub_emergency_;
   rclcpp::TimerBase::SharedPtr timer_;
 
