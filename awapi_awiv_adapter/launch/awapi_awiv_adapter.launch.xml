@@ -34,7 +34,7 @@
   <arg name="input_object" default="/perception/object_recognition/objects"/>
   <arg name="input_traffic_signals" default="/perception/traffic_light_recognition/traffic_signals"/>
   <arg name="input_nearest_traffic_signal" default="/planning/scenario_planning/lane_driving/behavior_planning/debug/traffic_signal"/>
-  <arg name="input_trajectory" default="/planning/scenario_planning/trajectory"/>
+  <arg name="input_trajectory" default="/planning/trajectory"/>
   <arg name="input_current_max_velocity" default="/planning/scenario_planning/current_max_velocity"/>
   <arg name="input_stop_speed_exceeded" default="/planning/scenario_planning/motion_velocity_smoother/stop_speed_exceeded"/>
   <arg name="input_external_crosswalk_status" default="/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/input/external_crosswalk_states"/>

@@ -49,7 +49,7 @@
 
 - specification of stop_reason
   - stop_reason is output only when the following conditions are met.
-    - stop_point in stop_reason is close to /planning/scenario_planning/trajectory (within 10m).
+    - stop_point in stop_reason is close to /planning/trajectory (within 10m).
     - The distance between current position and stop_point is less than stop_reason_thresh_dist.
 
 ### /awapi/autoware/get/route
