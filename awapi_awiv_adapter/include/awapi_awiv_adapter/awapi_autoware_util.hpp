@@ -121,7 +121,7 @@ namespace planning_util
 {
 bool calcClosestIndex(
   const autoware_auto_planning_msgs::msg::Trajectory & traj, const geometry_msgs::msg::Pose & pose,
-  size_t & output_closest_idx, const double dist_thr = 10.0, const double angle_thr = M_PI / 2.0);
+  size_t & output_closest_idx, const double dist_thr = 10.0, const double angle_thr = M_PI_4);
 
 inline geometry_msgs::msg::Pose getPose(
   const autoware_auto_planning_msgs::msg::Trajectory & traj, const int idx)

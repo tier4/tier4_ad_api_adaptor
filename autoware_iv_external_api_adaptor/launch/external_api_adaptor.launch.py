@@ -41,6 +41,7 @@ def generate_launch_description():
         _create_api_node("localization_score", "LocalizationScore"),
         _create_api_node("map", "Map"),
         _create_api_node("operator", "Operator"),
+        _create_api_node("rosbag_logging_mode", "RosbagLoggingMode"),
         _create_api_node("metadata_packages", "MetadataPackages"),
         _create_api_node("route", "Route"),
         _create_api_node("service", "Service"),
