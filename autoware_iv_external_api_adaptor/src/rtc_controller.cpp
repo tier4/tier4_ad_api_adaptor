@@ -27,6 +27,10 @@ RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
     cooperate_status_namespace_ + "/" + name, rclcpp::QoS(1),
     std::bind(&RTCModule::moduleCallback, this, _1));
 
+  auto_mode_sub_ = node->create_subscription<AutoModeStatus>(
+    auto_mode_status_namespace_ + "/" + name, rclcpp::QoS(1),
+    std::bind(&RTCModule::autoModeCallback, this, _1));
+
   cli_set_module_ = proxy.create_client<CooperateCommands>(
     cooperate_commands_namespace_ + "/" + name, rmw_qos_profile_services_default);
 
@@ -39,10 +43,21 @@ void RTCModule::moduleCallback(const CooperateStatusArray::ConstSharedPtr messag
   module_statuses_ = message->statuses;
 }
 
+void RTCModule::autoModeCallback(const AutoModeStatus::ConstSharedPtr message)
+{
+  auto_mode_status_.module = message->module;
+  auto_mode_status_.is_auto_mode = message->is_auto_mode;
+}
+
 void RTCModule::insertMessage(std::vector<CooperateStatus> & cooperate_statuses)
 {
   cooperate_statuses.insert(
     cooperate_statuses.end(), module_statuses_.begin(), module_statuses_.end());
+}
+
+void RTCModule::insertAutoModeMessage(std::vector<AutoModeStatus> & auto_mode_status)
+{
+  auto_mode_status.insert(auto_mode_status.begin(), auto_mode_status_);
 }
 
 void RTCModule::callService(
@@ -101,6 +116,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
+  auto_mode_pub_ =
+    create_publisher<AutoModeStatusArray>("/api/external/get/rtc_auto_mode", rclcpp::QoS(1));
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_rtc_ = proxy.create_service<CooperateCommands>(
@@ -111,6 +128,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     rmw_qos_profile_services_default, group_);
 
   timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
+  auto_mode_timer_ = rclcpp::create_timer(
+    this, get_clock(), 100ms, std::bind(&RTCController::onAutoModeTimer, this));
 }
 
 void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & statuses_vector)
@@ -257,6 +276,35 @@ void RTCController::setRTC(
         // virtual_traffic not found
     }
   }
+}
+
+void RTCController::onAutoModeTimer()
+{
+  std::vector<AutoModeStatus> auto_mode_statuses;
+  blind_spot_->insertAutoModeMessage(auto_mode_statuses);
+  crosswalk_->insertAutoModeMessage(auto_mode_statuses);
+  detection_area_->insertAutoModeMessage(auto_mode_statuses);
+  intersection_->insertAutoModeMessage(auto_mode_statuses);
+  intersection_occlusion_->insertAutoModeMessage(auto_mode_statuses);
+  no_stopping_area_->insertAutoModeMessage(auto_mode_statuses);
+  occlusion_spot_->insertAutoModeMessage(auto_mode_statuses);
+  traffic_light_->insertAutoModeMessage(auto_mode_statuses);
+  virtual_traffic_light_->insertAutoModeMessage(auto_mode_statuses);
+  lane_change_left_->insertAutoModeMessage(auto_mode_statuses);
+  lane_change_right_->insertAutoModeMessage(auto_mode_statuses);
+  ext_request_lane_change_left_->insertAutoModeMessage(auto_mode_statuses);
+  ext_request_lane_change_right_->insertAutoModeMessage(auto_mode_statuses);
+  avoidance_left_->insertAutoModeMessage(auto_mode_statuses);
+  avoidance_right_->insertAutoModeMessage(auto_mode_statuses);
+  avoidance_by_lc_left_->insertAutoModeMessage(auto_mode_statuses);
+  avoidance_by_lc_right_->insertAutoModeMessage(auto_mode_statuses);
+  goal_planner_->insertAutoModeMessage(auto_mode_statuses);
+  start_planner_->insertAutoModeMessage(auto_mode_statuses);
+
+  AutoModeStatusArray msg;
+  msg.stamp = now();
+  msg.statuses = auto_mode_statuses;
+  auto_mode_pub_->publish(msg);
 }
 
 void RTCController::setRTCAutoMode(
