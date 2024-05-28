@@ -15,6 +15,10 @@ repositories:
     type: git
     url: https://github.com/autowarefoundation/autoware_adapi_msgs.git
     version: main
+  msg/autoware_internal_msgs:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_internal_msgs.git
+    version: main
   universe/tier4_autoware_msgs:
     type: git
     url: https://github.com/tier4/tier4_autoware_msgs.git
