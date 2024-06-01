@@ -21,9 +21,15 @@ namespace autoware_api
 {
 namespace
 {
-std::string createKey(const Command & command) { return command.type + "-" + command.id; }
+std::string createKey(const Command & command)
+{
+  return command.type + "-" + command.id;
+}
 
-std::string createKey(const State & state) { return state.type + "-" + state.id; }
+std::string createKey(const State & state)
+{
+  return state.type + "-" + state.id;
+}
 }  // namespace
 
 AutowareIvV2XAggregator::AutowareIvV2XAggregator(rclcpp::Node & node)

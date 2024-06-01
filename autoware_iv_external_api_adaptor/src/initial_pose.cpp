@@ -61,8 +61,9 @@ void InitialPose::setInitializePose(
   const tier4_external_api_msgs::srv::InitializePose::Response::SharedPtr response)
 {
   const auto req = std::make_shared<localization_interface::Initialize::Service::Request>();
-  req->pose.push_back(request->pose);
-  req->pose.back().pose.covariance = particle_covariance;
+  req->method = localization_interface::Initialize::Service::Request::AUTO;
+  req->pose_with_covariance.push_back(request->pose);
+  req->pose_with_covariance.back().pose.covariance = particle_covariance;
 
   try {
     const auto res = cli_localization_initialize_->call(req, initial_pose_timeout);
@@ -77,6 +78,7 @@ void InitialPose::setInitializePoseAuto(
   const tier4_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response)
 {
   const auto req = std::make_shared<localization_interface::Initialize::Service::Request>();
+  req->method = localization_interface::Initialize::Service::Request::AUTO;
 
   try {
     const auto res = cli_localization_initialize_->call(req, initial_pose_timeout);

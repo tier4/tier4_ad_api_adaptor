@@ -27,6 +27,10 @@ RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
     cooperate_status_namespace_ + "/" + name, rclcpp::QoS(1),
     std::bind(&RTCModule::moduleCallback, this, _1));
 
+  auto_mode_sub_ = node->create_subscription<AutoModeStatus>(
+    auto_mode_status_namespace_ + "/" + name, rclcpp::QoS(1),
+    std::bind(&RTCModule::autoModeCallback, this, _1));
+
   cli_set_module_ = proxy.create_client<CooperateCommands>(
     cooperate_commands_namespace_ + "/" + name, rmw_qos_profile_services_default);
 
@@ -39,10 +43,21 @@ void RTCModule::moduleCallback(const CooperateStatusArray::ConstSharedPtr messag
   module_statuses_ = message->statuses;
 }
 
+void RTCModule::autoModeCallback(const AutoModeStatus::ConstSharedPtr message)
+{
+  auto_mode_status_.module = message->module;
+  auto_mode_status_.is_auto_mode = message->is_auto_mode;
+}
+
 void RTCModule::insertMessage(std::vector<CooperateStatus> & cooperate_statuses)
 {
   cooperate_statuses.insert(
     cooperate_statuses.end(), module_statuses_.begin(), module_statuses_.end());
+}
+
+void RTCModule::insertAutoModeMessage(std::vector<AutoModeStatus> & auto_mode_status)
+{
+  auto_mode_status.insert(auto_mode_status.begin(), auto_mode_status_);
 }
 
 void RTCModule::callService(
@@ -58,8 +73,7 @@ void RTCModule::callService(
 }
 
 void RTCModule::callAutoModeService(
-  const AutoMode::Request::SharedPtr request,
-  const AutoMode::Response::SharedPtr response)
+  const AutoMode::Request::SharedPtr request, const AutoMode::Response::SharedPtr response)
 {
   const auto [status, resp] = cli_set_auto_mode_->call(request);
   if (!tier4_api_utils::is_success(status)) {
@@ -82,22 +96,28 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   crosswalk_ = std::make_unique<RTCModule>(this, "crosswalk");
   detection_area_ = std::make_unique<RTCModule>(this, "detection_area");
   intersection_ = std::make_unique<RTCModule>(this, "intersection");
+  intersection_occlusion_ = std::make_unique<RTCModule>(this, "intersection_occlusion");
   no_stopping_area_ = std::make_unique<RTCModule>(this, "no_stopping_area");
   occlusion_spot_ = std::make_unique<RTCModule>(this, "occlusion_spot");
   traffic_light_ = std::make_unique<RTCModule>(this, "traffic_light");
   virtual_traffic_light_ = std::make_unique<RTCModule>(this, "virtual_traffic_light");
   lane_change_left_ = std::make_unique<RTCModule>(this, "lane_change_left");
   lane_change_right_ = std::make_unique<RTCModule>(this, "lane_change_right");
-  ext_request_lane_change_left_ = std::make_unique<RTCModule>(this, "ext_request_lane_change_left");
+  ext_request_lane_change_left_ =
+    std::make_unique<RTCModule>(this, "external_request_lane_change_left");
   ext_request_lane_change_right_ =
-    std::make_unique<RTCModule>(this, "ext_request_lane_change_right");
-  avoidance_left_ = std::make_unique<RTCModule>(this, "avoidance_left");
-  avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
-  pull_over_ = std::make_unique<RTCModule>(this, "pull_over");
-  pull_out_ = std::make_unique<RTCModule>(this, "pull_out");
+    std::make_unique<RTCModule>(this, "external_request_lane_change_right");
+  avoidance_left_ = std::make_unique<RTCModule>(this, "static_obstacle_avoidance_left");
+  avoidance_right_ = std::make_unique<RTCModule>(this, "static_obstacle_avoidance_right");
+  avoidance_by_lc_left_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_left");
+  avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_right");
+  goal_planner_ = std::make_unique<RTCModule>(this, "goal_planner");
+  start_planner_ = std::make_unique<RTCModule>(this, "start_planner");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
+  auto_mode_pub_ =
+    create_publisher<AutoModeStatusArray>("/api/external/get/rtc_auto_mode", rclcpp::QoS(1));
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_rtc_ = proxy.create_service<CooperateCommands>(
@@ -108,6 +128,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     rmw_qos_profile_services_default, group_);
 
   timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
+  auto_mode_timer_ = rclcpp::create_timer(
+    this, get_clock(), 100ms, std::bind(&RTCController::onAutoModeTimer, this));
 }
 
 void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & statuses_vector)
@@ -147,6 +169,7 @@ void RTCController::onTimer()
   crosswalk_->insertMessage(cooperate_statuses);
   detection_area_->insertMessage(cooperate_statuses);
   intersection_->insertMessage(cooperate_statuses);
+  intersection_occlusion_->insertMessage(cooperate_statuses);
   no_stopping_area_->insertMessage(cooperate_statuses);
   occlusion_spot_->insertMessage(cooperate_statuses);
   traffic_light_->insertMessage(cooperate_statuses);
@@ -157,8 +180,10 @@ void RTCController::onTimer()
   ext_request_lane_change_right_->insertMessage(cooperate_statuses);
   avoidance_left_->insertMessage(cooperate_statuses);
   avoidance_right_->insertMessage(cooperate_statuses);
-  pull_over_->insertMessage(cooperate_statuses);
-  pull_out_->insertMessage(cooperate_statuses);
+  avoidance_by_lc_left_->insertMessage(cooperate_statuses);
+  avoidance_by_lc_right_->insertMessage(cooperate_statuses);
+  goal_planner_->insertMessage(cooperate_statuses);
+  start_planner_->insertMessage(cooperate_statuses);
 
   insertionSortAndValidation(cooperate_statuses);
 
@@ -200,12 +225,20 @@ void RTCController::setRTC(
         avoidance_right_->callService(request, responses);
         break;
       }
-      case Module::PULL_OVER: {
-        pull_over_->callService(request, responses);
+      case Module::AVOIDANCE_BY_LC_LEFT: {
+        avoidance_by_lc_left_->callService(request, responses);
         break;
       }
-      case Module::PULL_OUT: {
-        pull_out_->callService(request, responses);
+      case Module::AVOIDANCE_BY_LC_RIGHT: {
+        avoidance_by_lc_right_->callService(request, responses);
+        break;
+      }
+      case Module::GOAL_PLANNER: {
+        goal_planner_->callService(request, responses);
+        break;
+      }
+      case Module::START_PLANNER: {
+        start_planner_->callService(request, responses);
         break;
       }
       case Module::TRAFFIC_LIGHT: {
@@ -214,6 +247,10 @@ void RTCController::setRTC(
       }
       case Module::INTERSECTION: {
         intersection_->callService(request, responses);
+        break;
+      }
+      case Module::INTERSECTION_OCCLUSION: {
+        intersection_occlusion_->callService(request, responses);
         break;
       }
       case Module::CROSSWALK: {
@@ -241,6 +278,35 @@ void RTCController::setRTC(
   }
 }
 
+void RTCController::onAutoModeTimer()
+{
+  std::vector<AutoModeStatus> auto_mode_statuses;
+  blind_spot_->insertAutoModeMessage(auto_mode_statuses);
+  crosswalk_->insertAutoModeMessage(auto_mode_statuses);
+  detection_area_->insertAutoModeMessage(auto_mode_statuses);
+  intersection_->insertAutoModeMessage(auto_mode_statuses);
+  intersection_occlusion_->insertAutoModeMessage(auto_mode_statuses);
+  no_stopping_area_->insertAutoModeMessage(auto_mode_statuses);
+  occlusion_spot_->insertAutoModeMessage(auto_mode_statuses);
+  traffic_light_->insertAutoModeMessage(auto_mode_statuses);
+  virtual_traffic_light_->insertAutoModeMessage(auto_mode_statuses);
+  lane_change_left_->insertAutoModeMessage(auto_mode_statuses);
+  lane_change_right_->insertAutoModeMessage(auto_mode_statuses);
+  ext_request_lane_change_left_->insertAutoModeMessage(auto_mode_statuses);
+  ext_request_lane_change_right_->insertAutoModeMessage(auto_mode_statuses);
+  avoidance_left_->insertAutoModeMessage(auto_mode_statuses);
+  avoidance_right_->insertAutoModeMessage(auto_mode_statuses);
+  avoidance_by_lc_left_->insertAutoModeMessage(auto_mode_statuses);
+  avoidance_by_lc_right_->insertAutoModeMessage(auto_mode_statuses);
+  goal_planner_->insertAutoModeMessage(auto_mode_statuses);
+  start_planner_->insertAutoModeMessage(auto_mode_statuses);
+
+  AutoModeStatusArray msg;
+  msg.stamp = now();
+  msg.statuses = auto_mode_statuses;
+  auto_mode_pub_->publish(msg);
+}
+
 void RTCController::setRTCAutoMode(
   const AutoModeWithModule::Request::SharedPtr request,
   const AutoModeWithModule::Response::SharedPtr response)
@@ -265,12 +331,20 @@ void RTCController::setRTCAutoMode(
       avoidance_right_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
-    case Module::PULL_OVER: {
-      pull_over_->callAutoModeService(auto_mode_request, auto_mode_response);
+    case Module::AVOIDANCE_BY_LC_LEFT: {
+      avoidance_by_lc_left_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
-    case Module::PULL_OUT: {
-      pull_out_->callAutoModeService(auto_mode_request, auto_mode_response);
+    case Module::AVOIDANCE_BY_LC_RIGHT: {
+      avoidance_by_lc_right_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::GOAL_PLANNER: {
+      goal_planner_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::START_PLANNER: {
+      start_planner_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::TRAFFIC_LIGHT: {
@@ -279,6 +353,10 @@ void RTCController::setRTCAutoMode(
     }
     case Module::INTERSECTION: {
       intersection_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::INTERSECTION_OCCLUSION: {
+      intersection_occlusion_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::CROSSWALK: {
