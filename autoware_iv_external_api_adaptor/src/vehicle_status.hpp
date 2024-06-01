@@ -49,8 +49,7 @@ private:
 
   // ros interface for vehicle command
   rclcpp::Publisher<tier4_external_api_msgs::msg::VehicleCommandStamped>::SharedPtr pub_cmd_;
-  rclcpp::Subscription<autoware_control_msgs::msg::Control>::SharedPtr
-    sub_cmd_;
+  rclcpp::Subscription<autoware_control_msgs::msg::Control>::SharedPtr sub_cmd_;
 
   // ros callback
   void onTimer();

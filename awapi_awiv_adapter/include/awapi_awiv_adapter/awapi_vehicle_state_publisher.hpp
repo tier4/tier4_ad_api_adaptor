@@ -43,12 +43,10 @@ private:
     const autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr & steer_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getVehicleCmdInfo(
-    const autoware_control_msgs::msg::Control::ConstSharedPtr &
-      vehicle_cmd_ptr,
+    const autoware_control_msgs::msg::Control::ConstSharedPtr & vehicle_cmd_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getTurnSignalInfo(
-    const autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &
-      turn_indicators_ptr,
+    const autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr & turn_indicators_ptr,
     const autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr & hazard_lights_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getTwistInfo(

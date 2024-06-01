@@ -60,16 +60,13 @@ AutowareIvAdapter::AutowareIvAdapter()
 
   sub_steer_ = this->create_subscription<autoware_vehicle_msgs::msg::SteeringReport>(
     "input/steer", 1, std::bind(&AutowareIvAdapter::callbackSteer, this, _1));
-  sub_vehicle_cmd_ =
-    this->create_subscription<autoware_control_msgs::msg::Control>(
-      "input/vehicle_cmd", durable_qos,
-      std::bind(&AutowareIvAdapter::callbackVehicleCmd, this, _1));
+  sub_vehicle_cmd_ = this->create_subscription<autoware_control_msgs::msg::Control>(
+    "input/vehicle_cmd", durable_qos, std::bind(&AutowareIvAdapter::callbackVehicleCmd, this, _1));
   sub_turn_indicators_ =
     this->create_subscription<autoware_vehicle_msgs::msg::TurnIndicatorsReport>(
       "input/turn_indicators", 1, std::bind(&AutowareIvAdapter::callbackTurnIndicators, this, _1));
-  sub_hazard_lights_ =
-    this->create_subscription<autoware_vehicle_msgs::msg::HazardLightsReport>(
-      "input/hazard_lights", 1, std::bind(&AutowareIvAdapter::callbackHazardLights, this, _1));
+  sub_hazard_lights_ = this->create_subscription<autoware_vehicle_msgs::msg::HazardLightsReport>(
+    "input/hazard_lights", 1, std::bind(&AutowareIvAdapter::callbackHazardLights, this, _1));
   sub_odometry_ = this->create_subscription<nav_msgs::msg::Odometry>(
     "input/odometry", 1, std::bind(&AutowareIvAdapter::callbackTwist, this, _1));
   sub_gear_ = this->create_subscription<autoware_vehicle_msgs::msg::GearReport>(
@@ -86,9 +83,8 @@ AutowareIvAdapter::AutowareIvAdapter()
     "input/gate_mode", durable_qos, std::bind(&AutowareIvAdapter::callbackGateMode, this, _1));
   sub_emergency_ = this->create_subscription<autoware_adapi_v1_msgs::msg::MrmState>(
     "input/mrm_state", 1, std::bind(&AutowareIvAdapter::callbackMrmState, this, _1));
-  sub_hazard_status_ =
-    this->create_subscription<autoware_system_msgs::msg::HazardStatusStamped>(
-      "input/hazard_status", 1, std::bind(&AutowareIvAdapter::callbackHazardStatus, this, _1));
+  sub_hazard_status_ = this->create_subscription<autoware_system_msgs::msg::HazardStatusStamped>(
+    "input/hazard_status", 1, std::bind(&AutowareIvAdapter::callbackHazardStatus, this, _1));
   sub_stop_reason_ = this->create_subscription<tier4_planning_msgs::msg::StopReasonArray>(
     "input/stop_reason", 100, std::bind(&AutowareIvAdapter::callbackStopReason, this, _1));
   sub_v2x_command_ = this->create_subscription<tier4_v2x_msgs::msg::InfrastructureCommandArray>(
