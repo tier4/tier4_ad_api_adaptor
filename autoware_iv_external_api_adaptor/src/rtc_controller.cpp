@@ -107,8 +107,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     std::make_unique<RTCModule>(this, "external_request_lane_change_left");
   ext_request_lane_change_right_ =
     std::make_unique<RTCModule>(this, "external_request_lane_change_right");
-  avoidance_left_ = std::make_unique<RTCModule>(this, "avoidance_left");
-  avoidance_right_ = std::make_unique<RTCModule>(this, "avoidance_right");
+  avoidance_left_ = std::make_unique<RTCModule>(this, "static_obstacle_avoidance_left");
+  avoidance_right_ = std::make_unique<RTCModule>(this, "static_obstacle_avoidance_right");
   avoidance_by_lc_left_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_left");
   avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_right");
   goal_planner_ = std::make_unique<RTCModule>(this, "goal_planner");

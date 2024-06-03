@@ -18,6 +18,7 @@
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/response_status.hpp>
+#include <autoware_common_msgs/msg/response_status.hpp>
 #include <tier4_external_api_msgs/msg/response_status.hpp>
 
 namespace external_api::converter
@@ -25,6 +26,7 @@ namespace external_api::converter
 
 using AdResponseStatus = autoware_adapi_v1_msgs::msg::ResponseStatus;
 using T4ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
+using CommonResponseStatus = autoware_common_msgs::msg::ResponseStatus;
 
 inline T4ResponseStatus convert(const AdResponseStatus & ad)
 {
@@ -32,6 +34,15 @@ inline T4ResponseStatus convert(const AdResponseStatus & ad)
     return tier4_api_utils::response_success(ad.message);
   } else {
     return tier4_api_utils::response_error(ad.message);
+  }
+}
+
+inline T4ResponseStatus convert(const CommonResponseStatus & common)
+{
+  if (common.success) {
+    return tier4_api_utils::response_success(common.message);
+  } else {
+    return tier4_api_utils::response_error(common.message);
   }
 }
 
