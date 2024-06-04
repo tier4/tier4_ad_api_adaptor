@@ -18,10 +18,10 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
-#include <autoware_auto_perception_msgs/msg/tracked_objects.hpp>
-#include <autoware_auto_planning_msgs/msg/trajectory.hpp>
-#include <autoware_auto_system_msgs/msg/autoware_state.hpp>
-#include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
+#include <autoware_perception_msgs/msg/tracked_objects.hpp>
+#include <autoware_planning_msgs/msg/trajectory.hpp>
+#include <autoware_system_msgs/msg/autoware_state.hpp>
+#include <autoware_vehicle_msgs/msg/control_mode_report.hpp>
 #include <tier4_perception_msgs/msg/dynamic_object_array.hpp>
 #include <tier4_planning_msgs/msg/trajectory.hpp>
 #include <tier4_system_msgs/msg/autoware_state.hpp>
@@ -35,22 +35,22 @@ public:
 
 private:
   using EmergencyStateAuto = autoware_adapi_v1_msgs::msg::MrmState;
-  using AutowareStateAuto = autoware_auto_system_msgs::msg::AutowareState;
+  using AutowareStateAuto = autoware_system_msgs::msg::AutowareState;
   using AutowareStateIV = tier4_system_msgs::msg::AutowareState;
   rclcpp::Subscription<EmergencyStateAuto>::SharedPtr sub_emergency_;
   rclcpp::Subscription<AutowareStateAuto>::SharedPtr sub_state_;
   rclcpp::Publisher<AutowareStateIV>::SharedPtr pub_state_;
 
-  using ControlModeAuto = autoware_auto_vehicle_msgs::msg::ControlModeReport;
+  using ControlModeAuto = autoware_vehicle_msgs::msg::ControlModeReport;
   rclcpp::Subscription<ControlModeAuto>::SharedPtr sub_control_mode_;
   rclcpp::Publisher<ControlModeAuto>::SharedPtr pub_control_mode_;
 
-  using TrajectoryAuto = autoware_auto_planning_msgs::msg::Trajectory;
+  using TrajectoryAuto = autoware_planning_msgs::msg::Trajectory;
   using TrajectoryIV = tier4_planning_msgs::msg::Trajectory;
   rclcpp::Subscription<TrajectoryAuto>::SharedPtr sub_trajectory_;
   rclcpp::Publisher<TrajectoryIV>::SharedPtr pub_trajectory_;
 
-  using TrackedObjectsAuto = autoware_auto_perception_msgs::msg::TrackedObjects;
+  using TrackedObjectsAuto = autoware_perception_msgs::msg::TrackedObjects;
   using DynamicObjectsIV = tier4_perception_msgs::msg::DynamicObjectArray;
   rclcpp::Subscription<TrackedObjectsAuto>::SharedPtr sub_tracked_objects_;
   rclcpp::Publisher<DynamicObjectsIV>::SharedPtr pub_dynamic_objects_;

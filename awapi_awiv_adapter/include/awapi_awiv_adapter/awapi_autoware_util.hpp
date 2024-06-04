@@ -18,15 +18,15 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
-#include <autoware_auto_control_msgs/msg/ackermann_control_command.hpp>
-#include <autoware_auto_planning_msgs/msg/path.hpp>
-#include <autoware_auto_planning_msgs/msg/trajectory.hpp>
-#include <autoware_auto_system_msgs/msg/hazard_status_stamped.hpp>
-#include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/gear_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/hazard_lights_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/steering_report.hpp>
-#include <autoware_auto_vehicle_msgs/msg/turn_indicators_report.hpp>
+#include <autoware_control_msgs/msg/control.hpp>
+#include <autoware_planning_msgs/msg/path.hpp>
+#include <autoware_planning_msgs/msg/trajectory.hpp>
+#include <autoware_system_msgs/msg/hazard_status_stamped.hpp>
+#include <autoware_vehicle_msgs/msg/control_mode_report.hpp>
+#include <autoware_vehicle_msgs/msg/gear_report.hpp>
+#include <autoware_vehicle_msgs/msg/hazard_lights_report.hpp>
+#include <autoware_vehicle_msgs/msg/steering_report.hpp>
+#include <autoware_vehicle_msgs/msg/turn_indicators_report.hpp>
 #include <diagnostic_msgs/msg/diagnostic_array.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <nav_msgs/msg/odometry.hpp>
@@ -62,32 +62,32 @@ namespace autoware_api
 struct AutowareInfo
 {
   std::shared_ptr<geometry_msgs::msg::PoseStamped> current_pose_ptr;
-  autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr steer_ptr;
-  autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr vehicle_cmd_ptr;
-  autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr turn_indicators_ptr;
-  autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr hazard_lights_ptr;
+  autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr steer_ptr;
+  autoware_control_msgs::msg::Control::ConstSharedPtr vehicle_cmd_ptr;
+  autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr turn_indicators_ptr;
+  autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr hazard_lights_ptr;
   nav_msgs::msg::Odometry::ConstSharedPtr odometry_ptr;
-  autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr gear_ptr;
+  autoware_vehicle_msgs::msg::GearReport::ConstSharedPtr gear_ptr;
   tier4_vehicle_msgs::msg::BatteryStatus::ConstSharedPtr battery_ptr;
   sensor_msgs::msg::NavSatFix::ConstSharedPtr nav_sat_ptr;
   tier4_system_msgs::msg::AutowareState::ConstSharedPtr autoware_state_ptr;
-  autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr control_mode_ptr;
+  autoware_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr control_mode_ptr;
   tier4_control_msgs::msg::GateMode::ConstSharedPtr gate_mode_ptr;
   autoware_adapi_v1_msgs::msg::MrmState::ConstSharedPtr mrm_state_ptr;
-  autoware_auto_system_msgs::msg::HazardStatusStamped::ConstSharedPtr hazard_status_ptr;
+  autoware_system_msgs::msg::HazardStatusStamped::ConstSharedPtr hazard_status_ptr;
   tier4_planning_msgs::msg::StopReasonArray::ConstSharedPtr stop_reason_ptr;
   tier4_v2x_msgs::msg::InfrastructureCommandArray::ConstSharedPtr v2x_command_ptr;
   tier4_v2x_msgs::msg::VirtualTrafficLightStateArray::ConstSharedPtr v2x_state_ptr;
   diagnostic_msgs::msg::DiagnosticArray::ConstSharedPtr diagnostic_ptr;
   tier4_planning_msgs::msg::LaneChangeStatus::ConstSharedPtr lane_change_available_ptr;
   tier4_planning_msgs::msg::LaneChangeStatus::ConstSharedPtr lane_change_ready_ptr;
-  autoware_auto_planning_msgs::msg::Path::ConstSharedPtr lane_change_candidate_ptr;
+  autoware_planning_msgs::msg::Path::ConstSharedPtr lane_change_candidate_ptr;
   tier4_planning_msgs::msg::IsAvoidancePossible::ConstSharedPtr obstacle_avoid_ready_ptr;
-  autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr obstacle_avoid_candidate_ptr;
+  autoware_planning_msgs::msg::Trajectory::ConstSharedPtr obstacle_avoid_candidate_ptr;
   tier4_api_msgs::msg::VelocityLimit::ConstSharedPtr max_velocity_ptr;
   tier4_planning_msgs::msg::VelocityLimit::ConstSharedPtr current_max_velocity_ptr;
   tier4_api_msgs::msg::StopCommand::ConstSharedPtr temporary_stop_ptr;
-  autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr autoware_planning_traj_ptr;
+  autoware_planning_msgs::msg::Trajectory::ConstSharedPtr autoware_planning_traj_ptr;
 };
 
 template <class T>
@@ -120,11 +120,11 @@ double lowpass_filter(const double current_value, const double prev_value, const
 namespace planning_util
 {
 bool calcClosestIndex(
-  const autoware_auto_planning_msgs::msg::Trajectory & traj, const geometry_msgs::msg::Pose & pose,
+  const autoware_planning_msgs::msg::Trajectory & traj, const geometry_msgs::msg::Pose & pose,
   size_t & output_closest_idx, const double dist_thr = 10.0, const double angle_thr = M_PI_4);
 
 inline geometry_msgs::msg::Pose getPose(
-  const autoware_auto_planning_msgs::msg::Trajectory & traj, const int idx)
+  const autoware_planning_msgs::msg::Trajectory & traj, const int idx)
 {
   return traj.points.at(idx).pose;
 }
@@ -137,11 +137,11 @@ inline double calcDist2d(const geometry_msgs::msg::Point & a, const geometry_msg
 double normalizeEulerAngle(double euler);
 
 double calcArcLengthFromWayPoint(
-  const autoware_auto_planning_msgs::msg::Trajectory & input_path, const size_t src_idx,
+  const autoware_planning_msgs::msg::Trajectory & input_path, const size_t src_idx,
   const size_t dst_idx);
 
 double calcDistanceAlongTrajectory(
-  const autoware_auto_planning_msgs::msg::Trajectory & trajectory,
+  const autoware_planning_msgs::msg::Trajectory & trajectory,
   const geometry_msgs::msg::Pose & current_pose, const geometry_msgs::msg::Pose & target_pose);
 
 }  // namespace planning_util

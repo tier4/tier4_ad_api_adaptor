@@ -40,22 +40,20 @@ private:
     const std::shared_ptr<geometry_msgs::msg::PoseStamped> & pose_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getSteerInfo(
-    const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr & steer_ptr,
+    const autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr & steer_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getVehicleCmdInfo(
-    const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr &
-      vehicle_cmd_ptr,
+    const autoware_control_msgs::msg::Control::ConstSharedPtr & vehicle_cmd_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getTurnSignalInfo(
-    const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &
-      turn_indicators_ptr,
-    const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr & hazard_lights_ptr,
+    const autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr & turn_indicators_ptr,
+    const autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr & hazard_lights_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getTwistInfo(
     const nav_msgs::msg::Odometry::ConstSharedPtr & odometry_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getGearInfo(
-    const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr & gear_ptr,
+    const autoware_vehicle_msgs::msg::GearReport::ConstSharedPtr & gear_ptr,
     tier4_api_msgs::msg::AwapiVehicleStatus * status);
   void getBatteryInfo(
     const tier4_vehicle_msgs::msg::BatteryStatus::ConstSharedPtr & battery_ptr,
@@ -69,7 +67,7 @@ private:
 
   // parameters
   nav_msgs::msg::Odometry::ConstSharedPtr previous_odometry_ptr_;
-  autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr previous_steer_ptr_;
+  autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr previous_steer_ptr_;
   double prev_accel_;
   double prev_steer_vel_;
 

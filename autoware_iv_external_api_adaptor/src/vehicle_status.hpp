@@ -18,12 +18,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
-#include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"
-#include "autoware_auto_vehicle_msgs/msg/gear_report.hpp"
-#include "autoware_auto_vehicle_msgs/msg/hazard_lights_report.hpp"
-#include "autoware_auto_vehicle_msgs/msg/steering_report.hpp"
-#include "autoware_auto_vehicle_msgs/msg/turn_indicators_report.hpp"
-#include "autoware_auto_vehicle_msgs/msg/velocity_report.hpp"
+#include "autoware_control_msgs/msg/control.hpp"
+#include "autoware_vehicle_msgs/msg/gear_report.hpp"
+#include "autoware_vehicle_msgs/msg/hazard_lights_report.hpp"
+#include "autoware_vehicle_msgs/msg/steering_report.hpp"
+#include "autoware_vehicle_msgs/msg/turn_indicators_report.hpp"
+#include "autoware_vehicle_msgs/msg/velocity_report.hpp"
 #include "tier4_external_api_msgs/msg/vehicle_command_stamped.hpp"
 #include "tier4_external_api_msgs/msg/vehicle_status_stamped.hpp"
 
@@ -39,28 +39,27 @@ private:
   // ros interface for vehicle status
   rclcpp::Publisher<tier4_external_api_msgs::msg::VehicleStatusStamped>::SharedPtr pub_status_;
   rclcpp::TimerBase::SharedPtr timer_;
-  rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr sub_velocity_;
-  rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr sub_steering_;
-  rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>::SharedPtr
+  rclcpp::Subscription<autoware_vehicle_msgs::msg::VelocityReport>::SharedPtr sub_velocity_;
+  rclcpp::Subscription<autoware_vehicle_msgs::msg::SteeringReport>::SharedPtr sub_steering_;
+  rclcpp::Subscription<autoware_vehicle_msgs::msg::TurnIndicatorsReport>::SharedPtr
     sub_turn_indicators_;
-  rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::HazardLightsReport>::SharedPtr
+  rclcpp::Subscription<autoware_vehicle_msgs::msg::HazardLightsReport>::SharedPtr
     sub_hazard_lights_;
-  rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::GearReport>::SharedPtr sub_gear_shift_;
+  rclcpp::Subscription<autoware_vehicle_msgs::msg::GearReport>::SharedPtr sub_gear_shift_;
 
   // ros interface for vehicle command
   rclcpp::Publisher<tier4_external_api_msgs::msg::VehicleCommandStamped>::SharedPtr pub_cmd_;
-  rclcpp::Subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
-    sub_cmd_;
+  rclcpp::Subscription<autoware_control_msgs::msg::Control>::SharedPtr sub_cmd_;
 
   // ros callback
   void onTimer();
 
   // vehicle status
-  autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr velocity_;
-  autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr steering_;
-  autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr turn_indicators_;
-  autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr hazard_lights_;
-  autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr gear_shift_;
+  autoware_vehicle_msgs::msg::VelocityReport::ConstSharedPtr velocity_;
+  autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr steering_;
+  autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr turn_indicators_;
+  autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr hazard_lights_;
+  autoware_vehicle_msgs::msg::GearReport::ConstSharedPtr gear_shift_;
 };
 
 }  // namespace external_api

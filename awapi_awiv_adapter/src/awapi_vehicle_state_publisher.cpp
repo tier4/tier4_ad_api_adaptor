@@ -83,7 +83,7 @@ void AutowareIvVehicleStatePublisher::getPoseInfo(
 }
 
 void AutowareIvVehicleStatePublisher::getSteerInfo(
-  const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr & steer_ptr,
+  const autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr & steer_ptr,
   tier4_api_msgs::msg::AwapiVehicleStatus * status)
 {
   if (!steer_ptr) {
@@ -112,7 +112,7 @@ void AutowareIvVehicleStatePublisher::getSteerInfo(
   previous_steer_ptr_ = steer_ptr;
 }
 void AutowareIvVehicleStatePublisher::getVehicleCmdInfo(
-  const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr & vehicle_cmd_ptr,
+  const autoware_control_msgs::msg::Control::ConstSharedPtr & vehicle_cmd_ptr,
   tier4_api_msgs::msg::AwapiVehicleStatus * status)
 {
   if (!vehicle_cmd_ptr) {
@@ -122,14 +122,14 @@ void AutowareIvVehicleStatePublisher::getVehicleCmdInfo(
 
   // get command
   status->target_acceleration = vehicle_cmd_ptr->longitudinal.acceleration;
-  status->target_velocity = vehicle_cmd_ptr->longitudinal.speed;
+  status->target_velocity = vehicle_cmd_ptr->longitudinal.velocity;
   status->target_steering = vehicle_cmd_ptr->lateral.steering_tire_angle;
   status->target_steering_velocity = vehicle_cmd_ptr->lateral.steering_tire_rotation_rate;
 }
 
 void AutowareIvVehicleStatePublisher::getTurnSignalInfo(
-  const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr & turn_indicators_ptr,
-  const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr & hazard_lights_ptr,
+  const autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr & turn_indicators_ptr,
+  const autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr & hazard_lights_ptr,
   tier4_api_msgs::msg::AwapiVehicleStatus * status)
 {
   if (!turn_indicators_ptr) {
@@ -181,7 +181,7 @@ void AutowareIvVehicleStatePublisher::getTwistInfo(
 }
 
 void AutowareIvVehicleStatePublisher::getGearInfo(
-  const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr & gear_ptr,
+  const autoware_vehicle_msgs::msg::GearReport::ConstSharedPtr & gear_ptr,
   tier4_api_msgs::msg::AwapiVehicleStatus * status)
 {
   if (!gear_ptr) {

@@ -80,40 +80,40 @@ VehicleStatus::VehicleStatus(const rclcpp::NodeOptions & options)
     "/api/external/get/vehicle/status", rclcpp::QoS(1));
   timer_ = rclcpp::create_timer(this, get_clock(), 200ms, std::bind(&VehicleStatus::onTimer, this));
 
-  sub_velocity_ = create_subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>(
+  sub_velocity_ = create_subscription<autoware_vehicle_msgs::msg::VelocityReport>(
     "/vehicle/status/velocity_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg) {
+    [this](const autoware_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg) {
       velocity_ = msg;
     });
-  sub_steering_ = create_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
+  sub_steering_ = create_subscription<autoware_vehicle_msgs::msg::SteeringReport>(
     "/vehicle/status/steering_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg) {
+    [this](const autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg) {
       steering_ = msg;
     });
-  sub_turn_indicators_ = create_subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>(
+  sub_turn_indicators_ = create_subscription<autoware_vehicle_msgs::msg::TurnIndicatorsReport>(
     "/vehicle/status/turn_indicators_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg) {
+    [this](const autoware_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg) {
       turn_indicators_ = msg;
     });
-  sub_hazard_lights_ = create_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsReport>(
+  sub_hazard_lights_ = create_subscription<autoware_vehicle_msgs::msg::HazardLightsReport>(
     "/vehicle/status/hazard_lights_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr msg) {
+    [this](const autoware_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr msg) {
       hazard_lights_ = msg;
     });
-  sub_gear_shift_ = create_subscription<autoware_auto_vehicle_msgs::msg::GearReport>(
+  sub_gear_shift_ = create_subscription<autoware_vehicle_msgs::msg::GearReport>(
     "/vehicle/status/gear_status", rclcpp::QoS(1),
-    [this](const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr msg) {
+    [this](const autoware_vehicle_msgs::msg::GearReport::ConstSharedPtr msg) {
       gear_shift_ = msg;
     });
 
   pub_cmd_ = create_publisher<tier4_external_api_msgs::msg::VehicleCommandStamped>(
     "/api/external/get/command/selected/vehicle", rclcpp::QoS(1));
-  sub_cmd_ = create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+  sub_cmd_ = create_subscription<autoware_control_msgs::msg::Control>(
     "/control/command/control_cmd", rclcpp::QoS(1),
-    [this](const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg) {
+    [this](const autoware_control_msgs::msg::Control::ConstSharedPtr msg) {
       tier4_external_api_msgs::msg::VehicleCommandStamped cmd;
       cmd.stamp = msg->stamp;
-      cmd.command.velocity = msg->longitudinal.speed;
+      cmd.command.velocity = msg->longitudinal.velocity;
       cmd.command.acceleration = msg->longitudinal.acceleration;
       pub_cmd_->publish(cmd);
     });
