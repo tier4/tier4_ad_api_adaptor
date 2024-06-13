@@ -36,7 +36,7 @@
   <arg name="input_nearest_traffic_signal" default="/planning/scenario_planning/lane_driving/behavior_planning/debug/traffic_signal"/>
   <arg name="input_trajectory" default="/planning/scenario_planning/trajectory"/>
   <arg name="input_current_max_velocity" default="/planning/scenario_planning/current_max_velocity"/>
-  <arg name="input_stop_speed_exceeded" default="/planning/scenario_planning/motion_velocity_smoother/stop_speed_exceeded"/>
+  <arg name="input_stop_speed_exceeded" default="/planning/scenario_planning/velocity_smoother/stop_speed_exceeded"/>
   <arg name="input_external_crosswalk_status" default="/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/input/external_crosswalk_states"/>
   <arg name="input_external_intersection_status" default="/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/input/external_intersection_states"/>
   <arg name="input_expand_stop_range" default="/planning/scenario_planning/lane_driving/motion_planning/obstacle_stop_planner/input/expand_stop_range"/>
@@ -62,7 +62,7 @@
 
   <arg name="node_emergency_stop" default="/control/vehicle_cmd_gate"/>
   <arg name="param_emergency_stop" default="check_external_emergency_heartbeat"/>
-  <arg name="node_max_velocity" default="/planning/scenario_planning/motion_velocity_smoother"/>
+  <arg name="node_max_velocity" default="/planning/scenario_planning/velocity_smoother"/>
   <arg name="param_max_velocity" default="max_velocity"/>
 
   <arg name="set_max_velocity" default="vehicle/put/velocity"/>
