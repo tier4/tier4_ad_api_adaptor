@@ -18,7 +18,6 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
-#include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
 #include <autoware_perception_msgs/msg/tracked_objects.hpp>
 #include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_system_msgs/msg/autoware_state.hpp>
@@ -43,7 +42,7 @@ private:
   rclcpp::Publisher<AutowareStateIV>::SharedPtr pub_state_;
 
   using ControlModeAuto = autoware_vehicle_msgs::msg::ControlModeReport;
-  using ControlMode = autoware_auto_vehicle_msgs::msg::ControlModeReport;
+  using ControlMode = autoware_vehicle_msgs::msg::ControlModeReport;
   rclcpp::Subscription<ControlMode>::SharedPtr sub_control_mode_;
   rclcpp::Publisher<ControlModeAuto>::SharedPtr pub_control_mode_;
 
