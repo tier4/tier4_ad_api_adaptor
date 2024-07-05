@@ -35,33 +35,33 @@ public:
   explicit IVMsgs(const rclcpp::NodeOptions & options);
 
 private:
-  using EmergencyStateAuto = autoware_adapi_v1_msgs::msg::MrmState;
-  using AutowareStateAuto = autoware_system_msgs::msg::AutowareState;
-  using AutowareStateIV = tier4_system_msgs::msg::AutowareState;
-  rclcpp::Subscription<EmergencyStateAuto>::SharedPtr sub_emergency_;
-  rclcpp::Subscription<AutowareStateAuto>::SharedPtr sub_state_;
-  rclcpp::Publisher<AutowareStateIV>::SharedPtr pub_state_;
+  using EmergencyStateInput = autoware_adapi_v1_msgs::msg::MrmState;
+  using AutowareStateInput = autoware_system_msgs::msg::AutowareState;
+  using AutowareStateOutput = tier4_system_msgs::msg::AutowareState;
+  rclcpp::Subscription<EmergencyStateInput>::SharedPtr sub_emergency_;
+  rclcpp::Subscription<AutowareStateInput>::SharedPtr sub_state_;
+  rclcpp::Publisher<AutowareStateOutput>::SharedPtr pub_state_;
 
-  using ControlModeAuto = autoware_vehicle_msgs::msg::ControlModeReport;
-  using ControlMode = autoware_auto_vehicle_msgs::msg::ControlModeReport;
-  rclcpp::Subscription<ControlMode>::SharedPtr sub_control_mode_;
-  rclcpp::Publisher<ControlModeAuto>::SharedPtr pub_control_mode_;
+  using ControlModeInput = autoware_vehicle_msgs::msg::ControlModeReport;
+  using ControlModeOutput = autoware_auto_vehicle_msgs::msg::ControlModeReport;
+  rclcpp::Subscription<ControlModeInput>::SharedPtr sub_control_mode_;
+  rclcpp::Publisher<ControlModeOutput>::SharedPtr pub_control_mode_;
 
-  using TrajectoryAuto = autoware_planning_msgs::msg::Trajectory;
-  using TrajectoryIV = tier4_planning_msgs::msg::Trajectory;
-  rclcpp::Subscription<TrajectoryAuto>::SharedPtr sub_trajectory_;
-  rclcpp::Publisher<TrajectoryIV>::SharedPtr pub_trajectory_;
+  using TrajectoryInput = autoware_planning_msgs::msg::Trajectory;
+  using TrajectoryOutput = tier4_planning_msgs::msg::Trajectory;
+  rclcpp::Subscription<TrajectoryInput>::SharedPtr sub_trajectory_;
+  rclcpp::Publisher<TrajectoryOutput>::SharedPtr pub_trajectory_;
 
-  using TrackedObjectsAuto = autoware_perception_msgs::msg::TrackedObjects;
-  using DynamicObjectsIV = tier4_perception_msgs::msg::DynamicObjectArray;
-  rclcpp::Subscription<TrackedObjectsAuto>::SharedPtr sub_tracked_objects_;
-  rclcpp::Publisher<DynamicObjectsIV>::SharedPtr pub_dynamic_objects_;
+  using TrackedObjectsInput = autoware_perception_msgs::msg::TrackedObjects;
+  using DynamicObjectsOutput = tier4_perception_msgs::msg::DynamicObjectArray;
+  rclcpp::Subscription<TrackedObjectsInput>::SharedPtr sub_tracked_objects_;
+  rclcpp::Publisher<DynamicObjectsOutput>::SharedPtr pub_dynamic_objects_;
 
-  void onState(const AutowareStateAuto::ConstSharedPtr message);
-  void onEmergency(const EmergencyStateAuto::ConstSharedPtr message);
-  void onControlMode(const ControlMode::ConstSharedPtr message);
-  void onTrajectory(const TrajectoryAuto::ConstSharedPtr message);
-  void onTrackedObjects(const TrackedObjectsAuto::ConstSharedPtr message);
+  void onState(const AutowareStateInput::ConstSharedPtr message);
+  void onEmergency(const EmergencyStateInput::ConstSharedPtr message);
+  void onControlMode(const ControlModeInput::ConstSharedPtr message);
+  void onTrajectory(const TrajectoryInput::ConstSharedPtr message);
+  void onTrackedObjects(const TrackedObjectsInput::ConstSharedPtr message);
 
   bool is_emergency_;
 };
