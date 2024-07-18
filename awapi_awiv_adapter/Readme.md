@@ -107,11 +107,11 @@
 ### /awapi/traffic_light/get/traffic_signals
 
 - get recognition result of traffic light
-- MessageType: autoware_auto_perception_msgs/msg/TrafficSignalArray
+- MessageType: autoware_perception_msgs/msg/TrafficSignalArray
 
 | ✓   | type                                                 | name | unit | note |
 | --- | :--------------------------------------------------- | :--- | :--- | :--- |
-|     | autoware_auto_perception_msgs/msg/TrafficSignalArray |      |      |      |
+|     | autoware_perception_msgs/msg/TrafficSignalArray |      |      |      |
 
 ### /awapi/traffic_light/get/nearest_traffic_signal
 
@@ -234,11 +234,11 @@
 ### /awapi/traffic_light/put/traffic_signals
 
 - Overwrite the recognition result of traffic light
-- MessageType: autoware_auto_perception_msgs/TrafficSignalArray
+- MessageType: autoware_perception_msgs/msg/TrafficSignalArray
 
 | ✓   | type                                             | name | unit | note |
 | --- | :----------------------------------------------- | :--- | :--- | :--- |
-|     | autoware_auto_perception_msgs/TrafficSignalArray |      |      |      |
+|     | autoware_perception_msgs/msg/TrafficSignalArray |      |      |      |
 
 ### /awapi/autoware/put/crosswalk_states
 
