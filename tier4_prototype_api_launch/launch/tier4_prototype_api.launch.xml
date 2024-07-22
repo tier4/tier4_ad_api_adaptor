@@ -1,0 +1,28 @@
+<launch>
+  <!-- awapi -->
+  <group>
+    <include file="$(find-pkg-share awapi_awiv_adapter)/launch/awapi_awiv_adapter.launch.xml"/>
+  </group>
+
+  <!-- autoware api adaptor -->
+  <group>
+    <push-ros-namespace namespace="autoware_api"/>
+    <include file="$(find-pkg-share autoware_iv_external_api_adaptor)/launch/external_api_adaptor.launch.py"/>
+    <include file="$(find-pkg-share autoware_iv_internal_api_adaptor)/launch/internal_api_adaptor.launch.py"/>
+    <include file="$(find-pkg-share autoware_iv_internal_api_adaptor)/launch/internal_api_relay.launch.xml"/>
+  </group>
+
+  <!-- autoware api utils -->
+  <group>
+    <push-ros-namespace namespace="autoware_api/utils"/>
+    <include file="$(find-pkg-share path_distance_calculator)/launch/path_distance_calculator.launch.xml"/>
+  </group>
+
+  <!-- RTC controller -->
+  <group>
+    <push-ros-namespace namespace="autoware_api/external/rtc_controller"/>
+    <node_container pkg="rclcpp_components" exec="component_container_mt" name="container" namespace="" ros_args="--log-level autoware_api.external.rtc_controller.container:=warn">
+      <composable_node pkg="autoware_iv_external_api_adaptor" plugin="external_api::RTCController" name="node"/>
+    </node_container>
+  </group>
+</launch>
