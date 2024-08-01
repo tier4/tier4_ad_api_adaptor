@@ -107,30 +107,30 @@
 ### /awapi/traffic_light/get/traffic_signals
 
 - get recognition result of traffic light
-- MessageType: autoware_auto_perception_msgs/msg/TrafficSignalArray
+- MessageType: autoware_perception_msgs/msg/TrafficSignalArray
 
-| ✓   | type                                                 | name | unit | note |
-| --- | :--------------------------------------------------- | :--- | :--- | :--- |
-|     | autoware_auto_perception_msgs/msg/TrafficSignalArray |      |      |      |
+| ✓   | type                                            | name | unit | note |
+| --- | :---------------------------------------------- | :--- | :--- | :--- |
+|     | autoware_perception_msgs/msg/TrafficSignalArray |      |      |      |
 
 ### /awapi/traffic_light/get/nearest_traffic_signal
 
 - get recognition result of nearest traffic light
-- MessageType: autoware_auto_perception_msgs/LookingTrafficSignal
+- MessageType: autoware_perception_msgs/LookingTrafficSignal
 
-|     | type                                                 | name       | unit | note                                                          |
-| --- | :--------------------------------------------------- | :--------- | :--- | :------------------------------------------------------------ |
-|     | std_msgs/Header                                      | header     |      |                                                               |
-|     | autoware_auto_perception_msgs/TrafficSignalWithJudge | perception |      | traffic light information from autoware perception module     |
-|     | autoware_auto_perception_msgs/TrafficSignalWithJudge | external   |      | traffic light information from external tool/module           |
-|     | autoware_auto_perception_msgs/TrafficSignalWithJudge | final      |      | traffic light information used by the planning module finally |
+|     | type                                            | name       | unit | note                                                          |
+| --- | :---------------------------------------------- | :--------- | :--- | :------------------------------------------------------------ |
+|     | std_msgs/Header                                 | header     |      |                                                               |
+|     | autoware_perception_msgs/TrafficSignalWithJudge | perception |      | traffic light information from autoware perception module     |
+|     | autoware_perception_msgs/TrafficSignalWithJudge | external   |      | traffic light information from external tool/module           |
+|     | autoware_perception_msgs/TrafficSignalWithJudge | final      |      | traffic light information used by the planning module finally |
 
 - The contents of TrafficSignalWithJudge.msg is following.
 
-|     | type                                        | name   | unit                 | note                                                           |
-| --- | :------------------------------------------ | :----- | :------------------- | :------------------------------------------------------------- |
-|     | autoware_auto_perception_msgs/TrafficSignal | signal |                      | traffic light color/arrow                                      |
-|     | uint8                                       | judge  | 0:NONE, 1:STOP, 2:GO | go/stop judgment based on the color/arrow of the traffic light |
+|     | type                                   | name   | unit                 | note                                                           |
+| --- | :------------------------------------- | :----- | :------------------- | :------------------------------------------------------------- |
+|     | autoware_perception_msgs/TrafficSignal | signal |                      | traffic light color/arrow                                      |
+|     | uint8                                  | judge  | 0:NONE, 1:STOP, 2:GO | go/stop judgment based on the color/arrow of the traffic light |
 
 ## put topic
 
@@ -234,11 +234,11 @@
 ### /awapi/traffic_light/put/traffic_signals
 
 - Overwrite the recognition result of traffic light
-- MessageType: autoware_auto_perception_msgs/TrafficSignalArray
+- MessageType: autoware_perception_msgs/TrafficSignalArray
 
-| ✓   | type                                             | name | unit | note |
-| --- | :----------------------------------------------- | :--- | :--- | :--- |
-|     | autoware_auto_perception_msgs/TrafficSignalArray |      |      |      |
+| ✓   | type                                        | name | unit | note |
+| --- | :------------------------------------------ | :--- | :--- | :--- |
+|     | autoware_perception_msgs/TrafficSignalArray |      |      |      |
 
 ### /awapi/autoware/put/crosswalk_states
 

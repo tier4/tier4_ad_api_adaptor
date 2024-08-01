@@ -28,11 +28,6 @@ IVMsgs::IVMsgs(const rclcpp::NodeOptions & options) : Node("external_api_iv_msgs
   sub_emergency_ = create_subscription<EmergencyStateInput>(
     "/system/fail_safe/mrm_state", rclcpp::QoS(1), std::bind(&IVMsgs::onEmergency, this, _1));
 
-  pub_control_mode_ =
-    create_publisher<ControlModeOutput>("/api/iv_msgs/vehicle/status/control_mode", rclcpp::QoS(1));
-  sub_control_mode_ = create_subscription<ControlModeInput>(
-    "/vehicle/status/control_mode", rclcpp::QoS(1), std::bind(&IVMsgs::onControlMode, this, _1));
-
   pub_trajectory_ = create_publisher<TrajectoryOutput>(
     "/api/iv_msgs/planning/scenario_planning/trajectory", rclcpp::QoS(1));
   sub_trajectory_ = create_subscription<TrajectoryInput>(
@@ -60,14 +55,6 @@ void IVMsgs::onState(const AutowareStateInput::ConstSharedPtr message)
 void IVMsgs::onEmergency(const EmergencyStateInput::ConstSharedPtr message)
 {
   is_emergency_ = message->state != EmergencyStateInput::NORMAL;
-}
-
-void IVMsgs::onControlMode(const ControlModeInput::ConstSharedPtr message)
-{
-  ControlModeOutput control_mode;
-  control_mode.stamp = message->stamp;
-  control_mode.mode = message->mode;
-  pub_control_mode_->publish(control_mode);
 }
 
 void IVMsgs::onTrajectory(const TrajectoryInput::ConstSharedPtr message)

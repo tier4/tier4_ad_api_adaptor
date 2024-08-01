@@ -18,7 +18,6 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
-#include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
 #include <autoware_perception_msgs/msg/tracked_objects.hpp>
 #include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_system_msgs/msg/autoware_state.hpp>
@@ -42,11 +41,6 @@ private:
   rclcpp::Subscription<AutowareStateInput>::SharedPtr sub_state_;
   rclcpp::Publisher<AutowareStateOutput>::SharedPtr pub_state_;
 
-  using ControlModeInput = autoware_vehicle_msgs::msg::ControlModeReport;
-  using ControlModeOutput = autoware_auto_vehicle_msgs::msg::ControlModeReport;
-  rclcpp::Subscription<ControlModeInput>::SharedPtr sub_control_mode_;
-  rclcpp::Publisher<ControlModeOutput>::SharedPtr pub_control_mode_;
-
   using TrajectoryInput = autoware_planning_msgs::msg::Trajectory;
   using TrajectoryOutput = tier4_planning_msgs::msg::Trajectory;
   rclcpp::Subscription<TrajectoryInput>::SharedPtr sub_trajectory_;
@@ -59,7 +53,6 @@ private:
 
   void onState(const AutowareStateInput::ConstSharedPtr message);
   void onEmergency(const EmergencyStateInput::ConstSharedPtr message);
-  void onControlMode(const ControlModeInput::ConstSharedPtr message);
   void onTrajectory(const TrajectoryInput::ConstSharedPtr message);
   void onTrackedObjects(const TrackedObjectsInput::ConstSharedPtr message);
 
