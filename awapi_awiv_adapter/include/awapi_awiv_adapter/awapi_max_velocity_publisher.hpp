@@ -30,6 +30,8 @@ public:
   void statePublisher(const AutowareInfo & aw_info);
 
 private:
+  rclcpp::Clock::SharedPtr clock_;
+
   // publisher
   rclcpp::Publisher<tier4_planning_msgs::msg::VelocityLimit>::SharedPtr pub_state_;
 

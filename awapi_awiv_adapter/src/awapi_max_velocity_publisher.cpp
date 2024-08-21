@@ -18,7 +18,7 @@ namespace autoware_api
 {
 AutowareIvMaxVelocityPublisher::AutowareIvMaxVelocityPublisher(
   rclcpp::Node & node, const double default_max_velocity)
-: default_max_velocity_(default_max_velocity)
+: clock_(node.get_clock()), default_max_velocity_(default_max_velocity)
 {
   // publisher
   pub_state_ = node.create_publisher<tier4_planning_msgs::msg::VelocityLimit>(
@@ -32,6 +32,7 @@ void AutowareIvMaxVelocityPublisher::statePublisher(const AutowareInfo & aw_info
         aw_info.max_velocity_ptr, aw_info.temporary_stop_ptr,
         &max_velocity.max_velocity))  // publish info
   {
+    max_velocity.stamp = clock_->now();
     pub_state_->publish(max_velocity);
   }
 }
