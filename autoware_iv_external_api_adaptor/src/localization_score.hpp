@@ -18,8 +18,8 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include "tier4_external_api_msgs/msg/localization_score_array.hpp"
+#include <autoware_internal_debug_msgs/msg/float32_stamped.hpp>
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
-#include <tier4_debug_msgs/msg/float32_stamped.hpp>
 
 #include <memory>
 #include <utility>
@@ -27,7 +27,7 @@
 namespace external_api
 {
 using geometry_msgs::msg::PoseWithCovarianceStamped;
-using tier4_debug_msgs::msg::Float32Stamped;
+using autoware_internal_debug_msgs::msg::Float32Stamped;
 using tier4_external_api_msgs::msg::LocalizationScoreArray;
 
 class LocalizationScore : public rclcpp::Node
