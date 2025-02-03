@@ -26,8 +26,8 @@
 
 namespace external_api
 {
-using geometry_msgs::msg::PoseWithCovarianceStamped;
 using autoware_internal_debug_msgs::msg::Float32Stamped;
+using geometry_msgs::msg::PoseWithCovarianceStamped;
 using tier4_external_api_msgs::msg::LocalizationScoreArray;
 
 class LocalizationScore : public rclcpp::Node
