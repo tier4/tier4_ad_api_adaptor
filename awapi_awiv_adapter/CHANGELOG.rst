@@ -2,8 +2,8 @@
 Changelog for package awapi_awiv_adapter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.41.0 (2025-02-10)
+-------------------
 * feat(awapi): add velocity factor converter (`#129 <https://github.com/tier4/tier4_ad_api_adaptor/issues/129>`_)
   * feat(awapi): add velocity factor converter
   * fix: use velocity factor converter

@@ -2,8 +2,8 @@
 Changelog for package autoware_external_api_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.41.0 (2025-02-10)
+-------------------
 * chore: use autoware_cmake (`#71 <https://github.com/tier4/tier4_ad_api_adaptor/issues/71>`_)
 * feat: add external api adaptor for calibration status (`#43 <https://github.com/tier4/tier4_ad_api_adaptor/issues/43>`_)
   * (editting) save current work

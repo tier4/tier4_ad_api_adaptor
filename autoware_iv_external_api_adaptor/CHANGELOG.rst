@@ -2,8 +2,8 @@
 Changelog for package autoware_iv_external_api_adaptor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.41.0 (2025-02-10)
+-------------------
 * feat: rename autoware_component_interface_specs to autoware_component_interface_specs_universe (`#130 <https://github.com/tier4/tier4_ad_api_adaptor/issues/130>`_)
 * fix(external): fix old package name (`#128 <https://github.com/tier4/tier4_ad_api_adaptor/issues/128>`_)
   * fix(external): fix old package name

@@ -2,8 +2,8 @@
 Changelog for package autoware_iv_internal_api_adaptor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.41.0 (2025-02-10)
+-------------------
 * feat: remove autoware_auto messages (`#124 <https://github.com/tier4/tier4_ad_api_adaptor/issues/124>`_)
 * fix(autoware_iv_internal_api_adaptor): iv msg types (`#121 <https://github.com/tier4/tier4_ad_api_adaptor/issues/121>`_)
 * fix: change the output of ControlMode to autoware_auto_msgs (`#116 <https://github.com/tier4/tier4_ad_api_adaptor/issues/116>`_)
