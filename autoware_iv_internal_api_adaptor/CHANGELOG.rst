@@ -75,9 +75,6 @@ Changelog for package autoware_iv_internal_api_adaptor
   * pull the latest tier4/univerese
 * Contributors: Ryohsuke Mitsudome, Satoshi OTA, Takagi, Isamu, Takamasa Horibe, TakumiKozaka-T4, Tomoya Kimura, Vincent Richard, Yukihiro Saito
 
-2022.05.0 (2022-05-24)
-----------------------
-
 0.40.0 (2024-11-25)
 -------------------
 * feat: remove autoware_auto messages (`#124 <https://github.com/tier4/tier4_ad_api_adaptor/issues/124>`_)

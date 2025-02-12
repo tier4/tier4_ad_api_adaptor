@@ -12,9 +12,6 @@ Changelog for package autoware_external_api_msgs
   * pull the latest tier4/univerese
 * Contributors: Takagi, Isamu, TakumiKozaka-T4
 
-2022.05.0 (2022-05-24)
-----------------------
-
 0.40.0 (2024-11-25)
 -------------------
 * chore: use autoware_cmake (`#71 <https://github.com/tier4/tier4_ad_api_adaptor/issues/71>`_)
