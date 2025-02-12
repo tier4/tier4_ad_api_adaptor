@@ -111,9 +111,6 @@ Changelog for package autoware_iv_external_api_adaptor
   * pull the latest tier4/univerese
 * Contributors: Esteve Fernandez, Fumiya Watanabe, Kah Hooi Tan, Kosuke Takeuchi, Mamoru Sobue, Ryohsuke Mitsudome, Satoshi OTA, Takagi, Isamu, Takayuki Murooka, Takeshi Miura, TakumiKozaka-T4, Vincent Richard, Yukihiro Saito, hidenaga
 
-2022.05.0 (2022-05-24)
-----------------------
-
 0.40.0 (2024-11-25)
 -------------------
 * fix(external): fix old package name (`#128 <https://github.com/tier4/tier4_ad_api_adaptor/issues/128>`_)

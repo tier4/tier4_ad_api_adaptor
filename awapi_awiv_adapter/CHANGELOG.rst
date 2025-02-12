@@ -57,9 +57,6 @@ Changelog for package awapi_awiv_adapter
 * chore: replace topic tools (`#44 <https://github.com/tier4/tier4_ad_api_adaptor/issues/44>`_)
 * Contributors: Autumn60, Daisuke Nishimatsu, Fumiya Watanabe, Hiroki OTA, Satoshi OTA, Shumpei Wakabayashi, Takagi, Isamu, TakumiKozaka-T4, Vincent Richard, Yukihiro Saito, yabuta
 
-2022.05.0 (2022-05-24)
-----------------------
-
 0.40.0 (2024-11-25)
 -------------------
 * feat(awapi): add velocity factor converter (`#129 <https://github.com/tier4/tier4_ad_api_adaptor/issues/129>`_)
