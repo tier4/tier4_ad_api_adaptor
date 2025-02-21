@@ -21,13 +21,13 @@ AutowareIvMaxVelocityPublisher::AutowareIvMaxVelocityPublisher(
 : clock_(node.get_clock()), default_max_velocity_(default_max_velocity)
 {
   // publisher
-  pub_state_ = node.create_publisher<tier4_planning_msgs::msg::VelocityLimit>(
+  pub_state_ = node.create_publisher<autoware_internal_planning_msgs::msg::VelocityLimit>(
     "output/max_velocity", rclcpp::QoS{1}.transient_local());
 }
 
 void AutowareIvMaxVelocityPublisher::statePublisher(const AutowareInfo & aw_info)
 {
-  tier4_planning_msgs::msg::VelocityLimit max_velocity;
+  autoware_internal_planning_msgs::msg::VelocityLimit max_velocity;
   if (calcMaxVelocity(
         aw_info.max_velocity_ptr, aw_info.temporary_stop_ptr,
         &max_velocity.max_velocity))  // publish info

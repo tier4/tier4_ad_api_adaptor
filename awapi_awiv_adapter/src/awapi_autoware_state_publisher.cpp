@@ -114,7 +114,7 @@ void AutowareIvAutowareStatePublisher::getEmergencyStateInfo(
 }
 
 void AutowareIvAutowareStatePublisher::getCurrentMaxVelInfo(
-  const tier4_planning_msgs::msg::VelocityLimit::ConstSharedPtr & current_max_velocity_ptr,
+  const autoware_internal_planning_msgs::msg::VelocityLimit::ConstSharedPtr & current_max_velocity_ptr,
   tier4_api_msgs::msg::AwapiAutowareStatus * status)
 {
   if (!current_max_velocity_ptr) {

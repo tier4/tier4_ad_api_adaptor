@@ -31,6 +31,7 @@
   <depend>tier4_system_msgs</depend>
   <depend>tier4_v2x_msgs</depend>
   <depend>tier4_vehicle_msgs</depend>
+  <depend>autoware_internal_planning_msgs</depend>
 
   <exec_depend>tier4_perception_msgs</exec_depend>
   <exec_depend>topic_tools</exec_depend>
