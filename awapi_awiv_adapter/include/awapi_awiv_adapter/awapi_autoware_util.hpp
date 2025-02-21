@@ -19,6 +19,7 @@
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
 #include <autoware_control_msgs/msg/control.hpp>
+#include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
 #include <autoware_planning_msgs/msg/path.hpp>
 #include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_system_msgs/msg/hazard_status_stamped.hpp>
@@ -37,7 +38,6 @@
 #include <tier4_planning_msgs/msg/is_avoidance_possible.hpp>
 #include <tier4_planning_msgs/msg/lane_change_status.hpp>
 #include <tier4_planning_msgs/msg/stop_reason_array.hpp>
-#include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
 #include <tier4_system_msgs/msg/autoware_state.hpp>
 #include <tier4_v2x_msgs/msg/infrastructure_command_array.hpp>
 #include <tier4_v2x_msgs/msg/virtual_traffic_light_state_array.hpp>
