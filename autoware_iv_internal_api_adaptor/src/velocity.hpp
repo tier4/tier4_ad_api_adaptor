@@ -18,9 +18,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
+#include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
 #include <tier4_external_api_msgs/srv/pause_driving.hpp>
 #include <tier4_external_api_msgs/srv/set_velocity_limit.hpp>
-#include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
 
 namespace internal_api
 {

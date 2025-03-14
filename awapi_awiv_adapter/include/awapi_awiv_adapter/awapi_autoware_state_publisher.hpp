@@ -58,7 +58,8 @@ private:
     const autoware_adapi_v1_msgs::msg::MrmState::ConstSharedPtr & mrm_state_ptr,
     tier4_api_msgs::msg::AwapiAutowareStatus * status);
   void getCurrentMaxVelInfo(
-    const autoware_internal_planning_msgs::msg::VelocityLimit::ConstSharedPtr & current_max_velocity_ptr,
+    const autoware_internal_planning_msgs::msg::VelocityLimit::ConstSharedPtr &
+      current_max_velocity_ptr,
     tier4_api_msgs::msg::AwapiAutowareStatus * status);
   void getHazardStatusInfo(
     const AutowareInfo & aw_info, tier4_api_msgs::msg::AwapiAutowareStatus * status);

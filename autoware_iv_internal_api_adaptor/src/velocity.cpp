@@ -63,7 +63,8 @@ void Velocity::setVelocityLimit(
   response->status = tier4_api_utils::response_success();
 }
 
-void Velocity::onVelocityLimit(const autoware_internal_planning_msgs::msg::VelocityLimit::SharedPtr msg)
+void Velocity::onVelocityLimit(
+  const autoware_internal_planning_msgs::msg::VelocityLimit::SharedPtr msg)
 {
   // store the velocity for releasing the stop
   if (kVelocityEpsilon < msg->max_velocity) {
