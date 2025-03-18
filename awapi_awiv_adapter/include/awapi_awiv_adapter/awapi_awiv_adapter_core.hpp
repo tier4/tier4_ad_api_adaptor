@@ -92,7 +92,7 @@ private:
   rclcpp::Subscription<autoware_planning_msgs::msg::Trajectory>::SharedPtr
     sub_obstacle_avoid_candidate_;
   rclcpp::Subscription<tier4_api_msgs::msg::VelocityLimit>::SharedPtr sub_max_velocity_;
-  rclcpp::Subscription<tier4_planning_msgs::msg::VelocityLimit>::SharedPtr
+  rclcpp::Subscription<autoware_internal_planning_msgs::msg::VelocityLimit>::SharedPtr
     sub_current_max_velocity_;
   rclcpp::Subscription<tier4_api_msgs::msg::StopCommand>::SharedPtr sub_temporary_stop_;
   rclcpp::Subscription<autoware_planning_msgs::msg::Trajectory>::SharedPtr sub_autoware_traj_;
@@ -145,7 +145,7 @@ private:
     const autoware_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr);
   void callbackMaxVelocity(const tier4_api_msgs::msg::VelocityLimit::ConstSharedPtr msg_ptr);
   void callbackCurrentMaxVelocity(
-    const tier4_planning_msgs::msg::VelocityLimit::ConstSharedPtr msg_ptr);
+    const autoware_internal_planning_msgs::msg::VelocityLimit::ConstSharedPtr msg_ptr);
   void callbackTemporaryStop(const tier4_api_msgs::msg::StopCommand::ConstSharedPtr msg_ptr);
   void callbackAutowareTrajectory(
     const autoware_planning_msgs::msg::Trajectory::ConstSharedPtr msg_ptr);

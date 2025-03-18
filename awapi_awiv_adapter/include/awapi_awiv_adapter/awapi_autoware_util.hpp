@@ -19,6 +19,7 @@
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
 #include <autoware_control_msgs/msg/control.hpp>
+#include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
 #include <autoware_planning_msgs/msg/path.hpp>
 #include <autoware_planning_msgs/msg/trajectory.hpp>
 #include <autoware_system_msgs/msg/hazard_status_stamped.hpp>
@@ -37,7 +38,6 @@
 #include <tier4_planning_msgs/msg/is_avoidance_possible.hpp>
 #include <tier4_planning_msgs/msg/lane_change_status.hpp>
 #include <tier4_planning_msgs/msg/stop_reason_array.hpp>
-#include <tier4_planning_msgs/msg/velocity_limit.hpp>
 #include <tier4_system_msgs/msg/autoware_state.hpp>
 #include <tier4_v2x_msgs/msg/infrastructure_command_array.hpp>
 #include <tier4_v2x_msgs/msg/virtual_traffic_light_state_array.hpp>
@@ -85,7 +85,7 @@ struct AutowareInfo
   tier4_planning_msgs::msg::IsAvoidancePossible::ConstSharedPtr obstacle_avoid_ready_ptr;
   autoware_planning_msgs::msg::Trajectory::ConstSharedPtr obstacle_avoid_candidate_ptr;
   tier4_api_msgs::msg::VelocityLimit::ConstSharedPtr max_velocity_ptr;
-  tier4_planning_msgs::msg::VelocityLimit::ConstSharedPtr current_max_velocity_ptr;
+  autoware_internal_planning_msgs::msg::VelocityLimit::ConstSharedPtr current_max_velocity_ptr;
   tier4_api_msgs::msg::StopCommand::ConstSharedPtr temporary_stop_ptr;
   autoware_planning_msgs::msg::Trajectory::ConstSharedPtr autoware_planning_traj_ptr;
 };
