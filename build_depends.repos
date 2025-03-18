@@ -1,11 +1,11 @@
 repositories:
-  core/common:
-    type: git
-    url: https://github.com/autowarefoundation/autoware_common.git
-    version: main
   core/autoware.core:
     type: git
     url: https://github.com/autowarefoundation/autoware.core.git
+    version: main
+  core/autoware_utils:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_utils.git
     version: main
   msgs/autoware_msgs:
     type: git
