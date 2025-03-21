@@ -21,6 +21,10 @@
 #include "tier4_external_api_msgs/srv/initialize_pose.hpp"
 #include "tier4_external_api_msgs/srv/initialize_pose_auto.hpp"
 
+#include "autoware_state_machine_msgs/msg/state_sound_done.hpp"
+#include "tier4_external_api_msgs/msg/operator.hpp"
+#include "tier4_calibration_msgs/msg/bool_stamped.hpp"
+
 namespace external_api
 {
 
@@ -32,6 +36,9 @@ public:
 private:
   using InitializePose = tier4_external_api_msgs::srv::InitializePose;
   using InitializePoseAuto = tier4_external_api_msgs::srv::InitializePoseAuto;
+  using StateSoundDone = autoware_state_machine_msgs::msg::StateSoundDone;
+  using Operator = tier4_external_api_msgs::msg::Operator;
+  using BoolStamped = tier4_calibration_msgs::msg::BoolStamped;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
@@ -40,6 +47,12 @@ private:
   tier4_api_utils::Client<InitializePose>::SharedPtr cli_set_initialize_pose_;
   tier4_api_utils::Client<InitializePoseAuto>::SharedPtr cli_set_initialize_pose_auto_;
 
+  rclcpp::Publisher<BoolStamped>::SharedPtr pub_sound_state_; // true:PLAY, false:Stop
+
+  rclcpp::Subscription<StateSoundDone>::SharedPtr sub_state_sound_done_;
+  rclcpp::Subscription<Operator>::SharedPtr sub_operator_;
+  rclcpp::Subscription<BoolStamped>::SharedPtr sub_imu_calibrated_;
+
   // ros callback
   void setInitializePose(
     const tier4_external_api_msgs::srv::InitializePose::Request::SharedPtr request,
@@ -47,6 +60,14 @@ private:
   void setInitializePoseAuto(
     const tier4_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response);
+
+  void onStateSoundDone(const StateSoundDone::SharedPtr msg);
+  void onOperator(const Operator::SharedPtr msg);
+  void onImuCalibrated(const BoolStamped::SharedPtr msg);
+
+  bool is_playing_audio_;
+  bool is_calibrated_;
+  bool is_auto_key_;
 };
 
 }  // namespace external_api
