@@ -18,4 +18,7 @@ ament_auto_add_executable(awapi_awiv_adapter
   src/awapi_autoware_util.cpp
 )
 
+find_package(glog REQUIRED)
+target_link_libraries(awapi_awiv_adapter glog::glog)
+
 ament_auto_package(INSTALL_TO_SHARE launch)
