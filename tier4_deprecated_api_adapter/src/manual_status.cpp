@@ -48,7 +48,7 @@ void ManualStatus::relay_pedals(const InternalPedals & msg)
 {
   ExternalControlCommand command;
   command.stamp = msg.stamp;
-  command.control.throttle = msg.accelerator;
+  command.control.throttle = msg.throttle;
   command.control.brake = msg.brake;
   command.control.steering_angle = steering_tire_angle_;
   pub_control_->publish(command);

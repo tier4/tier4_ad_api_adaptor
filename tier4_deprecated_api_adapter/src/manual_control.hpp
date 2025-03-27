@@ -17,7 +17,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <autoware_adapi_v1_msgs/msg/manual_operator_status.hpp>
+#include <autoware_adapi_v1_msgs/msg/manual_operator_heartbeat.hpp>
 #include <autoware_adapi_v1_msgs/msg/pedals_command.hpp>
 #include <autoware_adapi_v1_msgs/msg/steering_command.hpp>
 #include <autoware_vehicle_msgs/msg/gear_command.hpp>
@@ -36,7 +36,7 @@ using ExternalControl = tier4_external_api_msgs::msg::ControlCommandStamped;
 using ExternalGear = tier4_external_api_msgs::msg::GearShiftStamped;
 using ExternalTurnSignal = tier4_external_api_msgs::msg::TurnSignalStamped;
 
-using InternalHeartbeat = autoware_adapi_v1_msgs::msg::ManualOperatorStatus;
+using InternalHeartbeat = autoware_adapi_v1_msgs::msg::ManualOperatorHeartbeat;
 using InternalPedals = autoware_adapi_v1_msgs::msg::PedalsCommand;
 using InternalSteering = autoware_adapi_v1_msgs::msg::SteeringCommand;
 using InternalGear = autoware_vehicle_msgs::msg::GearCommand;

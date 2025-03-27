@@ -57,7 +57,7 @@ void ManualControl::relay_control(const ExternalControl & msg)
 {
   InternalPedals pedals;
   pedals.stamp = msg.stamp;
-  pedals.accelerator = msg.control.throttle;
+  pedals.throttle = msg.control.throttle;
   pedals.brake = msg.control.brake;
   pub_pedals_->publish(pedals);
 
