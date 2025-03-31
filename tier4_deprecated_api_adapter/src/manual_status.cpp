@@ -51,12 +51,14 @@ void ManualStatus::relay_pedals(const InternalPedals & msg)
   command.control.throttle = msg.throttle;
   command.control.brake = msg.brake;
   command.control.steering_angle = steering_tire_angle_;
+  command.control.steering_angle_velocity = steering_tire_velocity_;
   pub_control_->publish(command);
 }
 
 void ManualStatus::relay_steering(const InternalSteering & msg)
 {
   steering_tire_angle_ = msg.steering_tire_angle;
+  steering_tire_velocity_ = msg.steering_tire_velocity;
 }
 
 }  // namespace tier4_deprecated_api_adapter
