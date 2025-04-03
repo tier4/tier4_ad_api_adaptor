@@ -2,6 +2,9 @@
 Changelog for package autoware_external_api_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.42.0 (2025-04-03)
+-------------------
+
 0.41.0 (2025-02-10)
 -------------------
 * chore: use autoware_cmake (`#71 <https://github.com/tier4/tier4_ad_api_adaptor/issues/71>`_)
