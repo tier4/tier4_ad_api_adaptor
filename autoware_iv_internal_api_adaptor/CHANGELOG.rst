@@ -2,8 +2,8 @@
 Changelog for package autoware_iv_internal_api_adaptor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.42.0 (2025-04-03)
+-------------------
 * feat!: replace tier4_planning_msgs/VelocityLimit to autoware_internal_planning_msgs/VelocityLimit (`#136 <https://github.com/tier4/tier4_ad_api_adaptor/issues/136>`_)
 * Contributors: Ryohsuke Mitsudome
 
