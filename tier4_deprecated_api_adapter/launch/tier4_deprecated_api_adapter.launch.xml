@@ -1,0 +1,15 @@
+<launch>
+  <group>
+    <push-ros-namespace namespace="tier4_api"/>
+    <group>
+      <push-ros-namespace namespace="manual"/>
+      <node pkg="tier4_deprecated_api_adapter" exec="manual_status_node" name="status"/>
+      <node pkg="tier4_deprecated_api_adapter" exec="manual_control_node" name="local">
+        <param name="mode" value="local"/>
+      </node>
+      <node pkg="tier4_deprecated_api_adapter" exec="manual_control_node" name="remote">
+        <param name="mode" value="remote"/>
+      </node>
+    </group>
+  </group>
+</launch>
