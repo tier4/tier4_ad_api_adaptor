@@ -2,6 +2,12 @@
 Changelog for package awapi_awiv_adapter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.42.0 (2025-04-03)
+-------------------
+* feat(awapi_awiv_adapter): use glog (`#137 <https://github.com/tier4/tier4_ad_api_adaptor/issues/137>`_)
+* feat!: replace tier4_planning_msgs/VelocityLimit to autoware_internal_planning_msgs/VelocityLimit (`#136 <https://github.com/tier4/tier4_ad_api_adaptor/issues/136>`_)
+* Contributors: Ryohsuke Mitsudome, Takagi, Isamu
+
 0.41.0 (2025-02-10)
 -------------------
 * feat(awapi): add velocity factor converter (`#129 <https://github.com/tier4/tier4_ad_api_adaptor/issues/129>`_)
