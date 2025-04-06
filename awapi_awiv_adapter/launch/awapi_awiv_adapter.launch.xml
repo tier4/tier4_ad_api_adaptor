@@ -1,4 +1,5 @@
 <launch>
+  <arg name="use_control_command_gate" default="false"/>
   <arg name="adapter_output" default="screen"/>
   <arg name="relay_output" default="log"/>
   <arg name="status_pub_hz" default="5.0"/>
@@ -139,6 +140,7 @@
       <param name="status_pub_hz" value="$(var status_pub_hz)"/>
       <param name="stop_reason_timeout" value="$(var stop_reason_timeout)"/>
       <param name="stop_reason_thresh_dist" value="$(var stop_reason_thresh_dist)"/>
+      <param name="use_control_command_gate" value="$(var use_control_command_gate)"/>
     </node>
   </group>
 
