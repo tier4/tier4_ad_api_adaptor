@@ -31,10 +31,12 @@ AutowareIvAdapter::AutowareIvAdapter()
   stop_reason_thresh_dist_ = this->declare_parameter("stop_reason_thresh_dist", 100.0);
   const double default_max_velocity = waitForParam<double>(
     this, declare_parameter("node/max_velocity", ""), declare_parameter("param/max_velocity", ""));
-  const bool em_stop_param = waitForParam<bool>(
-    this, declare_parameter("node/emergency_stop", ""),
-    declare_parameter("param/emergency_stop", ""));
-  emergencyParamCheck(em_stop_param);
+  if (!this->declare_parameter("use_control_command_gate", false)) {
+    const bool em_stop_param = waitForParam<bool>(
+      this, declare_parameter("node/emergency_stop", ""),
+      declare_parameter("param/emergency_stop", ""));
+    emergencyParamCheck(em_stop_param);
+  }
 
   // setup instance
   vehicle_state_publisher_ = std::make_unique<AutowareIvVehicleStatePublisher>(*this);
