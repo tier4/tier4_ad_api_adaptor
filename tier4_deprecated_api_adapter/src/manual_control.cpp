@@ -98,7 +98,7 @@ void ManualControl::relay_turn_signal(const ExternalTurnSignal & msg)
   {
     using ExternalType = ExternalTurnSignal::_turn_signal_type;
     switch(turn_signal) {
-      case ExternalType::NONE:    return {InternalTurnIndicators::NO_COMMAND,   InternalHazardLights::NO_COMMAND};  // NOLINT
+      case ExternalType::NONE:    return {InternalTurnIndicators::DISABLE,      InternalHazardLights::DISABLE};     // NOLINT
       case ExternalType::LEFT:    return {InternalTurnIndicators::ENABLE_LEFT,  InternalHazardLights::DISABLE};     // NOLINT
       case ExternalType::RIGHT:   return {InternalTurnIndicators::ENABLE_RIGHT, InternalHazardLights::DISABLE};     // NOLINT
       case ExternalType::HAZARD:  return {InternalTurnIndicators::DISABLE,      InternalHazardLights::ENABLE};      // NOLINT
