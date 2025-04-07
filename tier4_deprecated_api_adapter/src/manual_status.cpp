@@ -24,9 +24,9 @@ ManualStatus::ManualStatus(const rclcpp::NodeOptions & options) : Node("manual_s
   sub_control_command_ = create_subscription<InternalControl>(
     "/external/selected/control_cmd", 1, bind(&ManualStatus::relay_control_command));
   sub_selected_pedals_ = create_subscription<InternalPedals>(
-    "/external/selected/pedals", 1, bind(&ManualStatus::relay_pedals));
+    "/external/selected/pedals_cmd", 1, bind(&ManualStatus::relay_pedals));
   sub_selected_steering_ = create_subscription<InternalSteering>(
-    "/external/selected/steering", 1, bind(&ManualStatus::relay_steering));
+    "/external/selected/steering_cmd", 1, bind(&ManualStatus::relay_steering));
 
   pub_vehicle_ =
     create_publisher<ExternalVehicleCommand>("/api/external/get/command/selected/vehicle", 1);

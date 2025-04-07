@@ -35,14 +35,14 @@ ManualControl::ManualControl(const rclcpp::NodeOptions & options) : Node("manual
     "/api/external/set/command/" + mode + "/turn_signal", 1,
     bind(&ManualControl::relay_turn_signal));
 
-  pub_heartbeat_ = create_publisher<InternalHeartbeat>("/external/selected/heartbeat", 1);
-  pub_pedals_ = create_publisher<InternalPedals>("/external/selected/control_cmd", 1);
-  pub_steering_ = create_publisher<InternalSteering>("/external/selected/steering_cmd", 1);
-  pub_gear_ = create_publisher<InternalGear>("/external/selected/gear_cmd", 1);
+  pub_heartbeat_ = create_publisher<InternalHeartbeat>("/external/" + mode + "/heartbeat", 1);
+  pub_pedals_ = create_publisher<InternalPedals>("/external/" + mode + "/pedals_cmd", 1);
+  pub_steering_ = create_publisher<InternalSteering>("/external/" + mode + "/steering_cmd", 1);
+  pub_gear_ = create_publisher<InternalGear>("/external/" + mode + "/gear_cmd", 1);
   pub_turn_indicators_ =
-    create_publisher<InternalTurnIndicators>("/external/selected/turn_indicators_cmd", 1);
+    create_publisher<InternalTurnIndicators>("/external/" + mode + "/turn_indicators_cmd", 1);
   pub_hazard_lights_ =
-    create_publisher<InternalHazardLights>("/external/selected/hazard_lights_cmd", 1);
+    create_publisher<InternalHazardLights>("/external/" + mode + "/hazard_lights_cmd", 1);
 }
 
 void ManualControl::relay_heartbeat(const ExternalHeartbeat & msg)
