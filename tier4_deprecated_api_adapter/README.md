@@ -1,8 +1,10 @@
 # tier4_deprecated_api_adapter
 
-このパッケージは新APIへの移行により削除されるAPIについて、移行期間中の互換性を維持するためのパッケージです。
-[TIER IV API の仕様についてはこちらをご覧ください。](https://tier4.github.io/autoware-documentation/tier4-main/design/autoware-interfaces/prototyping/)
+This package provides backward compatibility during the transition period for deprecated part of TIER IV API that is scheduled for removal.
 
-## 機能一覧
+- [See here for the migration schedule.](https://github.com/autowarefoundation/autoware/issues/3096)
+- [See here for the TIER IV API specification.](https://tier4.github.io/autoware-documentation/tier4-main/design/autoware-interfaces/prototyping/)
+
+## Features
 
 - [manual_control](./doc/manual_control.md)
