@@ -22,27 +22,33 @@ namespace tier4_deprecated_api_adapter
 
 ManualControl::ManualControl(const rclcpp::NodeOptions & options) : Node("manual_control", options)
 {
-  const auto mode = declare_parameter<std::string>("mode");
+  rcl_interfaces::msg::ParameterDescriptor descriptor;
+  descriptor.read_only = true;
+
+  const auto mode = declare_parameter<std::string>("mode", descriptor);
   const auto bind = [this](auto && func) { return std::bind(func, this, std::placeholders::_1); };
 
-  sub_heartbeat_ = create_subscription<ExternalHeartbeat>(
-    "/api/external/set/command/" + mode + "/heartbeat", 1, bind(&ManualControl::relay_heartbeat));
-  sub_control_ = create_subscription<ExternalControl>(
-    "/api/external/set/command/" + mode + "/control", 1, bind(&ManualControl::relay_control));
-  sub_gear_ = create_subscription<ExternalGear>(
-    "/api/external/set/command/" + mode + "/shift", 1, bind(&ManualControl::relay_gear));
-  sub_turn_signal_ = create_subscription<ExternalTurnSignal>(
-    "/api/external/set/command/" + mode + "/turn_signal", 1,
-    bind(&ManualControl::relay_turn_signal));
+  {
+    const auto ns = "/api/external/set/command/" + mode + "/";
+    sub_heartbeat_ = create_subscription<ExternalHeartbeat>(
+      ns + "heartbeat", 1, bind(&ManualControl::relay_heartbeat));
+    sub_control_ =
+      create_subscription<ExternalControl>(ns + "control", 1, bind(&ManualControl::relay_control));
+    sub_gear_ =
+      create_subscription<ExternalGear>(ns + "shift", 1, bind(&ManualControl::relay_gear));
+    sub_turn_signal_ = create_subscription<ExternalTurnSignal>(
+      ns + "turn_signal", 1, bind(&ManualControl::relay_turn_signal));
+  }
 
-  pub_heartbeat_ = create_publisher<InternalHeartbeat>("/external/" + mode + "/heartbeat", 1);
-  pub_pedals_ = create_publisher<InternalPedals>("/external/" + mode + "/pedals_cmd", 1);
-  pub_steering_ = create_publisher<InternalSteering>("/external/" + mode + "/steering_cmd", 1);
-  pub_gear_ = create_publisher<InternalGear>("/external/" + mode + "/gear_cmd", 1);
-  pub_turn_indicators_ =
-    create_publisher<InternalTurnIndicators>("/external/" + mode + "/turn_indicators_cmd", 1);
-  pub_hazard_lights_ =
-    create_publisher<InternalHazardLights>("/external/" + mode + "/hazard_lights_cmd", 1);
+  {
+    const auto ns = "/external/" + mode + "/";
+    pub_heartbeat_ = create_publisher<InternalHeartbeat>(ns + "heartbeat", 1);
+    pub_pedals_ = create_publisher<InternalPedals>(ns + "pedals_cmd", 1);
+    pub_steering_ = create_publisher<InternalSteering>(ns + "steering_cmd", 1);
+    pub_gear_ = create_publisher<InternalGear>(ns + "gear_cmd", 1);
+    pub_turn_indicators_ = create_publisher<InternalTurnIndicators>(ns + "turn_indicators_cmd", 1);
+    pub_hazard_lights_ = create_publisher<InternalHazardLights>(ns + "hazard_lights_cmd", 1);
+  }
 }
 
 void ManualControl::relay_heartbeat(const ExternalHeartbeat & msg)

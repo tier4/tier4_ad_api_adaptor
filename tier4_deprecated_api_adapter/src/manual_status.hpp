@@ -43,8 +43,8 @@ private:
   rclcpp::Subscription<InternalControl>::SharedPtr sub_control_command_;
   rclcpp::Subscription<InternalPedals>::SharedPtr sub_selected_pedals_;
   rclcpp::Subscription<InternalSteering>::SharedPtr sub_selected_steering_;
-  float steering_tire_angle_ = 0.0;
-  float steering_tire_velocity_ = 0.0;
+  float steering_tire_angle_ = 0.0f;
+  float steering_tire_velocity_ = 0.0f;
 
   // Status output.
   rclcpp::Publisher<ExternalVehicleCommand>::SharedPtr pub_vehicle_;  // velocity and accel
