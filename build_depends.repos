@@ -25,5 +25,5 @@ repositories:
     version: tier4/universe
   universe/universe:
     type: git
-    url: https://github.com/autowarefoundation/autoware.universe
-    version: main
+    url: https://github.com/autowarefoundation/autoware_universe.git
+    version: 0.43.0
