@@ -1,6 +1,8 @@
-- repository: autowarefoundation/autoware_common
+- repository: autowarefoundation/sync-file-templates
+  source-dir: sources
   files:
     - source: .github/dependabot.yaml
+    - source: .github/pull_request_template.md
     - source: .github/workflows/build-and-test.yaml
     - source: .github/workflows/build-and-test-differential.yaml
     - source: .github/workflows/pre-commit.yaml
