@@ -3,8 +3,6 @@
   files:
     - source: .github/dependabot.yaml
     - source: .github/pull_request_template.md
-    - source: .github/workflows/build-and-test.yaml
-    - source: .github/workflows/build-and-test-differential.yaml
     - source: .github/workflows/pre-commit.yaml
     - source: .github/workflows/pre-commit-optional.yaml
     - source: .github/workflows/semantic-pull-request.yaml
