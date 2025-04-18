@@ -128,5 +128,5 @@ void ManualControl::relay_turn_signal(const ExternalTurnSignal & msg)
 
 }  // namespace tier4_deprecated_api_adapter
 
-#include "rclcpp_components/register_node_macro.hpp"
+#include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(tier4_deprecated_api_adapter::ManualControl)

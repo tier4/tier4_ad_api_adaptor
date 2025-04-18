@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef MANUAL_STATUS_HPP_
-#define MANUAL_STATUS_HPP_
+#ifndef MANUAL__MANUAL_STATUS_HPP_
+#define MANUAL__MANUAL_STATUS_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -58,4 +58,4 @@ private:
 
 }  // namespace tier4_deprecated_api_adapter
 
-#endif  // MANUAL_STATUS_HPP_
+#endif  // MANUAL__MANUAL_STATUS_HPP_
