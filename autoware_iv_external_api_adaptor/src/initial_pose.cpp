@@ -73,12 +73,29 @@ void InitialPose::setInitializePoseAuto(
   const tier4_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
   const tier4_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response)
 {
-  const auto [status, resp] = cli_set_initialize_pose_auto_->call(request, initial_pose_timeout);
-  if (!tier4_api_utils::is_success(status)) {
-    response->status = status;
-    return;
+  if (is_imu_calibrated_) {
+    const auto [status, resp] = cli_set_initialize_pose_auto_->call(request, initial_pose_timeout);
+    if (!tier4_api_utils::is_success(status)) {
+      response->status = status;
+      return;
+    }
+    response->status = resp->status;
+  } else {
+    response->status.code = tier4_external_api_msgs::msg::ResponseStatus::ERROR;
+    response->status.message = "ERROR";
+    if (!is_sound_locked_) {
+      return;
+    }
+    if (is_auto_mode_) {
+      return;
+    }
+    is_sound_locked_ = true;
+    sound_msgs::msg::SoundRequest sound_req;
+    sound_req.stamp = this->now();
+    sound_req.sound_type = "alert_imu_initialize";
+    pub_sound_request_->publish(sound_req);
+    RCLCPP_ERROR(get_logger(), "Initial pose is not calibrated");
   }
-  response->status = resp->status;
 }
 
 void InitialPose::imuCalibratedCallback(
@@ -89,7 +106,7 @@ void InitialPose::imuCalibratedCallback(
 
 void InitialPose::operatorCallback(const tier4_external_api_msgs::msg::Operator::ConstSharedPtr msg)
 {
-  if (msg->mode == 2) {
+  if (msg->mode == tier4_external_api_msgs::msg::Operator::AUTONOMOUS) {
     is_auto_mode_ = true;
   } else {
     is_auto_mode_ = false;
