@@ -27,6 +27,9 @@ InitialPose::InitialPose(const rclcpp::NodeOptions & options)
   using std::placeholders::_1;
   using std::placeholders::_2;
   tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  is_sound_locked_ = false;
+  is_imu_calibrated_ = false;
+  is_auto_mode_ = false;
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_initialize_pose_ = proxy.create_service<InitializePose>(
@@ -40,6 +43,18 @@ InitialPose::InitialPose(const rclcpp::NodeOptions & options)
     "/api/autoware/set/initialize_pose", rmw_qos_profile_services_default);
   cli_set_initialize_pose_auto_ = proxy.create_client<InitializePoseAuto>(
     "/api/autoware/set/initialize_pose_auto", rmw_qos_profile_services_default);
+
+  pub_sound_request_ = create_publisher<sound_msgs::msg::SoundRequest>(
+    "localization/initial_pose/sound/request", rclcpp::QoS{1});
+  sub_sound_response_ = create_subscription<tier4_external_api_msgs::msg::ResponseStatus>(
+    "/localization/initial_pose/sound/response", rclcpp::QoS{1},
+    std::bind(&InitialPose::soundResponseCallback, this, std::placeholders::_1));
+  sub_operator_ = create_subscription<tier4_external_api_msgs::msg::Operator>(
+    "/api/external/get/operator", rclcpp::QoS{1},
+    std::bind(&InitialPose::operatorCallback, this, std::placeholders::_1));
+  sub_imu_calibrated_ = create_subscription<tier4_calibration_msgs::msg::BoolStamped>(
+    "/sensing/imu/is_calibrated", rclcpp::QoS{1},
+    std::bind(&InitialPose::imuCalibratedCallback, this, std::placeholders::_1));
 }
 
 void InitialPose::setInitializePose(
@@ -64,6 +79,27 @@ void InitialPose::setInitializePoseAuto(
     return;
   }
   response->status = resp->status;
+}
+
+void InitialPose::imuCalibratedCallback(
+  const tier4_calibration_msgs::msg::BoolStamped::ConstSharedPtr msg)
+{
+  is_imu_calibrated_ = msg->data;
+}
+
+void InitialPose::operatorCallback(const tier4_external_api_msgs::msg::Operator::ConstSharedPtr msg)
+{
+  if (msg->mode == 2) {
+    is_auto_mode_ = true;
+  } else {
+    is_auto_mode_ = false;
+  }
+}
+
+void InitialPose::soundResponseCallback(
+  const tier4_external_api_msgs::msg::ResponseStatus::ConstSharedPtr msg)
+{
+  is_sound_locked_ = false;
 }
 
 }  // namespace external_api

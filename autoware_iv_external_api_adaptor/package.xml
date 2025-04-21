@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-
   <name>autoware_iv_external_api_adaptor</name>
   <version>0.0.0</version>
   <description>The autoware_iv_external_api_adaptor package</description>
@@ -17,10 +16,12 @@
   <depend>nlohmann-json-dev</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
+  <depend>sound_msgs</depend>
   <depend>std_srvs</depend>
   <depend>tier4_api_msgs</depend>
   <depend>tier4_api_utils</depend>
   <depend>tier4_auto_msgs_converter</depend>
+  <depend>tier4_calibration_msgs</depend>
   <depend>tier4_external_api_msgs</depend>
   <depend>tier4_rtc_msgs</depend>
   <depend>tier4_vehicle_msgs</depend>
@@ -31,5 +32,4 @@
   <export>
     <build_type>ament_cmake</build_type>
   </export>
-
 </package>

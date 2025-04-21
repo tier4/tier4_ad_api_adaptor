@@ -54,10 +54,11 @@ repos:
       - id: shfmt
         args: [-w, -s, -i=4]
 
-  - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
-    hooks:
-      - id: isort
+  # TODO: isort is not working due to poetry error
+  #  - repo: https://github.com/pycqa/isort
+  #    rev: 5.10.1
+  #    hooks:
+  #      - id: isort
 
   - repo: https://github.com/psf/black
     rev: 22.3.0
