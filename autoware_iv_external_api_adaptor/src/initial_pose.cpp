@@ -45,7 +45,7 @@ InitialPose::InitialPose(const rclcpp::NodeOptions & options)
     "/api/autoware/set/initialize_pose_auto", rmw_qos_profile_services_default);
 
   pub_sound_request_ = create_publisher<sound_msgs::msg::SoundRequest>(
-    "localization/initial_pose/sound/request", rclcpp::QoS{1});
+    "/localization/initial_pose/sound/request", rclcpp::QoS{1});
   sub_sound_response_ = create_subscription<tier4_external_api_msgs::msg::ResponseStatus>(
     "/localization/initial_pose/sound/response", rclcpp::QoS{1},
     std::bind(&InitialPose::soundResponseCallback, this, std::placeholders::_1));
@@ -61,26 +61,28 @@ void InitialPose::setInitializePose(
   const tier4_external_api_msgs::srv::InitializePose::Request::SharedPtr request,
   const tier4_external_api_msgs::srv::InitializePose::Response::SharedPtr response)
 {
-  const auto [status, resp] = cli_set_initialize_pose_->call(request, initial_pose_timeout);
-  if (!tier4_api_utils::is_success(status)) {
-    response->status = status;
-    return;
-  }
-  response->status = resp->status;
-}
-
-void InitialPose::setInitializePoseAuto(
-  const tier4_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
-  const tier4_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response)
-{
+  RCLCPP_INFO(get_logger(), "setInitializePose, is_imu_calibrated_: %d", is_imu_calibrated_);
   if (is_imu_calibrated_) {
-    const auto [status, resp] = cli_set_initialize_pose_auto_->call(request, initial_pose_timeout);
+    RCLCPP_INFO(get_logger(), "setInitializePose, is_imu_calibrated_ is true");
+    const auto [status, resp] = cli_set_initialize_pose_->call(request, initial_pose_timeout);
+    RCLCPP_INFO(get_logger(), "setInitializePose, status: %d", status);
+    if (!resp) {
+      RCLCPP_INFO(get_logger(), "setInitializePose, resp is null");
+      response->status.code = tier4_external_api_msgs::msg::ResponseStatus::ERROR;
+      response->status.message = "Service call timeout or null response";
+      RCLCPP_ERROR(get_logger(), "Failed to get response from initialize pose service");
+      return;
+    }
+
+    RCLCPP_INFO(get_logger(), "setInitializePose, status: %d, resp: %d", status, resp->status);
     if (!tier4_api_utils::is_success(status)) {
       response->status = status;
+      RCLCPP_ERROR(get_logger(), "Failed to call initialize pose");
       return;
     }
     response->status = resp->status;
   } else {
+    RCLCPP_INFO(get_logger(), "setInitializePose, is_imu_calibrated_ is false");
     response->status.code = tier4_external_api_msgs::msg::ResponseStatus::ERROR;
     response->status.message = "ERROR";
     is_sound_locked_ = canPlaySound(is_sound_locked_, is_auto_mode_);
@@ -90,6 +92,18 @@ void InitialPose::setInitializePoseAuto(
     pub_sound_request_->publish(sound_req);
     RCLCPP_WARN(get_logger(), "WARN: IMU calibration incomplete. - Localization request rejected.");
   }
+}
+
+void InitialPose::setInitializePoseAuto(
+  const tier4_external_api_msgs::srv::InitializePoseAuto::Request::SharedPtr request,
+  const tier4_external_api_msgs::srv::InitializePoseAuto::Response::SharedPtr response)
+{
+  const auto [status, resp] = cli_set_initialize_pose_auto_->call(request, initial_pose_timeout);
+  if (!tier4_api_utils::is_success(status)) {
+    response->status = status;
+    return;
+  }
+  response->status = resp->status;
 }
 
 bool InitialPose::canPlaySound(bool is_sound_locked, bool is_auto_mode)
