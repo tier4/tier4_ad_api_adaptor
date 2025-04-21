@@ -61,6 +61,8 @@ private:
   void soundResponseCallback(
     const tier4_external_api_msgs::msg::ResponseStatus::ConstSharedPtr msg);
 
+  bool canPlaySound(bool is_sound_locked, bool is_auto_mode);
+
 protected:
   bool is_sound_locked_;
   bool is_imu_calibrated_;

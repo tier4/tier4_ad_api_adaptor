@@ -56,6 +56,15 @@ rclcpp_components_register_nodes(${PROJECT_NAME} "external_api::Version")
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
+  ament_add_ros_isolated_gmock(test_${PROJECT_NAME}
+    test/test_initial_pose.cpp
+  )
+  target_link_libraries(test_${PROJECT_NAME}
+    ${PROJECT_NAME}
+  )
+  target_include_directories(test_${PROJECT_NAME} PRIVATE
+  src
+)
 endif()
 
 ament_auto_package()

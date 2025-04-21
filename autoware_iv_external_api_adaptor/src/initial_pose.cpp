@@ -83,19 +83,24 @@ void InitialPose::setInitializePoseAuto(
   } else {
     response->status.code = tier4_external_api_msgs::msg::ResponseStatus::ERROR;
     response->status.message = "ERROR";
-    if (!is_sound_locked_) {
-      return;
-    }
-    if (is_auto_mode_) {
-      return;
-    }
-    is_sound_locked_ = true;
+    is_sound_locked_ = canPlaySound(is_sound_locked_, is_auto_mode_);
     sound_msgs::msg::SoundRequest sound_req;
     sound_req.stamp = this->now();
     sound_req.sound_type = "alert_imu_initialize";
     pub_sound_request_->publish(sound_req);
-    RCLCPP_ERROR(get_logger(), "Initial pose is not calibrated");
+    RCLCPP_WARN(get_logger(), "WARN: IMU calibration incomplete. - Localization request rejected.");
   }
+}
+
+bool InitialPose::canPlaySound(bool is_sound_locked, bool is_auto_mode)
+{
+  if (!is_sound_locked_) {
+    return false;
+  }
+  if (is_auto_mode_) {
+    return false;
+  }
+  return true;
 }
 
 void InitialPose::imuCalibratedCallback(
