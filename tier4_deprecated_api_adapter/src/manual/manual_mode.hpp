@@ -23,13 +23,15 @@
 #include <tier4_external_api_msgs/msg/operator.hpp>
 #include <tier4_external_api_msgs/srv/set_operator.hpp>
 
+#include <optional>
+
 namespace tier4_deprecated_api_adapter
 {
 
 namespace apiutils = autoware::component_interface_utils;
 using autoware::adapi_specs::operation_mode::ChangeToAutonomous;
-using autoware::adapi_specs::operation_mode::ChangeToLocal;
-using autoware::adapi_specs::operation_mode::ChangeToRemote;
+using autoware::adapi_specs::operation_mode::DisableAutowareControl;
+using autoware::adapi_specs::operation_mode::EnableAutowareControl;
 using autoware::adapi_specs::operation_mode::OperationModeState;
 using tier4_external_api_msgs::msg::Observer;
 using tier4_external_api_msgs::msg::Operator;
@@ -72,15 +74,17 @@ private:
 
   apiutils::Subscription<OperationModeState>::SharedPtr sub_operation_mode_;
   apiutils::Client<ChangeToAutonomous>::SharedPtr cli_autonomous_mode_;
-  apiutils::Client<ChangeToLocal>::SharedPtr cli_platform_control_;
-  apiutils::Client<ChangeToRemote>::SharedPtr cli_autoware_control_;
+  apiutils::Client<EnableAutowareControl>::SharedPtr cli_autoware_control_;
+  apiutils::Client<DisableAutowareControl>::SharedPtr cli_platform_control_;
 
-  // Callbacks.
   void on_timer();
   void on_operation_mode(const OperationModeState::Message & msg);
   void on_set_operator(
     const SetOperator::Service::Request::SharedPtr req,
     const SetOperator::Service::Response::SharedPtr res);
+
+  std::optional<uint8_t> current_operator_;
+  std::optional<uint8_t> current_observer_;
 };
 
 }  // namespace tier4_deprecated_api_adapter

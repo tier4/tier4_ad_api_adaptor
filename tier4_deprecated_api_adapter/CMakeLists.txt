@@ -13,16 +13,19 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN "tier4_deprecated_api_adapter::ManualControl"
   EXECUTABLE "manual_control_node"
+  EXECUTOR SingleThreadedExecutor
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN "tier4_deprecated_api_adapter::ManualMode"
   EXECUTABLE "manual_mode_node"
+  EXECUTOR MultiThreadedExecutor
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN "tier4_deprecated_api_adapter::ManualStatus"
   EXECUTABLE "manual_status_node"
+  EXECUTOR SingleThreadedExecutor
 )
 
 ament_auto_package(INSTALL_TO_SHARE launch)
