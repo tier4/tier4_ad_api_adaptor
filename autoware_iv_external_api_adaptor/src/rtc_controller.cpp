@@ -95,6 +95,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   blind_spot_ = std::make_unique<RTCModule>(this, "blind_spot");
   crosswalk_ = std::make_unique<RTCModule>(this, "crosswalk");
   detection_area_ = std::make_unique<RTCModule>(this, "detection_area");
+  detection_lane_ = std::make_unique<RTCModule>(this, "detection_lane");
   intersection_ = std::make_unique<RTCModule>(this, "intersection");
   intersection_occlusion_ = std::make_unique<RTCModule>(this, "intersection_occlusion");
   no_stopping_area_ = std::make_unique<RTCModule>(this, "no_stopping_area");
@@ -168,6 +169,7 @@ void RTCController::onTimer()
   blind_spot_->insertMessage(cooperate_statuses);
   crosswalk_->insertMessage(cooperate_statuses);
   detection_area_->insertMessage(cooperate_statuses);
+  detection_lane_->insertMessage(cooperate_statuses);
   intersection_->insertMessage(cooperate_statuses);
   intersection_occlusion_->insertMessage(cooperate_statuses);
   no_stopping_area_->insertMessage(cooperate_statuses);
@@ -263,6 +265,7 @@ void RTCController::setRTC(
       }
       case Module::DETECTION_AREA: {
         detection_area_->callService(request, responses);
+        detection_lane_->callService(request, responses);
         break;
       }
       case Module::NO_STOPPING_AREA: {
@@ -284,6 +287,7 @@ void RTCController::onAutoModeTimer()
   blind_spot_->insertAutoModeMessage(auto_mode_statuses);
   crosswalk_->insertAutoModeMessage(auto_mode_statuses);
   detection_area_->insertAutoModeMessage(auto_mode_statuses);
+  detection_lane_->insertAutoModeMessage(auto_mode_statuses);
   intersection_->insertAutoModeMessage(auto_mode_statuses);
   intersection_occlusion_->insertAutoModeMessage(auto_mode_statuses);
   no_stopping_area_->insertAutoModeMessage(auto_mode_statuses);
@@ -369,6 +373,7 @@ void RTCController::setRTCAutoMode(
     }
     case Module::DETECTION_AREA: {
       detection_area_->callAutoModeService(auto_mode_request, auto_mode_response);
+      detection_lane_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::NO_STOPPING_AREA: {

@@ -78,6 +78,7 @@ private:
   std::unique_ptr<RTCModule> blind_spot_;
   std::unique_ptr<RTCModule> crosswalk_;
   std::unique_ptr<RTCModule> detection_area_;
+  std::unique_ptr<RTCModule> detection_lane_;
   std::unique_ptr<RTCModule> intersection_;
   std::unique_ptr<RTCModule> intersection_occlusion_;
   std::unique_ptr<RTCModule> no_stopping_area_;
