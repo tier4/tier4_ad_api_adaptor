@@ -2,8 +2,8 @@
 Changelog for package awapi_awiv_adapter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.43.0 (2025-05-12)
+-------------------
 * feat: use control command gate (`#148 <https://github.com/tier4/tier4_ad_api_adaptor/issues/148>`_)
   feat: add use control command gate (`#140 <https://github.com/tier4/tier4_ad_api_adaptor/issues/140>`_)
 * Contributors: Tetsuhiro Kawaguchi
