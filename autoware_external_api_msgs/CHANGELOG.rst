@@ -2,6 +2,9 @@
 Changelog for package autoware_external_api_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.42.0 (2025-04-03)
 -------------------
 
