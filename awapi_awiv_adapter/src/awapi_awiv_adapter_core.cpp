@@ -14,6 +14,8 @@
 
 #include "awapi_awiv_adapter/awapi_awiv_adapter_core.hpp"
 
+#include <geometry_msgs/msg/detail/transform_stamped__struct.hpp>
+
 #include <functional>
 #include <memory>
 #include <utility>
@@ -22,8 +24,7 @@ namespace autoware_api
 {
 using std::placeholders::_1;
 
-AutowareIvAdapter::AutowareIvAdapter()
-: Node("awapi_awiv_adapter_node"), tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_)
+AutowareIvAdapter::AutowareIvAdapter() : Node("awapi_awiv_adapter_node")
 {
   // get param
   status_pub_hz_ = this->declare_parameter("status_pub_hz", 5.0);
@@ -220,19 +221,17 @@ void AutowareIvAdapter::callbackNavSat(const sensor_msgs::msg::NavSatFix::ConstS
 
 void AutowareIvAdapter::getCurrentPose()
 {
-  try {
-    auto transform = tf_buffer_.lookupTransform("map", "base_link", tf2::TimePointZero);
-    geometry_msgs::msg::PoseStamped ps;
-    ps.header = transform.header;
-    ps.pose.position.x = transform.transform.translation.x;
-    ps.pose.position.y = transform.transform.translation.y;
-    ps.pose.position.z = transform.transform.translation.z;
-    ps.pose.orientation = transform.transform.rotation;
-    aw_info_.current_pose_ptr = std::make_shared<geometry_msgs::msg::PoseStamped>(ps);
-  } catch (tf2::TransformException & ex) {
-    RCLCPP_DEBUG_STREAM_THROTTLE(
-      get_logger(), *this->get_clock(), 2000 /* ms */, "cannot get self pose");
-  }
+  auto transform = managed_tf_buffer_.getTransform<geometry_msgs::msg::TransformStamped>(
+    "map", "base_link", tf2::TimePointZero, tf2::Duration::zero());
+  if (!transform) return;
+
+  geometry_msgs::msg::PoseStamped ps;
+  ps.header = transform->header;
+  ps.pose.position.x = transform->transform.translation.x;
+  ps.pose.position.y = transform->transform.translation.y;
+  ps.pose.position.z = transform->transform.translation.z;
+  ps.pose.orientation = transform->transform.rotation;
+  aw_info_.current_pose_ptr = std::make_shared<geometry_msgs::msg::PoseStamped>(ps);
 }
 
 void AutowareIvAdapter::callbackAutowareState(

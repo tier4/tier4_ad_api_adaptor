@@ -25,6 +25,7 @@
 #include "awapi_awiv_adapter/awapi_vehicle_state_publisher.hpp"
 #include "awapi_awiv_adapter/awapi_velocity_factor_converter.hpp"
 
+#include <managed_transform_buffer/managed_transform_buffer.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
@@ -44,9 +45,6 @@
 #include <tier4_system_msgs/msg/autoware_state.hpp>
 #include <tier4_v2x_msgs/msg/infrastructure_command_array.hpp>
 #include <tier4_v2x_msgs/msg/virtual_traffic_light_state_array.hpp>
-
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
 
 #include <memory>
 
@@ -105,8 +103,7 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 
   // tf
-  tf2_ros::Buffer tf_buffer_;
-  tf2_ros::TransformListener tf_listener_;
+  managed_transform_buffer::ManagedTransformBuffer managed_tf_buffer_;
 
   // callback function
   void callbackSteer(const autoware_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg_ptr);

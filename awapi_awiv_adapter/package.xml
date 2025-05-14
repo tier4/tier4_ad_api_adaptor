@@ -19,6 +19,7 @@
   <depend>diagnostic_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>libgoogle-glog-dev</depend>
+  <depend>managed_transform_buffer</depend>
   <depend>nav_msgs</depend>
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
