@@ -1,0 +1,6 @@
+<launch>
+  <group>
+    <push-ros-namespace namespace="tier4_api"/>
+    <node pkg="tier4_autoware_api_extension" exec="traffic_light_node"/>
+  </group>
+</launch>
