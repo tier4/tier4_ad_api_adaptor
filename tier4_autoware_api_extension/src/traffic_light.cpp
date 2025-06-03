@@ -34,7 +34,7 @@ TrafficLight::TrafficLight(const rclcpp::NodeOptions & options) : Node("traffic_
     std::bind(&TrafficLight::on_message, this, std::placeholders::_1));
 
   pub_traffic_light_group_ =
-    create_publisher<ExternalMessage>("/api/external/nearest_traffic_light_group", 1);
+    create_publisher<ExternalMessage>("/api/external/get/nearest_traffic_light_group", 1);
 }
 
 void TrafficLight::on_message(const InternalMessage & internal)
