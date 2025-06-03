@@ -1,18 +1,20 @@
 # TIER IV Autoware API Extension
 
-This repository provides TIER IV API that specialized for use cases in TIER IV.
+This repository provides TIER IV Autoware API that specialized for use cases in TIER IV.
+Some pages in this documentation are only in Japanese.
 
 ## Note
 
-For historical reasons, TIER IV API is sometimes called High-level API or TIER IV External API.
+TIER IV Autoware API is sometimes called High-level API or TIER IV External API.
 
-## TIER IV API
+## TIER IV Autoware API
 
-これらの API はユースケースが限定的であり、[AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/) に統合されるか不明です。
+These APIs are specialized for use cases in TIER IV. There are currently no plans to move to AD API, but this may be done if there are many requests from the community.
 
-| Type    | Name                                                                                                           | Data                                                                                                                                                                                            |
+| Type    | Name                                                                                                           | Message/Service                                                                                                                                                                                 |
 | ------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | service | [/api/external/get/metadata/packages](./doc/api/external/get/metadata/packages.md)                             | [tier4_external_api_msgs/srv/GetMetadataPackages](https://github.com/tier4/tier4_autoware_msgs/tree/tier4/universe/tier4_external_api_msgs/srv/GetMetadataPackages.srv)                         |
+| topic   | [/api/external/get/nearest_traffic_light_group](./doc/api/external/get/nearest_traffic_light_group.md)         | [tier4_external_api_msgs/msg/TrafficLightGroup](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/TrafficLightGroup.msg)                             |
 | service | [/api/external/set/service](./doc/api/external/set/service.md)                                                 | [tier4_external_api_msgs/srv/SetService](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/srv/SetService.srv)                                           |
 | topic   | [/api/external/get/service](./doc/api/external/get/service.md)                                                 | [tier4_external_api_msgs/msg/Service](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/Service.msg)                                                 |
 | topic   | [/api/external/get/diagnostics](./doc/api/external/get/diagnostics.md)                                         | [tier4_external_api_msgs/msg/ClassifiedDiagnostics](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/ClassifiedDiagnostics.msg)                     |
@@ -23,13 +25,13 @@ For historical reasons, TIER IV API is sometimes called High-level API or TIER I
 | topic   | [/api/external/get/rosbag_logging_mode](./doc/api/external/get/rosbag_logging_mode.md)                         | [tier4_external_api_msgs/msg/RosbagLoggingMode](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/RosbagLoggingMode.msg)                             |
 | topic   | [/api/external/get/calibration_status](./doc/api/external/get/calibration_status.md)                           | [tier4_external_api_msgs/msg/CalibrationStatusArray](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/CalibrationStatusArray.msg)                   |
 | service | [/api/external/get/accel_brake_map_calibrator/data](./doc/api/external/get/accel_brake_map_calibrator/data.md) | [tier4_external_api_msgs/srv/GetAccelBrakeMapCalibrationData](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/srv/GetAccelBrakeMapCalibrationData.srv) |
-| topic   | [/api/external/get/nearest_traffic_light_group](./doc/api/external/get/nearest_traffic_light_group.md)         | [tier4_external_api_msgs/msg/TrafficLightGroup](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/TrafficLightGroup.msg)                             |
 
 ## Deprecated API
 
-これらの API は TIER IV の独自実装であり、段階的に [AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/) に統合する予定です。
+These are old implementations used internally by TIER IV.
+Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/) instead.
 
-| 種別    | 名前                                                                                                                               | 移行先                                                                                                                                            | 移行ガイド                                                                                                                                         |
+| Type    | Name                                                                                                                               | AD API                                                                                                                                            | Migration Guide                                                                                                                                    |
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | service | [/api/external/get/version](./doc/api/external/get/version.md)                                                                     | [Interface API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/features/interface/)           | -                                                                                                                                                  |
 | service | [/api/external/set/initialize_pose](./doc/api/external/set/initialize_pose.md)                                                     | [Localization API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/features/localization/)     | -                                                                                                                                                  |
@@ -67,8 +69,9 @@ For historical reasons, TIER IV API is sometimes called High-level API or TIER I
 
 ## Removed API
 
-これらの API は削除されました。代わりに [AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/) を使用してください。
+These APIs are removed.
+Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/) instead.
 
-| 種別  | 名前                                                                                         | 移行先                                                                                                                                            |
+| Type  | Name                                                                                         | AD API                                                                                                                                            |
 | ----- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | topic | [/api/iv_msgs/vehicle/status/control_mode](./doc/api/iv_msgs/vehicle/status/control_mode.md) | [Operation mode API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/features/operation_mode/) |
