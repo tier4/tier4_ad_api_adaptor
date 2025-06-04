@@ -1,6 +1,14 @@
 <launch>
+  <!-- Nodes in this package. -->
   <group>
     <push-ros-namespace namespace="tier4_api"/>
+    <node pkg="tier4_autoware_api_extension" exec="route_distance_node"/>
     <node pkg="tier4_autoware_api_extension" exec="traffic_light_node"/>
+  </group>
+
+  <!-- For route distance. -->
+  <group>
+    <push-ros-namespace namespace="tier4_api/utils"/>
+    <include file="$(find-pkg-share autoware_path_distance_calculator)/launch/path_distance_calculator.launch.xml"/>
   </group>
 </launch>
