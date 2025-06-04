@@ -2,5 +2,8 @@
   <group>
     <push-ros-namespace namespace="tier4_api"/>
     <node pkg="tier4_autoware_api_extension" exec="traffic_light_node"/>
+    <node pkg="tier4_autoware_api_extension" exec="planning_factor_node">
+      <param from="$(find-pkg-share tier4_autoware_api_extension)/config/planning_factors.param.yaml"/>
+    </node>
   </group>
 </launch>
