@@ -10,11 +10,16 @@
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
   <buildtool_depend>autoware_cmake</buildtool_depend>
 
+  <depend>autoware_internal_debug_msgs</depend>
   <depend>autoware_internal_planning_msgs</depend>
   <depend>autoware_perception_msgs</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>tier4_external_api_msgs</depend>
+
+  <exec_depend>autoware_path_distance_calculator</exec_depend>
+  <exec_depend>tier4_v2x_msgs</exec_depend>
+  <exec_depend>topic_tools</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>autoware_lint_common</test_depend>

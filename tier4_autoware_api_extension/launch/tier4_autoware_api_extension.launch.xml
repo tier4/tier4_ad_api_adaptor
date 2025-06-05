@@ -1,9 +1,32 @@
 <launch>
+  <!-- Nodes in this package. -->
   <group>
     <push-ros-namespace namespace="tier4_api"/>
+    <node pkg="tier4_autoware_api_extension" exec="route_distance_node"/>
     <node pkg="tier4_autoware_api_extension" exec="traffic_light_node"/>
     <node pkg="tier4_autoware_api_extension" exec="planning_factor_node">
       <param from="$(find-pkg-share tier4_autoware_api_extension)/config/planning_factors.param.yaml"/>
     </node>
+  </group>
+
+  <!-- Relay for tier4_v2x_msgs. -->
+  <group>
+    <push-ros-namespace namespace="tier4_api"/>
+    <node pkg="topic_tools" exec="relay" name="relay_virtual_traffic_light_status">
+      <param name="input_topic" value="/api/external/set/virtual_traffic_light/states"/>
+      <param name="output_topic" value="/awapi/tmp/virtual_traffic_light_states"/>
+      <param name="type" value="tier4_v2x_msgs/msg/VirtualTrafficLightStateArray"/>
+    </node>
+    <node pkg="topic_tools" exec="relay" name="relay_virtual_traffic_light_commands">
+      <param name="input_topic" value="/planning/scenario_planning/status/infrastructure_commands"/>
+      <param name="output_topic" value="/api/external/get/virtual_traffic_light/commands"/>
+      <param name="type" value="tier4_v2x_msgs/msg/InfrastructureCommandArray"/>
+    </node>
+  </group>
+
+  <!-- For route distance. -->
+  <group>
+    <push-ros-namespace namespace="tier4_api/utils"/>
+    <include file="$(find-pkg-share autoware_path_distance_calculator)/launch/path_distance_calculator.launch.xml"/>
   </group>
 </launch>
