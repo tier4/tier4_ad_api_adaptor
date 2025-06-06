@@ -1,0 +1,37 @@
+/**:
+  ros__parameters:
+    rate: 10.0
+    timeout: 1.0
+    topics:
+      - /planning/planning_factors/avoidance_by_lane_change
+      - /planning/planning_factors/behavior_path_planner
+      - /planning/planning_factors/bidirectional_traffic
+      - /planning/planning_factors/blind_spot
+      - /planning/planning_factors/crosswalk
+      - /planning/planning_factors/detection_area
+      - /planning/planning_factors/dynamic_obstacle_avoidance
+      - /planning/planning_factors/dynamic_obstacle_stop
+      - /planning/planning_factors/goal_planner
+      - /planning/planning_factors/intersection
+      - /planning/planning_factors/lane_change_left
+      - /planning/planning_factors/lane_change_right
+      - /planning/planning_factors/merge_from_private
+      - /planning/planning_factors/motion_velocity_planner
+      - /planning/planning_factors/no_drivable_lane
+      - /planning/planning_factors/no_stopping_area
+      - /planning/planning_factors/obstacle_cruise
+      - /planning/planning_factors/obstacle_cruise_planner
+      - /planning/planning_factors/obstacle_slow_down
+      - /planning/planning_factors/obstacle_stop
+      - /planning/planning_factors/obstacle_stop_planner
+      - /planning/planning_factors/occlusion_spot
+      - /planning/planning_factors/out_of_lane
+      - /planning/planning_factors/run_out
+      - /planning/planning_factors/side_shift
+      - /planning/planning_factors/start_planner
+      - /planning/planning_factors/static_obstacle_avoidance
+      - /planning/planning_factors/stop_line
+      - /planning/planning_factors/surround_obstacle_checker
+      - /planning/planning_factors/traffic_light
+      - /planning/planning_factors/virtual_traffic_light
+      - /planning/planning_factors/walkway

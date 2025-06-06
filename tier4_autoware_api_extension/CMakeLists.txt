@@ -7,6 +7,7 @@ autoware_package()
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/route_distance.cpp
   src/traffic_light.cpp
+  src/planning_factor.cpp
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
@@ -19,4 +20,9 @@ rclcpp_components_register_node(${PROJECT_NAME}
   EXECUTABLE traffic_light_node
 )
 
-ament_auto_package(INSTALL_TO_SHARE launch)
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "tier4_autoware_api_extension::PlanningFactor"
+  EXECUTABLE planning_factor_node
+)
+
+ament_auto_package(INSTALL_TO_SHARE config launch)
