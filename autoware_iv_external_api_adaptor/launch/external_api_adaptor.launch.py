@@ -28,7 +28,7 @@ def _create_api_node(node_name, class_name, **kwargs):
 
 
 def generate_launch_description():
-    # RTCController is launched by tier4_autoware_api_launch because it is used by autoware.universe.
+    # RTCController is launched by tier4_autoware_api_launch because it is used by autoware_universe.
     components = [
         _create_api_node("calibration_status", "CalibrationStatus"),
         _create_api_node("cpu_usage", "CpuUsage"),
