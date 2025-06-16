@@ -14,8 +14,6 @@
 
 #include "awapi_awiv_adapter/awapi_awiv_adapter_core.hpp"
 
-#include <geometry_msgs/msg/detail/transform_stamped__struct.hpp>
-
 #include <functional>
 #include <memory>
 #include <utility>
@@ -24,7 +22,7 @@ namespace autoware_api
 {
 using std::placeholders::_1;
 
-AutowareIvAdapter::AutowareIvAdapter() : Node("awapi_awiv_adapter_node")
+AutowareIvAdapter::AutowareIvAdapter() : Node("awapi_awiv_adapter_node"), managed_tf_buffer_(this)
 {
   // get param
   status_pub_hz_ = this->declare_parameter("status_pub_hz", 5.0);
