@@ -27,7 +27,7 @@
 #include <tier4_external_api_msgs/msg/operator.hpp>
 #include <tier4_external_api_msgs/srv/set_observer.hpp>
 #include <tier4_external_api_msgs/srv/set_operator.hpp>
-#include <tier4_system_msgs/srv/change_autoware_control.hpp>
+#include <autoware_system_msgs/srv/change_autoware_control.hpp>
 
 namespace internal_api
 {
@@ -45,7 +45,7 @@ private:
   using ExternalCommandSelectorMode = tier4_control_msgs::msg::ExternalCommandSelectorMode;
   using GateMode = tier4_control_msgs::msg::GateMode;
   using ControlModeReport = autoware_vehicle_msgs::msg::ControlModeReport;
-  using ChangeAutowareControl = tier4_system_msgs::srv::ChangeAutowareControl;
+  using ChangeAutowareControl = autoware_system_msgs::srv::ChangeAutowareControl;
   using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
 
   // ros interface

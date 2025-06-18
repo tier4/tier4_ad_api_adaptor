@@ -37,7 +37,7 @@ Operator::Operator(const rclcpp::NodeOptions & options) : Node("external_api_ope
 
   cli_external_select_ = proxy.create_client<tier4_control_msgs::srv::ExternalCommandSelect>(
     "/control/external_cmd_selector/select_external_command");
-  cli_autoware_control_ = proxy.create_client<tier4_system_msgs::srv::ChangeAutowareControl>(
+  cli_autoware_control_ = proxy.create_client<ChangeAutowareControl>(
     "/system/operation_mode/change_autoware_control");
   pub_gate_mode_ =
     create_publisher<tier4_control_msgs::msg::GateMode>("/control/gate_mode_cmd", rclcpp::QoS(1));
