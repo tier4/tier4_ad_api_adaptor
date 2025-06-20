@@ -1,4 +1,4 @@
-# Operation mode compatibility
+# Migrate to Operation Mode API
 
 ## 構成（TIER IV API）
 
