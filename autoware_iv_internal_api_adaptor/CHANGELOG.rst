@@ -2,8 +2,8 @@
 Changelog for package autoware_iv_internal_api_adaptor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.46.0 (2025-06-20)
+-------------------
 * feat!: replace tier4_system_msgs with autoware_system_msgs (`#159 <https://github.com/tier4/tier4_ad_api_adaptor/issues/159>`_)
   Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
 * Contributors: Ryohsuke Mitsudome
