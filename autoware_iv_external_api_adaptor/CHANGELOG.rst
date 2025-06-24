@@ -4,6 +4,7 @@ Changelog for package autoware_iv_external_api_adaptor
 
 0.46.0 (2025-06-20)
 -------------------
+* fix: api version v0.4.1 (`#162 <https://github.com/tier4/tier4_ad_api_adaptor/issues/162>`_ )
 * feat: release v0.5.0 (`#160 <https://github.com/tier4/tier4_ad_api_adaptor/issues/160>`_)
 * chore: update autoware.universe with autoware_universe (`#158 <https://github.com/tier4/tier4_ad_api_adaptor/issues/158>`_)
 * Contributors: Takagi, Isamu
