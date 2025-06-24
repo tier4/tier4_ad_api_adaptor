@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>awapi_awiv_adapter</name>
-  <version>0.43.0</version>
+  <version>0.46.0</version>
   <description>The awapi_awiv_adapter package</description>
   <maintainer email="tomoya.kimura@tier4.jp">Tomoya Kimura</maintainer>
   <author email="tomoya.kimura@tier4.jp">Tomoya Kimura</author>
