@@ -3,6 +3,11 @@
 This repository provides TIER IV Autoware API that specialized for use cases in TIER IV.
 Some pages in this documentation are only in Japanese.
 
+## Schedule
+
+- v0.5.0: Remove APIs with EOL 2025/09
+- v1.0.0: Remove APIs with EOL 2025/12
+
 ## Note
 
 TIER IV Autoware API is sometimes called High-level API or TIER IV External API.
@@ -71,6 +76,65 @@ Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/
 | 2025/12 | topic   | [/api/iv_msgs/planning/scenario_planning/trajectory](./doc/api/iv_msgs/planning/scenario_planning/trajectory.md)                   | [Migrate to Evaluation Interface](./doc/migration/evaluation.md)                                                                                               |
 | 2025/12 | topic   | [/api/iv_msgs/perception/object_recognition/tracking/objects](./doc/api/iv_msgs/perception/object_recognition/tracking/objects.md) | [Migrate to Evaluation Interface](./doc/migration/evaluation.md)                                                                                               |
 | 2025/12 | topic   | [/api/iv_msgs/autoware/state](./doc/api/iv_msgs/autoware/state.md)                                                                 | [Make Autoware State from AD API](https://autowarefoundation.github.io/autoware_universe/main/system/autoware_default_adapi_universe/document/autoware-state/) |
+
+## Deprecated API (AWAPI)
+
+| EOL     | Name (Field)                                         |
+| ------- | ---------------------------------------------------- |
+| 2025/12 | /awapi/autoware/get/status (autoware_state)          |
+| 2025/12 | /awapi/autoware/get/status (control_mode)            |
+| 2025/12 | /awapi/autoware/get/status (gate_mode)               |
+| 2025/12 | /awapi/autoware/get/status (emergency_stopped)       |
+| 2025/12 | /awapi/autoware/get/status (current_max_velocity)    |
+| 2025/12 | /awapi/autoware/get/status (hazard_status)           |
+| 2025/12 | /awapi/autoware/get/status (stop_reason)             |
+| 2025/12 | /awapi/autoware/get/status (diagnostics)             |
+| 2025/12 | /awapi/autoware/get/status (error_diagnostics)       |
+| 2025/12 | /awapi/autoware/get/status (autonomous_overridden)   |
+| 2025/12 | /awapi/autoware/get/status (arrived_goal)            |
+| 2025/12 | /awapi/vehicle/get/status (pose)                     |
+| 2025/12 | /awapi/vehicle/get/status (eulerangle)               |
+| 2025/12 | /awapi/vehicle/get/status (geo_point)                |
+| 2025/12 | /awapi/vehicle/get/status (velocity)                 |
+| 2025/12 | /awapi/vehicle/get/status (acceleration)             |
+| 2025/12 | /awapi/vehicle/get/status (steering)                 |
+| 2025/12 | /awapi/vehicle/get/status (steering_velocity)        |
+| 2025/12 | /awapi/vehicle/get/status (angular_velocity)         |
+| 2025/12 | /awapi/vehicle/get/status (gear)                     |
+| 2025/12 | /awapi/vehicle/get/status (energy_level)             |
+| 2025/12 | /awapi/vehicle/get/status (turn_signal)              |
+| 2025/12 | /awapi/vehicle/get/status (target_velocity)          |
+| 2025/12 | /awapi/vehicle/get/status (target_acceleration)      |
+| 2025/12 | /awapi/vehicle/get/status (target_steering)          |
+| 2025/12 | /awapi/vehicle/get/status (target_steering_velocity) |
+| 2025/12 | /awapi/tmp/infrastructure_commands                   |
+| 2025/09 | /awapi/autoware/put/engage                           |
+| 2025/09 | /awapi/autoware/put/route                            |
+| 2025/09 | /awapi/autoware/put/goal                             |
+| 2025/09 | /awapi/autoware/get/route                            |
+| 2025/09 | /awapi/autoware/put/pose_initialization_request      |
+| 2025/09 | /awapi/vehicle/put/stop                              |
+| 2025/09 | /awapi/vehicle/put/velocity                          |
+| 2025/09 | /awapi//tmp/virtual_traffic_light_states             |
+| 2025/09 | /awapi/prediction/get/objects                        |
+| 2025/09 | /awapi/autoware/get/stop_speed_exceeded              |
+| 2025/09 | /awapi/autoware/put/expand_stop_range                |
+| 2025/09 | /awapi/traffic_light/get/traffic_signals             |
+| 2025/09 | /awapi/traffic_light/get/nearest_traffic_signal      |
+| 2025/09 | /awapi/path_change/get/ready_module                  |
+| 2025/09 | /awapi/path_change/get/force_available               |
+| 2025/09 | /awapi/path_change/get/running_modules               |
+| 2025/09 | /awapi/path_change/put/approval                      |
+| 2025/09 | /awapi/path_change/put/force                         |
+| 2025/09 | /awapi/lane_change/put/approval                      |
+| 2025/09 | /awapi/lane_change/put/force                         |
+| 2025/09 | /awapi/object_avoidance/put/approval                 |
+| 2025/09 | /awapi/object_avoidance/put/force                    |
+| 2025/09 | /awapi/traffic_light/put/traffic_signals             |
+| 2025/09 | /awapi/autoware/put/crosswalk_states                 |
+| 2025/09 | /awapi/autoware/put/intersection_states              |
+| 2025/09 | /awapi/lane_change/get/status                        |
+| 2025/09 | /awapi/object_avoidance/get/status                   |
 
 ## Removed API
 
