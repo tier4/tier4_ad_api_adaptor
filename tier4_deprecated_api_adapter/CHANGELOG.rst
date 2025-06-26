@@ -2,6 +2,9 @@
 Changelog for package tier4_deprecated_api_adapter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.46.0 (2025-06-20)
+-------------------
+
 0.43.0 (2025-05-12)
 -------------------
 * feat(tier4_deprecated_api_adapter): create adapter for manual control (`#138 <https://github.com/tier4/tier4_ad_api_adaptor/issues/138>`_)
