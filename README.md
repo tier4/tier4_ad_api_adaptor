@@ -10,7 +10,7 @@ TIER IV Autoware API is sometimes called High-level API or TIER IV External API.
 ## TIER IV Autoware API
 
 These APIs are specialized for use cases in TIER IV. There are currently no plans to move to AD API, but this may be done if there are many requests from the community.
-If the version is blank, it means version v0.4.0 or earlier.
+If the version is empty, it means version v0.4.0 or earlier.
 
 | Version | Type    | Name                                                                                                           | Message/Service                                                                                                                                                                                 |
 | ------- | ------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
