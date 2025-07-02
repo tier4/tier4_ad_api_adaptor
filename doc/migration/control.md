@@ -1,8 +1,8 @@
 # Migrate to Control API
 
-従来は現在選択されている遠隔操作・ジョイスティック操作について取得する機能であったが、AD API では自律制御を含め、Autoware が車両に送信している指示値を取得する機能として統合された。
+従来は現在選択されている遠隔操作・ジョイスティック操作について取得する機能であったが、AD APIでは自律制御を含め、Autowareが車両に送信している指示値を取得する機能として統合された。
 新旧データの対応関係を以下に示す。
-詳細は [Control API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/features/control/) を参照のこと。
+詳細は[Control API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/features/control/)を参照のこと。
 
 <table>
     <tr>
