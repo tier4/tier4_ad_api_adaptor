@@ -14,6 +14,12 @@
 
 #include "autoware_engage.hpp"
 
+#include "utils/client.hpp"
+#include "utils/response.hpp"
+
+#include <memory>
+#include <string>
+
 namespace tier4_deprecated_api_adapter
 {
 
@@ -37,7 +43,7 @@ AutowareEngage::AutowareEngage(const rclcpp::NodeOptions & options)
     "/api/operation_mode/change_to_stop", rmw_qos_profile_services_default, callback_group_);
   cli_change_autonomous_mode_ = create_client<ChangeOperationMode>(
     "/api/operation_mode/change_to_autonomous", rmw_qos_profile_services_default, callback_group_);
-  cli_change_autoware_control_ = create_client<ChangeOperationMode>(
+  cli_enable_autoware_control_ = create_client<ChangeOperationMode>(
     "/api/operation_mode/enable_autoware_control", rmw_qos_profile_services_default,
     callback_group_);
 
@@ -46,14 +52,51 @@ AutowareEngage::AutowareEngage(const rclcpp::NodeOptions & options)
 
 void AutowareEngage::on_state(const OperationModeState & msg)
 {
-  (void)msg;
+  state_ = msg;
+
+  EngageStatus status;
+  status.stamp = now();
+  status.engage = msg.mode == OperationModeState::AUTONOMOUS;
+  pub_engage_->publish(status);
 }
 
 void AutowareEngage::on_engage(
   const EngageService::Request::SharedPtr req, EngageService::Response::SharedPtr res)
 {
-  (void)req;
-  (void)res;
+  using tier4_external_api_msgs::msg::ResponseStatus;
+  const auto create_response = [](uint16_t code, const std::string & message) {
+    ResponseStatus status;
+    status.code = code;
+    status.message = message;
+    return status;
+  };
+
+  const auto request = std::make_shared<ChangeOperationMode::Request>();
+  const bool is_autonomous_mode = state_.mode == OperationModeState::AUTONOMOUS;
+  const bool is_autoware_control = state_.is_autoware_control_enabled;
+
+  if (req->engage && is_autonomous_mode && is_autoware_control) {
+    res->status = create_response(ResponseStatus::IGNORED, "It is already engaged.");
+    return;
+  }
+
+  if (req->engage && auto_operator_change_) {
+    const auto [status, response] =
+      utils::sync_call<ChangeOperationMode>(cli_enable_autoware_control_, request);
+    if (utils::is_error(status)) {
+      res->status = status;
+      return;
+    }
+  }
+
+  const auto client = req->engage ? cli_change_autonomous_mode_ : cli_change_stop_mode_;
+  const auto [status, response] = utils::sync_call<ChangeOperationMode>(client, request);
+  if (utils::is_error(status)) {
+    res->status = status;
+    return;
+  }
+  res->status.code = response->status.success ? ResponseStatus::SUCCESS : ResponseStatus::ERROR;
+  res->status.message = response->status.message;
 }
 
 }  // namespace tier4_deprecated_api_adapter
