@@ -31,7 +31,7 @@ AutowareEngage::AutowareEngage(const rclcpp::NodeOptions & options)
 
   const auto service_qos = rmw_qos_profile_services_default;
 
-  auto_operator_change_ = declare_parameter("auto_operator_change", false);
+  autoware_control_change_ = declare_parameter("autoware_control_change", false);
   callback_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
   pub_engage_ = create_publisher<EngageStatus>("/api/external/get/engage", rclcpp::QoS(1));
@@ -83,7 +83,7 @@ void AutowareEngage::on_engage(
     return;
   }
 
-  if (req->engage && auto_operator_change_) {
+  if (autoware_control_change_) {
     const auto client = req->engage ? cli_enable_autoware_control_ : cli_disable_autoware_control_;
     const auto [status, response] = utils::sync_call<ChangeOperationMode>(client, request);
     if (utils::is_error(status)) {

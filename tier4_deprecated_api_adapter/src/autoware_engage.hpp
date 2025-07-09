@@ -53,7 +53,7 @@ private:
   void on_engage(
     const EngageService::Request::SharedPtr req, EngageService::Response::SharedPtr res);
 
-  bool auto_operator_change_;
+  bool autoware_control_change_;
   OperationModeState state_;
 };
 
