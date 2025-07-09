@@ -46,6 +46,7 @@ private:
   rclcpp::Client<ChangeOperationMode>::SharedPtr cli_change_stop_mode_;
   rclcpp::Client<ChangeOperationMode>::SharedPtr cli_change_autonomous_mode_;
   rclcpp::Client<ChangeOperationMode>::SharedPtr cli_enable_autoware_control_;
+  rclcpp::Client<ChangeOperationMode>::SharedPtr cli_disable_autoware_control_;
 
   // Callbacks.
   void on_state(const OperationModeState & msg);

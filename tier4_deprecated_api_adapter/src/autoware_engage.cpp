@@ -29,6 +29,8 @@ AutowareEngage::AutowareEngage(const rclcpp::NodeOptions & options)
   using std::placeholders::_1;
   using std::placeholders::_2;
 
+  const auto service_qos = rmw_qos_profile_services_default;
+
   auto_operator_change_ = declare_parameter("auto_operator_change", false);
   callback_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
@@ -40,12 +42,13 @@ AutowareEngage::AutowareEngage(const rclcpp::NodeOptions & options)
     "/api/operation_mode/state", rclcpp::QoS(1).transient_local(),
     std::bind(&AutowareEngage::on_state, this, _1));
   cli_change_stop_mode_ = create_client<ChangeOperationMode>(
-    "/api/operation_mode/change_to_stop", rmw_qos_profile_services_default, callback_group_);
+    "/api/operation_mode/change_to_stop", service_qos, callback_group_);
   cli_change_autonomous_mode_ = create_client<ChangeOperationMode>(
-    "/api/operation_mode/change_to_autonomous", rmw_qos_profile_services_default, callback_group_);
+    "/api/operation_mode/change_to_autonomous", service_qos, callback_group_);
   cli_enable_autoware_control_ = create_client<ChangeOperationMode>(
-    "/api/operation_mode/enable_autoware_control", rmw_qos_profile_services_default,
-    callback_group_);
+    "/api/operation_mode/enable_autoware_control", service_qos, callback_group_);
+  cli_disable_autoware_control_ = create_client<ChangeOperationMode>(
+    "/api/operation_mode/disable_autoware_control", service_qos, callback_group_);
 
   state_.mode = OperationModeState::UNKNOWN;
 }
@@ -81,8 +84,8 @@ void AutowareEngage::on_engage(
   }
 
   if (req->engage && auto_operator_change_) {
-    const auto [status, response] =
-      utils::sync_call<ChangeOperationMode>(cli_enable_autoware_control_, request);
+    const auto client = req->engage ? cli_enable_autoware_control_ : cli_disable_autoware_control_;
+    const auto [status, response] = utils::sync_call<ChangeOperationMode>(client, request);
     if (utils::is_error(status)) {
       res->status = status;
       return;

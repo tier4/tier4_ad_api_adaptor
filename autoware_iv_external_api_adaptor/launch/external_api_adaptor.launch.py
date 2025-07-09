@@ -35,7 +35,6 @@ def generate_launch_description():
         _create_api_node("diagnostics", "Diagnostics"),
         _create_api_node("door", "Door"),
         _create_api_node("emergency", "Emergency"),
-        _create_api_node("engage", "Engage"),
         _create_api_node("fail_safe_state", "FailSafeState"),
         _create_api_node("initial_pose", "InitialPose"),
         _create_api_node("localization_score", "LocalizationScore"),
