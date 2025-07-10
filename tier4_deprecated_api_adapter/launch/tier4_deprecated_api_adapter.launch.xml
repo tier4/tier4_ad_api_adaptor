@@ -1,6 +1,8 @@
 <launch>
   <group>
     <push-ros-namespace namespace="tier4_api"/>
+    <node pkg="tier4_deprecated_api_adapter" exec="autoware_engage_node" name="engage"/>
+
     <group>
       <push-ros-namespace namespace="manual"/>
       <node pkg="tier4_deprecated_api_adapter" exec="manual_status_node" name="status"/>
