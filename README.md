@@ -107,7 +107,6 @@ Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/
 | 2025/12 | /awapi/vehicle/get/status (target_acceleration)      |
 | 2025/12 | /awapi/vehicle/get/status (target_steering)          |
 | 2025/12 | /awapi/vehicle/get/status (target_steering_velocity) |
-| 2025/12 | /awapi/tmp/infrastructure_commands                   |
 | 2025/09 | /awapi/autoware/put/engage                           |
 | 2025/09 | /awapi/autoware/put/route                            |
 | 2025/09 | /awapi/autoware/put/goal                             |
@@ -115,7 +114,8 @@ Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/
 | 2025/09 | /awapi/autoware/put/pose_initialization_request      |
 | 2025/09 | /awapi/vehicle/put/stop                              |
 | 2025/09 | /awapi/vehicle/put/velocity                          |
-| 2025/09 | /awapi//tmp/virtual_traffic_light_states             |
+| 2025/09 | /awapi/tmp/virtual_traffic_light_states              |
+| 2025/09 | /awapi/tmp/infrastructure_commands                   |
 | 2025/09 | /awapi/prediction/get/objects                        |
 | 2025/09 | /awapi/autoware/get/stop_speed_exceeded              |
 | 2025/09 | /awapi/autoware/put/expand_stop_range                |
