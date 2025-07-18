@@ -148,7 +148,6 @@
 - set temporary stop signal
 - MessageType: tier4_api_msgs/StopCommand
 - Specification
-
   - send True: send upper velocity to 0
   - send False: resend last received upper velocity
     - (if upper velocity have never received, send _default_max_velocity_ value.)
