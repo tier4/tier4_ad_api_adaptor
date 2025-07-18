@@ -26,7 +26,9 @@
 #include "tier4_external_api_msgs/msg/network_status.hpp"
 #include "tier4_external_api_msgs/msg/system_monitor.hpp"
 
+#include <map>
 #include <memory>
+#include <string>
 #include <utility>
 
 namespace external_api
