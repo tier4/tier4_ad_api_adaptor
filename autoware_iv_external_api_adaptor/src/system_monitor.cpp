@@ -57,12 +57,13 @@ SystemMonitor::SystemMonitor(const rclcpp::NodeOptions & options) : Node("system
     });
 
   // Timer callback
-  timer_ = rclcpp::create_timer(this, get_clock(), 1s, std::bind(&SystemMonitor::callbackTimer, this));
+  timer_ =
+    rclcpp::create_timer(this, get_clock(), 1s, std::bind(&SystemMonitor::callbackTimer, this));
 }
 
 void SystemMonitor::callbackTimer()
 {
-  for (auto& [hostname, msg] : msg_system_monitor_) {
+  for (auto & [hostname, msg] : msg_system_monitor_) {
     msg.hostname = hostname;
     msg.stamp = this->now();
     pub_system_monitor_->publish(msg);
