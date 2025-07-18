@@ -1,4 +1,5 @@
 <launch>
+  <arg name="api_mode" default="0"/>
   <arg name="use_control_command_gate" default="false"/>
   <arg name="adapter_output" default="screen"/>
   <arg name="relay_output" default="log"/>
@@ -97,7 +98,7 @@
   <arg name="use_intra_process" default="false"/>
   <arg name="use_multithread" default="false"/>
 
-  <group>
+  <group if="$(eval &quot; $(var api_mode) &lt;= 1 &quot;)">
     <push-ros-namespace namespace="awapi"/>
     <node pkg="awapi_awiv_adapter" exec="awapi_awiv_adapter" output="screen">
       <remap from="input/steer" to="$(var input_steer)"/>
@@ -141,8 +142,11 @@
       <param name="stop_reason_timeout" value="$(var stop_reason_timeout)"/>
       <param name="stop_reason_thresh_dist" value="$(var stop_reason_thresh_dist)"/>
       <param name="use_control_command_gate" value="$(var use_control_command_gate)"/>
+      <param name="api_mode" value="$(var api_mode)"/>
     </node>
   </group>
 
-  <include file="$(find-pkg-share awapi_awiv_adapter)/launch/awapi_relay_container.launch.py"/>
+  <group if="$(eval &quot; $(var api_mode) &lt;= 0 &quot;)">
+    <include file="$(find-pkg-share awapi_awiv_adapter)/launch/awapi_relay_container.launch.py"/>
+  </group>
 </launch>
