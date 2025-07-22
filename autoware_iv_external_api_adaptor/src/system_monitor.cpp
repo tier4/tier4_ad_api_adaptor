@@ -67,10 +67,8 @@ bool SystemMonitor::isComplete(const tier4_external_api_msgs::msg::SystemMonitor
   // Checks whether all fields in the SystemMonitor message are filled.
   // The timestamp fields are initialized to zero by the default constructor,
   // so a non-zero value indicates that the corresponding message was received.
-  return msg.cpu_temperature.stamp.sec != 0 &&
-         msg.memory_status.stamp.sec != 0 &&
-         msg.gpu_status.stamp.sec != 0 &&
-         msg.network_status.stamp.sec != 0 &&
+  return msg.cpu_temperature.stamp.sec != 0 && msg.memory_status.stamp.sec != 0 &&
+         msg.gpu_status.stamp.sec != 0 && msg.network_status.stamp.sec != 0 &&
          msg.hdd_status.stamp.sec != 0;
 }
 
