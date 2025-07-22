@@ -40,9 +40,8 @@ public:
   explicit SystemMonitor(const rclcpp::NodeOptions & options);
 
 private:
-  void callbackTimer();
-
-  rclcpp::TimerBase::SharedPtr timer_;
+  bool isComplete(const tier4_external_api_msgs::msg::SystemMonitor & msg);
+  void tryPublishMsg(const std::string & hostname);
 
   std::map<std::string, tier4_external_api_msgs::msg::SystemMonitor> msg_system_monitor_;
 

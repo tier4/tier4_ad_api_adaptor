@@ -30,43 +30,61 @@ SystemMonitor::SystemMonitor(const rclcpp::NodeOptions & options) : Node("system
     "/system/system_monitor/cpu_monitor/cpu_temperature", rclcpp::QoS(1),
     [this](const tier4_external_api_msgs::msg::CpuTemperature::SharedPtr msg) {
       msg_system_monitor_[msg->hostname].cpu_temperature = *msg;
+      tryPublishMsg(msg->hostname);
     });
 
   sub_memory_status_ = create_subscription<tier4_external_api_msgs::msg::MemoryStatus>(
     "/system/system_monitor/mem_monitor/memory_status", rclcpp::QoS(1),
     [this](const tier4_external_api_msgs::msg::MemoryStatus::SharedPtr msg) {
       msg_system_monitor_[msg->hostname].memory_status = *msg;
+      tryPublishMsg(msg->hostname);
     });
 
   sub_gpu_status_ = create_subscription<tier4_external_api_msgs::msg::GpuStatus>(
     "/system/system_monitor/gpu_monitor/gpu_status", rclcpp::QoS(1),
     [this](const tier4_external_api_msgs::msg::GpuStatus::SharedPtr msg) {
       msg_system_monitor_[msg->hostname].gpu_status = *msg;
+      tryPublishMsg(msg->hostname);
     });
 
   sub_network_status_ = create_subscription<tier4_external_api_msgs::msg::NetworkStatus>(
     "/system/system_monitor/net_monitor/network_status", rclcpp::QoS(1),
     [this](const tier4_external_api_msgs::msg::NetworkStatus::SharedPtr msg) {
       msg_system_monitor_[msg->hostname].network_status = *msg;
+      tryPublishMsg(msg->hostname);
     });
 
   sub_hdd_status_ = create_subscription<tier4_external_api_msgs::msg::HddStatus>(
     "/system/system_monitor/hdd_monitor/hdd_status", rclcpp::QoS(1),
     [this](const tier4_external_api_msgs::msg::HddStatus::SharedPtr msg) {
       msg_system_monitor_[msg->hostname].hdd_status = *msg;
+      tryPublishMsg(msg->hostname);
     });
-
-  // Timer callback
-  timer_ =
-    rclcpp::create_timer(this, get_clock(), 1s, std::bind(&SystemMonitor::callbackTimer, this));
 }
 
-void SystemMonitor::callbackTimer()
+bool SystemMonitor::isComplete(const tier4_external_api_msgs::msg::SystemMonitor & msg)
 {
-  for (auto & [hostname, msg] : msg_system_monitor_) {
+  // Checks whether all fields in the SystemMonitor message are filled.
+  // The timestamp fields are initialized to zero by the default constructor,
+  // so a non-zero value indicates that the corresponding message was received.
+  return msg.cpu_temperature.stamp.sec != 0 &&
+         msg.memory_status.stamp.sec != 0 &&
+         msg.gpu_status.stamp.sec != 0 &&
+         msg.network_status.stamp.sec != 0 &&
+         msg.hdd_status.stamp.sec != 0;
+}
+
+void SystemMonitor::tryPublishMsg(const std::string & hostname)
+{
+  auto it = msg_system_monitor_.find(hostname);
+  if (it == msg_system_monitor_.end()) return;
+
+  auto & msg = it->second;
+  if (isComplete(msg)) {
     msg.hostname = hostname;
     msg.stamp = this->now();
     pub_system_monitor_->publish(msg);
+    msg_system_monitor_.erase(it);
   }
 }
 
