@@ -34,6 +34,7 @@ If the version is empty, it means version v0.4.0 or earlier.
 | -       | topic   | [/api/external/get/rosbag_logging_mode](./doc/api/external/get/rosbag_logging_mode.md)                         | [tier4_external_api_msgs/msg/RosbagLoggingMode](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/RosbagLoggingMode.msg)                             |
 | -       | topic   | [/api/external/get/calibration_status](./doc/api/external/get/calibration_status.md)                           | [tier4_external_api_msgs/msg/CalibrationStatusArray](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/CalibrationStatusArray.msg)                   |
 | -       | service | [/api/external/get/accel_brake_map_calibrator/data](./doc/api/external/get/accel_brake_map_calibrator/data.md) | [tier4_external_api_msgs/srv/GetAccelBrakeMapCalibrationData](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/srv/GetAccelBrakeMapCalibrationData.srv) |
+| -       | topic   | [/api/external/get/system_monitor](./doc/api/external/get/system_monitor.md)                                   | [tier4_external_api_msgs/msg/SystemMonitor](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/SystemMonitor.msg)                                     |
 
 ## Deprecated API
 
