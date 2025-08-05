@@ -77,7 +77,6 @@
   <arg name="set_path_change_approval" default="path_change/put/approval"/>
   <arg name="set_path_change_force" default="path_change/put/force"/>
   <arg name="set_obstacle_avoid_approval" default="object_avoidance/put/approval"/>
-  <arg name="set_force_obstacle_avoid" default="object_avoidance/put/force"/>
   <arg name="set_overwrite_traffic_signals" default="traffic_light/put/traffic_signals"/>
   <arg name="set_crosswalk_status" default="autoware/put/crosswalk_states"/>
   <arg name="set_intersection_status" default="autoware/put/intersection_states"/>
@@ -98,7 +97,7 @@
   <arg name="use_intra_process" default="false"/>
   <arg name="use_multithread" default="false"/>
 
-  <group if="$(eval &quot; $(var api_mode) &lt;= 1 &quot;)">
+  <group if="$(eval &quot; $(var api_mode) &lt; 2 &quot;)">
     <push-ros-namespace namespace="awapi"/>
     <node pkg="awapi_awiv_adapter" exec="awapi_awiv_adapter" output="screen">
       <remap from="input/steer" to="$(var input_steer)"/>
@@ -146,7 +145,7 @@
     </node>
   </group>
 
-  <group if="$(eval &quot; $(var api_mode) &lt;= 0 &quot;)">
+  <group if="$(eval &quot; $(var api_mode) &lt; 1 &quot;)">
     <include file="$(find-pkg-share awapi_awiv_adapter)/launch/awapi_relay_container.launch.py"/>
   </group>
 </launch>
