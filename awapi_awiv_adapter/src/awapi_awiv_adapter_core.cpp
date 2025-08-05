@@ -165,10 +165,14 @@ void AutowareIvAdapter::timerCallback()
   autoware_state_publisher_->statePublisher(aw_info_);
 
   // publish lane change state
-  lane_change_state_publisher_->statePublisher(aw_info_);
+  if (lane_change_state_publisher_) {
+    lane_change_state_publisher_->statePublisher(aw_info_);
+  }
 
   // publish obstacle_avoidance state
-  obstacle_avoidance_state_publisher_->statePublisher(aw_info_);
+  if (obstacle_avoidance_state_publisher_) {
+    obstacle_avoidance_state_publisher_->statePublisher(aw_info_);
+  }
 
   // publish v2x command and state
   if (aw_info_.v2x_command_ptr) {

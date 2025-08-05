@@ -66,17 +66,17 @@ def generate_launch_description():
         package="rclcpp_components",
         executable="component_container_mt",
         composable_node_descriptions=components3,
-        ros_arguments=["--log-level", "external.autoware_iv_adaptor:=WARN"],
+        ros_arguments=["--log-level", "autoware_api.external.autoware_iv_adaptor:=WARN"],
         output="screen",
     )
     loader1 = LoadComposableNodes(
         composable_node_descriptions=components1,
-        target_container="/external/autoware_iv_adaptor",
+        target_container="/autoware_api/external/autoware_iv_adaptor",
         condition=IfCondition(PythonExpression([LaunchConfiguration("api_mode"), " < 1"])),
     )
     loader2 = LoadComposableNodes(
         composable_node_descriptions=components2,
-        target_container="/external/autoware_iv_adaptor",
+        target_container="/autoware_api/external/autoware_iv_adaptor",
         condition=IfCondition(PythonExpression([LaunchConfiguration("api_mode"), " < 2"])),
     )
 
