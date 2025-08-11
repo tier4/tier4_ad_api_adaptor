@@ -31,8 +31,7 @@ IVMsgs::IVMsgs(const rclcpp::NodeOptions & options) : Node("external_api_iv_msgs
   pub_trajectory_ = create_publisher<TrajectoryOutput>(
     "/api/iv_msgs/planning/scenario_planning/trajectory", rclcpp::QoS(1));
   sub_trajectory_ = create_subscription<TrajectoryInput>(
-    "/planning/scenario_planning/trajectory", rclcpp::QoS(1),
-    std::bind(&IVMsgs::onTrajectory, this, _1));
+    "/planning/trajectory", rclcpp::QoS(1), std::bind(&IVMsgs::onTrajectory, this, _1));
 
   pub_dynamic_objects_ = create_publisher<DynamicObjectsOutput>(
     "/api/iv_msgs/perception/object_recognition/tracking/objects", rclcpp::QoS(1));
