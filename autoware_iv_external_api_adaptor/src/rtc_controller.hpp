@@ -94,6 +94,7 @@ private:
   std::unique_ptr<RTCModule> avoidance_by_lc_right_;
   std::unique_ptr<RTCModule> goal_planner_;
   std::unique_ptr<RTCModule> start_planner_;
+  std::unique_ptr<RTCModule> supervised_perception_filter_;
 
   /* publishers */
   rclcpp::Publisher<CooperateStatusArray>::SharedPtr rtc_status_pub_;
