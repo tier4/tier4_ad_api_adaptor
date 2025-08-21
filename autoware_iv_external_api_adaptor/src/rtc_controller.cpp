@@ -113,6 +113,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_right");
   goal_planner_ = std::make_unique<RTCModule>(this, "goal_planner");
   start_planner_ = std::make_unique<RTCModule>(this, "start_planner");
+  roundabout_ = std::make_unique<RTCModule>(this, "roundabout");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
@@ -184,6 +185,7 @@ void RTCController::onTimer()
   avoidance_by_lc_right_->insertMessage(cooperate_statuses);
   goal_planner_->insertMessage(cooperate_statuses);
   start_planner_->insertMessage(cooperate_statuses);
+  roundabout_->insertMessage(cooperate_statuses);
 
   insertionSortAndValidation(cooperate_statuses);
 
@@ -273,6 +275,10 @@ void RTCController::setRTC(
         occlusion_spot_->callService(request, responses);
         break;
       }
+      case Module::ROUNDABOUT: {
+        roundabout_->callService(request, responses);
+        break;
+      }
         // virtual_traffic not found
     }
   }
@@ -298,6 +304,7 @@ void RTCController::onAutoModeTimer()
   avoidance_right_->insertAutoModeMessage(auto_mode_statuses);
   avoidance_by_lc_left_->insertAutoModeMessage(auto_mode_statuses);
   avoidance_by_lc_right_->insertAutoModeMessage(auto_mode_statuses);
+  roundabout_->insertAutoModeMessage(auto_mode_statuses);
   goal_planner_->insertAutoModeMessage(auto_mode_statuses);
   start_planner_->insertAutoModeMessage(auto_mode_statuses);
 
@@ -377,6 +384,10 @@ void RTCController::setRTCAutoMode(
     }
     case Module::OCCLUSION_SPOT: {
       occlusion_spot_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::ROUNDABOUT: {
+      roundabout_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
       // virtual_traffic not found
