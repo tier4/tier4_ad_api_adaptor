@@ -2,3 +2,16 @@
 
 This package provides API that specialized for use cases in TIER IV.
 [See here for the TIER IV API specification.](https://tier4.github.io/autoware-documentation/tier4-main/design/autoware-interfaces/prototyping/)
+
+## Planning factor
+
+This module merges and publishes internal planning factor message for the planning factor API.
+
+### Parameters
+
+| Name                    | Type        | Description                                                                                                                                                                                                                     |
+| ----------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| rate                    | float       | Publication rate of the topic.                                                                                                                                                                                                  |
+| timeout                 | float       | Internal topic timeout. The topic is removed from the output when it times out.                                                                                                                                                 |
+| topics                  | string list | List of internal topic names.                                                                                                                                                                                                   |
+| behavior_name_remapping | string      | Remapping of behavior names. Due to ROS parameter limitations, specify this as a yaml-like map string. Any name not in the mapping is replaced with "unknown". If an empty string is specified, no remapping will be performed. |
