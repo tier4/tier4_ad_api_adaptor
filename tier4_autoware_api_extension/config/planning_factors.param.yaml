@@ -35,3 +35,6 @@
       - /planning/planning_factors/traffic_light
       - /planning/planning_factors/virtual_traffic_light
       - /planning/planning_factors/walkway
+    behavior_name_remapping: |
+      blind_spot : rear_check
+      crosswalk : crosswalk

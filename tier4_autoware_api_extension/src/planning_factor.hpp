@@ -20,6 +20,8 @@
 #include <autoware_internal_planning_msgs/msg/planning_factor_array.hpp>
 #include <tier4_external_api_msgs/msg/planning_factor_array.hpp>
 
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace tier4_autoware_api_extension
@@ -41,6 +43,7 @@ private:
   std::vector<InternalArray::ConstSharedPtr> factors_;
 
   double timeout_;
+  std::unordered_map<std::string, std::string> behavior_name_remapping_;
 };
 
 }  // namespace tier4_autoware_api_extension
