@@ -121,12 +121,12 @@ auto parse_remapping(const std::string & remapping)
   };
 
   std::unordered_map<std::string, std::string> remap;
-  std::stringstream ss(remapping);
+  std::stringstream ss(trim(remapping));
   std::string line;
   for (int i = 1; std::getline(ss, line, '\n'); ++i) {
     const auto pos = line.find(':');
     if (pos == std::string::npos) {
-      throw std::runtime_error("No delimiter on line " + std::to_string(i));
+      throw std::runtime_error("No delimiter: behavior_name_remapping line " + std::to_string(i));
     }
     const auto k = trim(line.substr(0, pos));
     const auto v = trim(line.substr(pos + 1));

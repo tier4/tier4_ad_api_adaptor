@@ -36,5 +36,33 @@
       - /planning/planning_factors/virtual_traffic_light
       - /planning/planning_factors/walkway
     behavior_name_remapping: |
-      blind_spot : rear_check
-      crosswalk : crosswalk
+      avoidance_by_lane_change: avoidance
+      blind_spot: rear_check
+      crosswalk: crosswalk
+      detection_area: user_defined_detection_area
+      dynamic_obstacle_avoidance: avoidance
+      dynamic_obstacle_stop: route_obstacle
+      external_request_lane_change_left: lane_change
+      external_request_lane_change_right: lane_change
+      goal_planner: goal_planner
+      intersection: intersection
+      intersection_occlusion: intersection
+      lane_change_left: lane_change
+      lane_change_right: lane_change
+      merge_from_private: merge
+      mvp_run_out: run_out
+      obstacle_cruise: adaptive_cruise
+      obstacle_cruise_planner: adaptive_cruise
+      obstacle_slow_down: route_obstacle
+      obstacle_stop: route_obstacle
+      obstacle_stop_planner: route_obstacle
+      out_of_lane: route_obstacle
+      road_user_stop: route_obstacle
+      run_out: run_out
+      start_planner: start_planner
+      static_obstacle_avoidance: avoidance
+      stop_line: stop_sign
+      surround_obstacle_checker: surrounding_obstacle
+      traffic_light: traffic_signal
+      virtual_traffic_light: traffic_signal
+      walkway: sidewalk
