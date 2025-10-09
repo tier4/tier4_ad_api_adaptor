@@ -14,83 +14,45 @@
 
 #include "velocity_limit.hpp"
 
-namespace internal_api
+namespace tier4_autoware_api_extension
 {
-Velocity::Velocity(const rclcpp::NodeOptions & options) : Node("external_api_velocity", options)
+VelocityLimit::VelocityLimit(const rclcpp::NodeOptions & options) : Node("velocity_limit", options)
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
 
-  srv_pause_ = proxy.create_service<tier4_external_api_msgs::srv::PauseDriving>(
-    "/api/autoware/set/pause_driving", std::bind(&Velocity::setPauseDriving, this, _1, _2));
-  srv_velocity_ = proxy.create_service<tier4_external_api_msgs::srv::SetVelocityLimit>(
-    "/api/autoware/set/velocity_limit", std::bind(&Velocity::setVelocityLimit, this, _1, _2));
-
-  pub_api_velocity_ = create_publisher<autoware_internal_planning_msgs::msg::VelocityLimit>(
-    "/api/autoware/get/velocity_limit", rclcpp::QoS(1).transient_local());
-  pub_planning_velocity_ = create_publisher<autoware_internal_planning_msgs::msg::VelocityLimit>(
+  srv_api_velocity_ = create_service<ExternalService>(
+    "/api/external/set/velocity_limit",
+    std::bind(&VelocityLimit::on_velocity_limit_service, this, _1, _2));
+  pub_api_velocity_ = create_publisher<ExternalMessage>(
+    "/api/external/get/velocity_limit", rclcpp::QoS(1).transient_local());
+  pub_planning_velocity_ = create_publisher<InternalMessage>(
     "/planning/scenario_planning/max_velocity_default", rclcpp::QoS(1).transient_local());
-  sub_planning_velocity_ = create_subscription<autoware_internal_planning_msgs::msg::VelocityLimit>(
+  sub_planning_velocity_ = create_subscription<InternalMessage>(
     "/planning/scenario_planning/current_max_velocity", rclcpp::QoS(1).transient_local(),
-    std::bind(&Velocity::onVelocityLimit, this, _1));
-
-  is_ready_ = false;
-  velocity_limit_ = 0.0;
+    std::bind(&VelocityLimit::on_velocity_limit_message, this, _1));
 }
 
-void Velocity::setPauseDriving(
-  const tier4_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
-  const tier4_external_api_msgs::srv::PauseDriving::Response::SharedPtr response)
+void VelocityLimit::on_velocity_limit_message(const InternalMessage::SharedPtr msg)
 {
-  if (!is_ready_) {
-    response->status = tier4_api_utils::response_error("It is not ready to set velocity.");
-    return;
-  }
-  publishPlanningVelocity(request->pause ? 0.0 : velocity_limit_);
-  response->status = tier4_api_utils::response_success();
+  ExternalMessage api;
+  api.stamp = msg->stamp;
+  api.velocity = msg->max_velocity;
+  pub_api_velocity_->publish(api);
 }
 
-void Velocity::setVelocityLimit(
-  const tier4_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
-  const tier4_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response)
+void VelocityLimit::on_velocity_limit_service(
+  const ExternalService::Request::SharedPtr req, const ExternalService::Response::SharedPtr res)
 {
-  if (!is_ready_) {
-    response->status = tier4_api_utils::response_error("It is not ready to set velocity.");
-    return;
-  }
-  publishPlanningVelocity(request->velocity);
-  response->status = tier4_api_utils::response_success();
-}
-
-void Velocity::onVelocityLimit(
-  const autoware_internal_planning_msgs::msg::VelocityLimit::SharedPtr msg)
-{
-  // store the velocity for releasing the stop
-  if (kVelocityEpsilon < msg->max_velocity) {
-    velocity_limit_ = msg->max_velocity;
-  }
-  is_ready_ = true;
-  publishApiVelocity(msg->max_velocity);
-}
-
-void Velocity::publishApiVelocity(double velocity)
-{
-  autoware_internal_planning_msgs::msg::VelocityLimit msg;
+  InternalMessage msg;
   msg.stamp = now();
-  msg.max_velocity = velocity;
-  pub_api_velocity_->publish(msg);
-}
-
-void Velocity::publishPlanningVelocity(double velocity)
-{
-  autoware_internal_planning_msgs::msg::VelocityLimit msg;
-  msg.stamp = now();
-  msg.max_velocity = velocity;
+  msg.max_velocity = req->velocity;
   pub_planning_velocity_->publish(msg);
+
+  res->status.code = tier4_external_api_msgs::msg::ResponseStatus::SUCCESS;
 }
 
-}  // namespace internal_api
+}  // namespace tier4_autoware_api_extension
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(internal_api::Velocity)
+RCLCPP_COMPONENTS_REGISTER_NODE(tier4_autoware_api_extension::VelocityLimit)

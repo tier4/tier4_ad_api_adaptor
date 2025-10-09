@@ -16,52 +16,37 @@
 #define VELOCITY_LIMIT_HPP_
 
 #include <rclcpp/rclcpp.hpp>
-#include <tier4_api_utils/tier4_api_utils.hpp>
 
 #include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
-#include <tier4_external_api_msgs/srv/pause_driving.hpp>
+#include <tier4_external_api_msgs/msg/velocity_limit.hpp>
 #include <tier4_external_api_msgs/srv/set_velocity_limit.hpp>
 
-namespace internal_api
+namespace tier4_autoware_api_extension
 {
-class Velocity : public rclcpp::Node
+class VelocityLimit : public rclcpp::Node
 {
 public:
-  explicit Velocity(const rclcpp::NodeOptions & options);
+  explicit VelocityLimit(const rclcpp::NodeOptions & options);
 
 private:
-  using PauseDriving = tier4_external_api_msgs::srv::PauseDriving;
-  using SetVelocityLimit = tier4_external_api_msgs::srv::SetVelocityLimit;
-  using VelocityLimit = autoware_internal_planning_msgs::msg::VelocityLimit;
+  using ExternalService = tier4_external_api_msgs::srv::SetVelocityLimit;
+  using ExternalMessage = tier4_external_api_msgs::msg::VelocityLimit;
+  using InternalMessage = autoware_internal_planning_msgs::msg::VelocityLimit;
 
-  // ros interface
-  tier4_api_utils::Service<PauseDriving>::SharedPtr srv_pause_;
-  tier4_api_utils::Service<SetVelocityLimit>::SharedPtr srv_velocity_;
-  rclcpp::Publisher<VelocityLimit>::SharedPtr pub_api_velocity_;
-  rclcpp::Publisher<VelocityLimit>::SharedPtr pub_planning_velocity_;
-  rclcpp::Subscription<VelocityLimit>::SharedPtr sub_planning_velocity_;
+  rclcpp::Service<ExternalService>::SharedPtr srv_api_velocity_;
+  rclcpp::Publisher<ExternalMessage>::SharedPtr pub_api_velocity_;
+  rclcpp::Publisher<InternalMessage>::SharedPtr pub_planning_velocity_;
+  rclcpp::Subscription<InternalMessage>::SharedPtr sub_planning_velocity_;
 
-  // class constants
-  static constexpr double kVelocityEpsilon = 1e-5;
+  void on_velocity_limit_message(const InternalMessage::SharedPtr msg);
+  void on_velocity_limit_service(
+    const ExternalService::Request::SharedPtr request,
+    const ExternalService::Response::SharedPtr response);
 
-  // class state
-  bool is_ready_;
-  double velocity_limit_;
-
-  // ros callback
-  void setPauseDriving(
-    const tier4_external_api_msgs::srv::PauseDriving::Request::SharedPtr request,
-    const tier4_external_api_msgs::srv::PauseDriving::Response::SharedPtr response);
-  void setVelocityLimit(
-    const tier4_external_api_msgs::srv::SetVelocityLimit::Request::SharedPtr request,
-    const tier4_external_api_msgs::srv::SetVelocityLimit::Response::SharedPtr response);
-  void onVelocityLimit(const autoware_internal_planning_msgs::msg::VelocityLimit::SharedPtr msg);
-
-  // class method
   void publishApiVelocity(double velocity);
   void publishPlanningVelocity(double velocity);
 };
 
-}  // namespace internal_api
+}  // namespace tier4_autoware_api_extension
 
 #endif  // VELOCITY_LIMIT_HPP_
