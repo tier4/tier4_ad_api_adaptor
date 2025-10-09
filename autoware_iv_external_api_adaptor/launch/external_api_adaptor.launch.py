@@ -13,7 +13,12 @@
 # limitations under the License.
 
 import launch
+from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PythonExpression
 from launch_ros.actions import ComposableNodeContainer
+from launch_ros.actions import LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
 
 
@@ -29,33 +34,51 @@ def _create_api_node(node_name, class_name, **kwargs):
 
 def generate_launch_description():
     # RTCController is launched by tier4_autoware_api_launch because it is used by autoware_universe.
-    components = [
-        _create_api_node("calibration_status", "CalibrationStatus"),
-        _create_api_node("cpu_usage", "CpuUsage"),
+    components1 = [
+        _create_api_node("service", "Service"),
+    ]
+    components2 = [
         _create_api_node("diagnostics", "Diagnostics"),
         _create_api_node("door", "Door"),
         _create_api_node("emergency", "Emergency"),
         _create_api_node("fail_safe_state", "FailSafeState"),
         _create_api_node("initial_pose", "InitialPose"),
-        _create_api_node("localization_score", "LocalizationScore"),
-        _create_api_node("map", "Map"),
         _create_api_node("operator", "Operator"),
-        _create_api_node("rosbag_logging_mode", "RosbagLoggingMode"),
-        _create_api_node("metadata_packages", "MetadataPackages"),
         _create_api_node("route", "Route"),
-        _create_api_node("service", "Service"),
         _create_api_node("start", "Start"),
-        _create_api_node("system_monitor", "SystemMonitor"),
         _create_api_node("vehicle_status", "VehicleStatus"),
         _create_api_node("velocity", "Velocity"),
+    ]
+    components3 = [
+        _create_api_node("calibration_status", "CalibrationStatus"),
+        _create_api_node("cpu_usage", "CpuUsage"),
+        _create_api_node("localization_score", "LocalizationScore"),
+        _create_api_node("map", "Map"),
+        _create_api_node("metadata_packages", "MetadataPackages"),
+        _create_api_node("rosbag_logging_mode", "RosbagLoggingMode"),
+        _create_api_node("system_monitor", "SystemMonitor"),
         _create_api_node("version", "Version"),
     ]
+
     container = ComposableNodeContainer(
         namespace="external",
         name="autoware_iv_adaptor",
         package="rclcpp_components",
         executable="component_container_mt",
-        composable_node_descriptions=components,
+        composable_node_descriptions=components3,
+        ros_arguments=["--log-level", "autoware_api.external.autoware_iv_adaptor:=WARN"],
         output="screen",
     )
-    return launch.LaunchDescription([container])
+    loader1 = LoadComposableNodes(
+        composable_node_descriptions=components1,
+        target_container="/autoware_api/external/autoware_iv_adaptor",
+        condition=IfCondition(PythonExpression([LaunchConfiguration("api_mode"), " < 1"])),
+    )
+    loader2 = LoadComposableNodes(
+        composable_node_descriptions=components2,
+        target_container="/autoware_api/external/autoware_iv_adaptor",
+        condition=IfCondition(PythonExpression([LaunchConfiguration("api_mode"), " < 2"])),
+    )
+
+    argument = DeclareLaunchArgument("api_mode", default_value="0")
+    return launch.LaunchDescription([argument, container, loader1, loader2])
