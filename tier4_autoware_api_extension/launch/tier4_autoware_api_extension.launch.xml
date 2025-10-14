@@ -1,4 +1,6 @@
 <launch>
+  <arg name="api_mode" default="0" description="options: 0(All), 1(Without 2025/09 EOL API), 2(Without 2025/12 EOL API)"/>
+
   <!-- Nodes in this package. -->
   <group>
     <push-ros-namespace namespace="tier4_api"/>
@@ -7,6 +9,12 @@
     <node pkg="tier4_autoware_api_extension" exec="planning_factor_node">
       <param from="$(find-pkg-share tier4_autoware_api_extension)/config/planning_factors.param.yaml"/>
     </node>
+  </group>
+
+  <!-- Nodes in this package. Switch for 2025/12 EOL API. -->
+  <group unless="$(eval &quot; $(var api_mode) &lt; 2 &quot;)">
+    <push-ros-namespace namespace="tier4_api"/>
+    <node pkg="tier4_autoware_api_extension" exec="velocity_limit_node"/>
   </group>
 
   <!-- Relay for tier4_v2x_msgs. -->
