@@ -13,5 +13,11 @@
         <param name="mode" value="remote"/>
       </node>
     </group>
+
+    <node pkg="topic_tools" exec="relay" name="relay_route_distance">
+      <param name="input_topic" value="/tier4_api/utils/path_distance_calculator/distance"/>
+      <param name="output_topic" value="/autoware_api/utils/path_distance_calculator/distance"/>
+      <param name="type" value="autoware_internal_debug_msgs/msg/Float64Stamped"/>
+    </node>
   </group>
 </launch>
