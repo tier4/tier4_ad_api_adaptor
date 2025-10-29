@@ -1,17 +1,15 @@
 <launch>
   <group>
     <push-ros-namespace namespace="tier4_api"/>
-    <node pkg="tier4_deprecated_api_adapter" exec="autoware_engage_node" name="engage"/>
-
-    <group>
-      <push-ros-namespace namespace="manual"/>
-      <node pkg="tier4_deprecated_api_adapter" exec="manual_status_node" name="status"/>
-      <node pkg="tier4_deprecated_api_adapter" exec="manual_control_node" name="local">
+    <node_container pkg="rclcpp_components" exec="component_container" name="deprecated_api_container" namespace="">
+      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::AutowareEngage" name="engage"/>
+      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualStatus" name="status" namespace="manual"/>
+      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="local" namespace="manual">
         <param name="mode" value="local"/>
-      </node>
-      <node pkg="tier4_deprecated_api_adapter" exec="manual_control_node" name="remote">
+      </composable_node>
+      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="remote" namespace="manual">
         <param name="mode" value="remote"/>
-      </node>
-    </group>
+      </composable_node>
+    </node_container>
   </group>
 </launch>
