@@ -1,7 +1,10 @@
 <launch>
   <group>
     <push-ros-namespace namespace="tier4_api"/>
-    <node_container pkg="rclcpp_components" exec="component_container" name="deprecated_api_container" namespace="">
+    <node_container pkg="rclcpp_components" exec="component_container" name="deprecated_api_container" namespace=""/>
+
+    <include file="$(find-pkg-share tier4_deprecated_api_adapter)/launch/namespace.launch.py"/>
+    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container">
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::AutowareEngage" name="engage"/>
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualStatus" name="status" namespace="manual"/>
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="local" namespace="manual">
@@ -10,6 +13,6 @@
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="remote" namespace="manual">
         <param name="mode" value="remote"/>
       </composable_node>
-    </node_container>
+    </load_composable_node>
   </group>
 </launch>

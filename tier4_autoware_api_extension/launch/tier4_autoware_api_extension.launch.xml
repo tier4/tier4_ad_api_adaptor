@@ -1,7 +1,10 @@
 <launch>
   <group>
     <push-ros-namespace namespace="tier4_api"/>
-    <node_container pkg="rclcpp_components" exec="component_container" name="api_extension_container" namespace="">
+    <node_container pkg="rclcpp_components" exec="component_container" name="api_extension_container" namespace=""/>
+
+    <include file="$(find-pkg-share tier4_autoware_api_extension)/launch/namespace.launch.py"/>
+    <load_composable_node target="$(var current_ros_namespace)/api_extension_container">
       <composable_node pkg="tier4_autoware_api_extension" plugin="tier4_autoware_api_extension::RouteDistance" name="route_distance"/>
       <composable_node pkg="tier4_autoware_api_extension" plugin="tier4_autoware_api_extension::TrafficLight" name="traffic_light"/>
       <composable_node pkg="tier4_autoware_api_extension" plugin="tier4_autoware_api_extension::PlanningFactor" name="planning_factor">
@@ -23,6 +26,6 @@
         <remap from="~/input/path" to="/planning/scenario_planning/lane_driving/behavior_planning/path"/>
         <remap from="~/output/distance" to="~/distance"/>
       </composable_node>
-    </node_container>
+    </load_composable_node>
   </group>
 </launch>
