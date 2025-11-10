@@ -13,12 +13,11 @@
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="remote" namespace="manual">
         <param name="mode" value="remote"/>
       </composable_node>
+      <composable_node pkg="topic_tools" plugin="topic_tools::RelayNode" name="relay_route_distance">
+        <param name="input_topic" value="/tier4_api/utils/path_distance_calculator/distance"/>
+        <param name="output_topic" value="/autoware_api/utils/path_distance_calculator/distance"/>
+        <param name="type" value="autoware_internal_debug_msgs/msg/Float64Stamped"/>
+      </composable_node>
     </load_composable_node>
-
-    <node pkg="topic_tools" exec="relay" name="relay_route_distance">
-      <param name="input_topic" value="/tier4_api/utils/path_distance_calculator/distance"/>
-      <param name="output_topic" value="/autoware_api/utils/path_distance_calculator/distance"/>
-      <param name="type" value="autoware_internal_debug_msgs/msg/Float64Stamped"/>
-    </node>
   </group>
 </launch>
