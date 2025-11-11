@@ -35,6 +35,11 @@
       - /planning/planning_factors/traffic_light
       - /planning/planning_factors/virtual_traffic_light
       - /planning/planning_factors/walkway
+      - /planning/planning_factors/roundabout
+      - /planning/planning_factors/road_user_stop
+      - /planning/planning_factors/intersection_collision_checker
+      - /planning/planning_factors/intersection_occlusion
+      - /planning/planning_factors/rear_collision_checker
     behavior_name_remapping: |
       avoidance_by_lane_change: avoidance
       blind_spot: rear_check

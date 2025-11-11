@@ -17,6 +17,9 @@
   <depend>rclcpp_components</depend>
   <depend>tier4_external_api_msgs</depend>
 
+  <exec_depend>autoware_internal_debug_msgs</exec_depend>
+  <exec_depend>topic_tools</exec_depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>autoware_lint_common</test_depend>
 

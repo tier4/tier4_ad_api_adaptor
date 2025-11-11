@@ -113,6 +113,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   avoidance_by_lc_right_ = std::make_unique<RTCModule>(this, "avoidance_by_lane_change_right");
   goal_planner_ = std::make_unique<RTCModule>(this, "goal_planner");
   start_planner_ = std::make_unique<RTCModule>(this, "start_planner");
+  roundabout_ = std::make_unique<RTCModule>(this, "roundabout");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
@@ -152,7 +153,7 @@ void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & st
   }
 }
 
-void RTCController::checkInfDistance(CooperateStatus & status)  // Temporary fix for ROS2 humble
+void RTCController::checkInfDistance(CooperateStatus & status)  // Temporary fix for ROS 2 humble
 {
   if (!std::isfinite(status.start_distance)) {
     status.start_distance = -100000.0;
@@ -184,6 +185,7 @@ void RTCController::onTimer()
   avoidance_by_lc_right_->insertMessage(cooperate_statuses);
   goal_planner_->insertMessage(cooperate_statuses);
   start_planner_->insertMessage(cooperate_statuses);
+  roundabout_->insertMessage(cooperate_statuses);
 
   insertionSortAndValidation(cooperate_statuses);
 
@@ -253,6 +255,10 @@ void RTCController::setRTC(
         intersection_occlusion_->callService(request, responses);
         break;
       }
+      case Module::ROUNDABOUT: {
+        roundabout_->callService(request, responses);
+        break;
+      }
       case Module::CROSSWALK: {
         crosswalk_->callService(request, responses);
         break;
@@ -286,6 +292,7 @@ void RTCController::onAutoModeTimer()
   detection_area_->insertAutoModeMessage(auto_mode_statuses);
   intersection_->insertAutoModeMessage(auto_mode_statuses);
   intersection_occlusion_->insertAutoModeMessage(auto_mode_statuses);
+  roundabout_->insertAutoModeMessage(auto_mode_statuses);
   no_stopping_area_->insertAutoModeMessage(auto_mode_statuses);
   occlusion_spot_->insertAutoModeMessage(auto_mode_statuses);
   traffic_light_->insertAutoModeMessage(auto_mode_statuses);
@@ -357,6 +364,10 @@ void RTCController::setRTCAutoMode(
     }
     case Module::INTERSECTION_OCCLUSION: {
       intersection_occlusion_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::ROUNDABOUT: {
+      roundabout_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
     case Module::CROSSWALK: {

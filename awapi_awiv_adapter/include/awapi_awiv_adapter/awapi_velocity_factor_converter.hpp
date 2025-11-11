@@ -52,7 +52,8 @@ const std::map<std::string, std::string> conversion_map = {
   {PlanningBehavior::USER_DEFINED_DETECTION_AREA, StopReason::DETECTION_AREA},
   {PlanningBehavior::VIRTUAL_TRAFFIC_LIGHT, StopReason::VIRTUAL_TRAFFIC_LIGHT},
   {PlanningBehavior::RUN_OUT, StopReason::OBSTACLE_STOP},
-  {PlanningBehavior::ADAPTIVE_CRUISE, "AdaptiveCruise"}};
+  {PlanningBehavior::ADAPTIVE_CRUISE, "AdaptiveCruise"},
+  {PlanningBehavior::ROUNDABOUT, StopReason::ROUNDABOUT}};
 
 class AutowareIvVelocityFactorConverter
 {
