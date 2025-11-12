@@ -1,40 +1,61 @@
 <launch>
   <arg name="api_mode" default="0" description="options: 0(All), 1(Without 2025/09 EOL API), 2(Without 2025/12 EOL API)"/>
 
+  <!-- Component Container -->
+  <group>
+    <push-ros-namespace namespace="tier4_api"/>
+    <node_container pkg="rclcpp_components" exec="component_container" name="api_extension_container" namespace=""/>
+  </group>
+
   <!-- Nodes in this package. -->
   <group>
     <push-ros-namespace namespace="tier4_api"/>
-    <node pkg="tier4_autoware_api_extension" exec="route_distance_node"/>
-    <node pkg="tier4_autoware_api_extension" exec="traffic_light_node"/>
-    <node pkg="tier4_autoware_api_extension" exec="planning_factor_node">
-      <param from="$(find-pkg-share tier4_autoware_api_extension)/config/planning_factors.param.yaml"/>
-    </node>
+    <include file="$(find-pkg-share tier4_autoware_api_extension)/launch/namespace.launch.py"/>
+    <load_composable_node target="$(var current_ros_namespace)/api_extension_container">
+      <composable_node pkg="tier4_autoware_api_extension" plugin="tier4_autoware_api_extension::RouteDistance" name="route_distance"/>
+      <composable_node pkg="tier4_autoware_api_extension" plugin="tier4_autoware_api_extension::TrafficLight" name="traffic_light"/>
+      <composable_node pkg="tier4_autoware_api_extension" plugin="tier4_autoware_api_extension::PlanningFactor" name="planning_factor">
+        <param from="$(find-pkg-share tier4_autoware_api_extension)/config/planning_factors.param.yaml"/>
+      </composable_node>
+    </load_composable_node>
   </group>
 
   <!-- Nodes in this package. Switch for 2025/12 EOL API. -->
   <group unless="$(eval &quot; $(var api_mode) &lt; 2 &quot;)">
     <push-ros-namespace namespace="tier4_api"/>
-    <node pkg="tier4_autoware_api_extension" exec="velocity_limit_node"/>
+    <include file="$(find-pkg-share tier4_autoware_api_extension)/launch/namespace.launch.py"/>
+    <load_composable_node target="$(var current_ros_namespace)/api_extension_container">
+      <composable_node pkg="tier4_autoware_api_extension" plugin="tier4_autoware_api_extension::VelocityLimit" name="velocity_limit"/>
+    </load_composable_node>
   </group>
 
   <!-- Relay for tier4_v2x_msgs. -->
   <group>
     <push-ros-namespace namespace="tier4_api"/>
-    <node pkg="topic_tools" exec="relay" name="relay_virtual_traffic_light_status">
-      <param name="input_topic" value="/api/external/set/virtual_traffic_light/states"/>
-      <param name="output_topic" value="/awapi/tmp/virtual_traffic_light_states"/>
-      <param name="type" value="tier4_v2x_msgs/msg/VirtualTrafficLightStateArray"/>
-    </node>
-    <node pkg="topic_tools" exec="relay" name="relay_virtual_traffic_light_commands">
-      <param name="input_topic" value="/planning/scenario_planning/status/infrastructure_commands"/>
-      <param name="output_topic" value="/api/external/get/virtual_traffic_light/commands"/>
-      <param name="type" value="tier4_v2x_msgs/msg/InfrastructureCommandArray"/>
-    </node>
+    <include file="$(find-pkg-share tier4_autoware_api_extension)/launch/namespace.launch.py"/>
+    <load_composable_node target="$(var current_ros_namespace)/api_extension_container">
+      <composable_node pkg="topic_tools" plugin="topic_tools::RelayNode" name="relay_virtual_traffic_light_status">
+        <param name="input_topic" value="/api/external/set/virtual_traffic_light/states"/>
+        <param name="output_topic" value="/awapi/tmp/virtual_traffic_light_states"/>
+        <param name="type" value="tier4_v2x_msgs/msg/VirtualTrafficLightStateArray"/>
+      </composable_node>
+      <composable_node pkg="topic_tools" plugin="topic_tools::RelayNode" name="relay_virtual_traffic_light_commands">
+        <param name="input_topic" value="/planning/scenario_planning/status/infrastructure_commands"/>
+        <param name="output_topic" value="/api/external/get/virtual_traffic_light/commands"/>
+        <param name="type" value="tier4_v2x_msgs/msg/InfrastructureCommandArray"/>
+      </composable_node>
+    </load_composable_node>
   </group>
 
   <!-- For route distance. -->
   <group>
-    <push-ros-namespace namespace="tier4_api/utils"/>
-    <include file="$(find-pkg-share autoware_path_distance_calculator)/launch/path_distance_calculator.launch.xml"/>
+    <push-ros-namespace namespace="tier4_api"/>
+    <include file="$(find-pkg-share tier4_autoware_api_extension)/launch/namespace.launch.py"/>
+    <load_composable_node target="$(var current_ros_namespace)/api_extension_container">
+      <composable_node pkg="autoware_path_distance_calculator" plugin="autoware::path_distance_calculator::PathDistanceCalculator" name="path_distance_calculator" namespace="utils">
+        <remap from="~/input/path" to="/planning/scenario_planning/lane_driving/behavior_planning/path"/>
+        <remap from="~/output/distance" to="~/distance"/>
+      </composable_node>
+    </load_composable_node>
   </group>
 </launch>
