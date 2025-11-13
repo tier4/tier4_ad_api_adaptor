@@ -4,7 +4,7 @@
   <!-- Component Container -->
   <group>
     <push-ros-namespace namespace="tier4_api"/>
-    <node_container pkg="rclcpp_components" exec="component_container" name="api_extension_container" namespace=""/>
+    <node_container pkg="rclcpp_components" exec="component_container_mt" name="api_extension_container" namespace=""/>
   </group>
 
   <!-- Nodes in this package. -->
