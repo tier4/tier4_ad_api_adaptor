@@ -1,23 +1,23 @@
 <launch>
   <group>
     <push-ros-namespace namespace="tier4_api"/>
-    <node_container pkg="rclcpp_components" exec="component_container" name="deprecated_api_container" namespace=""/>
+    <node pkg="tier4_deprecated_api_adapter" exec="autoware_engage_node" name="engage"/>
 
-    <include file="$(find-pkg-share tier4_deprecated_api_adapter)/launch/namespace.launch.py"/>
-    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container">
-      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::AutowareEngage" name="engage"/>
-      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualStatus" name="status" namespace="manual"/>
-      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="local" namespace="manual">
+    <group>
+      <push-ros-namespace namespace="manual"/>
+      <node pkg="tier4_deprecated_api_adapter" exec="manual_status_node" name="status"/>
+      <node pkg="tier4_deprecated_api_adapter" exec="manual_control_node" name="local">
         <param name="mode" value="local"/>
-      </composable_node>
-      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="remote" namespace="manual">
+      </node>
+      <node pkg="tier4_deprecated_api_adapter" exec="manual_control_node" name="remote">
         <param name="mode" value="remote"/>
-      </composable_node>
-      <composable_node pkg="topic_tools" plugin="topic_tools::RelayNode" name="relay_route_distance">
-        <param name="input_topic" value="/tier4_api/utils/path_distance_calculator/distance"/>
-        <param name="output_topic" value="/autoware_api/utils/path_distance_calculator/distance"/>
-        <param name="type" value="autoware_internal_debug_msgs/msg/Float64Stamped"/>
-      </composable_node>
-    </load_composable_node>
+      </node>
+    </group>
+
+    <node pkg="topic_tools" exec="relay" name="relay_route_distance">
+      <param name="input_topic" value="/tier4_api/utils/path_distance_calculator/distance"/>
+      <param name="output_topic" value="/autoware_api/utils/path_distance_calculator/distance"/>
+      <param name="type" value="autoware_internal_debug_msgs/msg/Float64Stamped"/>
+    </node>
   </group>
 </launch>
