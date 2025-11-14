@@ -6,6 +6,7 @@ autoware_package()
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/autoware_engage.cpp
+  src/initial_pose.cpp
   src/manual_control.cpp
   src/manual_status.cpp
 )
