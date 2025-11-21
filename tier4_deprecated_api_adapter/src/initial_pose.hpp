@@ -34,7 +34,7 @@ private:
   using NewService = autoware_adapi_v1_msgs::srv::InitializeLocalization;
   using OldService = tier4_external_api_msgs::srv::InitializePose;
 
-  rclcpp::CallbackGroup::SharedPtr group_;
+  rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Service<OldService>::SharedPtr srv_;
   rclcpp::Client<NewService>::SharedPtr cli_;
 

@@ -18,11 +18,12 @@
 
 #include <array>
 #include <memory>
+#include <utility>
 
 namespace tier4_deprecated_api_adapter
 {
 
-constexpr double initial_pose_timeout = 300;
+constexpr std::chrono::seconds initial_pose_timeout = std::chrono::seconds(300);
 
 // clang-format off
 const std::array<double, 36> particle_covariance =
@@ -51,17 +52,35 @@ void InitialPose::on_service(
   const std::shared_ptr<rmw_request_id_t> header, const OldService::Request::SharedPtr request)
 {
   const auto on_response = [this, header](rclcpp::Client<NewService>::SharedFuture future) {
+    if (!timer_) return;  // The timer is reset when it is timed out.
+    timer_->cancel();
+    timer_.reset();
     const auto res = future.get();
     const auto function = res->status.success ? utils::response_success : utils::response_error;
     OldService::Response response;
     response.status = function(res->status.message);
-    srv_->send_response(*header, response);
+    return srv_->send_response(*header, response);
   };
+
+  const auto on_timeout = [this, header]() {
+    timer_->cancel();
+    timer_.reset();
+    OldService::Response response;
+    response.status = utils::response_error("Internal service has timed out.");
+    return srv_->send_response(*header, response);
+  };
+
+  if (!cli_->service_is_ready()) {
+    OldService::Response response;
+    response.status = utils::response_error("Internal service is not available.");
+    return srv_->send_response(*header, response);
+  }
 
   const auto req = std::make_shared<NewService::Request>();
   req->pose.push_back(request->pose);
   req->pose.back().pose.covariance = particle_covariance;
   cli_->async_send_request(req, on_response);
+  timer_ = rclcpp::create_timer(this, get_clock(), initial_pose_timeout, std::move(on_timeout));
 }
 
 }  // namespace tier4_deprecated_api_adapter
