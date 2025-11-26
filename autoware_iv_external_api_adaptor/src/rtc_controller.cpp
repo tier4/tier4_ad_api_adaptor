@@ -114,6 +114,8 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   goal_planner_ = std::make_unique<RTCModule>(this, "goal_planner");
   start_planner_ = std::make_unique<RTCModule>(this, "start_planner");
   supervised_perception_filter_ = std::make_unique<RTCModule>(this, "supervised_perception_filter");
+  crosswalk_creep_ = std::make_unique<RTCModule>(this, "crosswalk_creep");
+  intersection_creep_ = std::make_unique<RTCModule>(this, "intersection_creep");
 
   rtc_status_pub_ =
     create_publisher<CooperateStatusArray>("/api/external/get/rtc_status", rclcpp::QoS(1));
@@ -186,6 +188,8 @@ void RTCController::onTimer()
   goal_planner_->insertMessage(cooperate_statuses);
   start_planner_->insertMessage(cooperate_statuses);
   supervised_perception_filter_->insertMessage(cooperate_statuses);
+  crosswalk_creep_->insertMessage(cooperate_statuses);
+  intersection_creep_->insertMessage(cooperate_statuses);
 
   insertionSortAndValidation(cooperate_statuses);
 
@@ -279,6 +283,14 @@ void RTCController::setRTC(
         supervised_perception_filter_->callService(request, responses);
         break;
       }
+      case Module::CROSSWALK_CREEP: {
+        crosswalk_creep_->callService(request, responses);
+        break;
+      }
+      case Module::INTERSECTION_CREEP: {
+        intersection_creep_->callService(request, responses);
+        break;
+      }
         // virtual_traffic not found
     }
   }
@@ -307,6 +319,8 @@ void RTCController::onAutoModeTimer()
   goal_planner_->insertAutoModeMessage(auto_mode_statuses);
   start_planner_->insertAutoModeMessage(auto_mode_statuses);
   supervised_perception_filter_->insertAutoModeMessage(auto_mode_statuses);
+  crosswalk_creep_->insertAutoModeMessage(auto_mode_statuses);
+  intersection_creep_->insertAutoModeMessage(auto_mode_statuses);
 
   AutoModeStatusArray msg;
   msg.stamp = now();
@@ -388,6 +402,14 @@ void RTCController::setRTCAutoMode(
     }
     case Module::SUPERVISED_PERCEPTION_FILTER: {
       supervised_perception_filter_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::CROSSWALK_CREEP: {
+      crosswalk_creep_->callAutoModeService(auto_mode_request, auto_mode_response);
+      break;
+    }
+    case Module::INTERSECTION_CREEP: {
+      intersection_creep_->callAutoModeService(auto_mode_request, auto_mode_response);
       break;
     }
       // virtual_traffic not found

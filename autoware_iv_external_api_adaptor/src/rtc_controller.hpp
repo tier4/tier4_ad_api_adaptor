@@ -95,6 +95,8 @@ private:
   std::unique_ptr<RTCModule> goal_planner_;
   std::unique_ptr<RTCModule> start_planner_;
   std::unique_ptr<RTCModule> supervised_perception_filter_;
+  std::unique_ptr<RTCModule> crosswalk_creep_;
+  std::unique_ptr<RTCModule> intersection_creep_;
 
   /* publishers */
   rclcpp::Publisher<CooperateStatusArray>::SharedPtr rtc_status_pub_;
