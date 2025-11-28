@@ -26,10 +26,16 @@ HazardStatus::HazardStatus(const rclcpp::NodeOptions & options) : Node("hazard_s
   const auto on_message = [this](const InternalMessage & internal) {
     ExternalMessage external;
     external.stamp = internal.stamp;
+    external.status.level = internal.status.level;
+    external.status.emergency = internal.status.emergency;
+    external.status.emergency_holding = internal.status.emergency_holding;
+    external.status.diag_no_fault = internal.status.diag_no_fault;
+    external.status.diag_safe_fault = internal.status.diag_safe_fault;
+    external.status.diag_latent_fault = internal.status.diag_latent_fault;
+    external.status.diag_single_point_fault = internal.status.diag_single_point_fault;
     pub_->publish(external);
   };
-
-  pub_ = create_publisher<ExternalMessage>("~/hazard_status", rclcpp::QoS(1));
+  pub_ = create_publisher<ExternalMessage>("/api/external/get/hazard_status", 1);
   sub_ = create_subscription<InternalMessage>("/system/emergency/hazard_status", 1, on_message);
 }
 

@@ -1,4 +1,6 @@
 <launch>
+  <arg name="api_mode" default="0" description="options: 0(All), 1(Without 2025/09 EOL API), 2(Without 2025/12 EOL API)"/>
+
   <group>
     <push-ros-namespace namespace="tier4_api"/>
     <node_container pkg="rclcpp_components" exec="component_container_mt" name="deprecated_api_container" namespace=""/>
@@ -18,6 +20,10 @@
         <param name="output_topic" value="/autoware_api/utils/path_distance_calculator/distance"/>
         <param name="type" value="autoware_internal_debug_msgs/msg/Float64Stamped"/>
       </composable_node>
+    </load_composable_node>
+
+    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container" unless="$(eval &quot; $(var api_mode) &lt; 2 &quot;)">
+      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::HazardStatus" name="hazard_status"/>
     </load_composable_node>
   </group>
 </launch>
