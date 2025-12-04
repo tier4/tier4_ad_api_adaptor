@@ -6,12 +6,14 @@ autoware_package()
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/autoware_engage.cpp
+  src/hazard_status.cpp
   src/initial_pose.cpp
   src/manual_control.cpp
   src/manual_status.cpp
 )
 
 rclcpp_components_register_nodes(${PROJECT_NAME}
+  "tier4_deprecated_api_adapter::HazardStatus"
   "tier4_deprecated_api_adapter::InitialPose"
 )
 

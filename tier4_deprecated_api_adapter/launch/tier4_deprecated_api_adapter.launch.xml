@@ -23,9 +23,14 @@
       </composable_node>
     </load_composable_node>
 
-    <!-- 2026/09 EOL API, use external_api_adapter if api_mode < 2, else use this package -->
+    <!-- 2026/09 EOL API, use autoware_iv_external_api_adaptor if api_mode < 2, else use this package -->
     <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container" unless="$(eval &quot; $(var api_mode) &lt; 2 &quot;)">
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::InitialPose" name="initial_pose"/>
+    </load_composable_node>
+
+    <!-- 2026/09 EOL API, launch regardless of the api_mode because it doesn't conflict with old implementation -->
+    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container">
+      <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::HazardStatus" name="hazard_status"/>
     </load_composable_node>
   </group>
 </launch>
