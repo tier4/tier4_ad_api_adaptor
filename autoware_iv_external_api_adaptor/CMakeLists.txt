@@ -7,6 +7,7 @@ autoware_package()
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/calibration_status.cpp
   src/cpu_usage.cpp
+  src/creep_guidance_controller.cpp
   src/diagnostics.cpp
   src/door.cpp
   src/emergency.cpp
@@ -31,6 +32,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 rclcpp_components_register_nodes(${PROJECT_NAME}
   "external_api::CalibrationStatus"
   "external_api::CpuUsage"
+  "external_api::CreepGuidanceController"
   "external_api::Diagnostics"
   "external_api::Door"
   "external_api::Emergency"
