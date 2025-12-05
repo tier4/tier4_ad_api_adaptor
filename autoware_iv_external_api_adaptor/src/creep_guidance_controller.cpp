@@ -18,7 +18,7 @@
 
 namespace
 {
-// Temporary fix for ROS2 humble
+// Temporary fix for ROS 2 humble
 void check_inf_distance(CreepStatus & status)
 {
   if (!std::isfinite(status.start_distance)) {

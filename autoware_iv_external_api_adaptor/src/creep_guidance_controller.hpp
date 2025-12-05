@@ -58,7 +58,7 @@ public:
 
   /**
    * @brief Construct a new Creep Guidance Module object
-   * @param node Pointer to the parent ROS2 node
+   * @param node Pointer to the parent ROS 2 node
    * @param name Name of the module (e.g., "crosswalk", "intersection", "intersection_occlusion")
    */
   CreepGuidanceModule(rclcpp::Node * node, const std::string & name);
@@ -107,7 +107,7 @@ class CreepGuidanceController : public rclcpp::Node
 public:
   /**
    * @brief Construct a new Creep Guidance Controller object
-   * @param options ROS2 node options
+   * @param options ROS 2 node options
    */
   explicit CreepGuidanceController(const rclcpp::NodeOptions & options);
 
