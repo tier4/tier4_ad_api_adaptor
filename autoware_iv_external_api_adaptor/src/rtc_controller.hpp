@@ -23,10 +23,13 @@
 #include "tier4_rtc_msgs/msg/cooperate_command.hpp"
 #include "tier4_rtc_msgs/msg/cooperate_status.hpp"
 #include "tier4_rtc_msgs/msg/cooperate_status_array.hpp"
+#include "tier4_rtc_msgs/msg/creep_command.hpp"
+#include "tier4_rtc_msgs/msg/creep_response.hpp"
 #include "tier4_rtc_msgs/msg/module.hpp"
 #include "tier4_rtc_msgs/srv/auto_mode.hpp"
 #include "tier4_rtc_msgs/srv/auto_mode_with_module.hpp"
 #include "tier4_rtc_msgs/srv/cooperate_commands.hpp"
+#include "tier4_rtc_msgs/srv/creep_commands.hpp"
 
 #include <memory>
 #include <string>
@@ -35,10 +38,13 @@
 using CooperateCommands = tier4_rtc_msgs::srv::CooperateCommands;
 using AutoMode = tier4_rtc_msgs::srv::AutoMode;
 using AutoModeWithModule = tier4_rtc_msgs::srv::AutoModeWithModule;
+using CreepCommands = tier4_rtc_msgs::srv::CreepCommands;
 using AutoModeStatusArray = tier4_rtc_msgs::msg::AutoModeStatusArray;
 using AutoModeStatus = tier4_rtc_msgs::msg::AutoModeStatus;
 using CooperateStatusArray = tier4_rtc_msgs::msg::CooperateStatusArray;
 using CooperateStatus = tier4_rtc_msgs::msg::CooperateStatus;
+using CreepCommand = tier4_rtc_msgs::msg::CreepCommand;
+using CreepResponse = tier4_rtc_msgs::msg::CreepResponse;
 using Module = tier4_rtc_msgs::msg::Module;
 
 class RTCModule
@@ -48,12 +54,14 @@ public:
   std::string cooperate_commands_namespace_ = "/planning/cooperate_commands";
   std::string auto_mode_status_namespace_ = "/planning/auto_mode_status";
   std::string enable_auto_mode_namespace_ = "/planning/enable_auto_mode";
+  std::string creep_commands_namespace_ = "/planning/creep_commands";
   std::vector<CooperateStatus> module_statuses_;
   AutoModeStatus auto_mode_status_;
   rclcpp::Subscription<CooperateStatusArray>::SharedPtr module_sub_;
   rclcpp::Subscription<AutoModeStatus>::SharedPtr auto_mode_sub_;
   tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_module_;
   tier4_api_utils::Client<AutoMode>::SharedPtr cli_set_auto_mode_;
+  tier4_api_utils::Client<CreepCommands>::SharedPtr cli_set_creep_;
 
   RTCModule(rclcpp::Node * node, const std::string & name);
   void moduleCallback(const CooperateStatusArray::ConstSharedPtr message);
@@ -65,6 +73,9 @@ public:
     const CooperateCommands::Response::SharedPtr & responses);
   void callAutoModeService(
     const AutoMode::Request::SharedPtr request, const AutoMode::Response::SharedPtr response);
+  void callCreepService(
+    CreepCommands::Request::SharedPtr request,
+    const CreepCommands::Response::SharedPtr & responses);
 };
 
 namespace external_api
@@ -103,6 +114,7 @@ private:
   rclcpp::CallbackGroup::SharedPtr group_;
   tier4_api_utils::Service<CooperateCommands>::SharedPtr srv_set_rtc_;
   tier4_api_utils::Service<AutoModeWithModule>::SharedPtr srv_set_rtc_auto_mode_;
+  tier4_api_utils::Service<CreepCommands>::SharedPtr srv_set_creep_;
 
   /* Timer */
   rclcpp::TimerBase::SharedPtr timer_;
@@ -117,6 +129,9 @@ private:
   void setRTCAutoMode(
     const AutoModeWithModule::Request::SharedPtr request,
     const AutoModeWithModule::Response::SharedPtr response);
+  void setCreepRTC(
+    const CreepCommands::Request::SharedPtr requests,
+    const CreepCommands::Response::SharedPtr responses);
 
   // ros callback
   void onTimer();
