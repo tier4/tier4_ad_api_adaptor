@@ -31,4 +31,12 @@ rclcpp_components_register_node(${PROJECT_NAME}
   EXECUTABLE velocity_limit_node
 )
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+
+  ament_add_gtest(test_validation_utils test/test_validation_utils.cpp)
+  target_include_directories(test_validation_utils PRIVATE src)
+  ament_target_dependencies(test_validation_utils rclcpp tier4_external_api_msgs)
+endif()
+
 ament_auto_package(INSTALL_TO_SHARE config launch)
