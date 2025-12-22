@@ -20,9 +20,11 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cmath>
 #include <limits>
 
+using tier4_autoware_api_extension::validation::BEHAVIOR_TYPES;
 using tier4_autoware_api_extension::validation::clamp_non_negative;
 using tier4_autoware_api_extension::validation::clamp_normalized;
 using tier4_autoware_api_extension::validation::clamp_with_warning;
@@ -31,10 +33,14 @@ using tier4_autoware_api_extension::validation::is_in_range;
 using tier4_autoware_api_extension::validation::is_non_negative;
 using tier4_autoware_api_extension::validation::is_normalized;
 using tier4_autoware_api_extension::validation::is_valid_behavior_type;
+using tier4_autoware_api_extension::validation::is_valid_enum;
 using tier4_autoware_api_extension::validation::is_valid_traffic_light_color;
 using tier4_autoware_api_extension::validation::is_valid_traffic_light_shape;
 using tier4_autoware_api_extension::validation::is_valid_traffic_light_status;
 using tier4_autoware_api_extension::validation::set_response_status;
+using tier4_autoware_api_extension::validation::TRAFFIC_LIGHT_COLORS;
+using tier4_autoware_api_extension::validation::TRAFFIC_LIGHT_SHAPES;
+using tier4_autoware_api_extension::validation::TRAFFIC_LIGHT_STATUSES;
 using tier4_autoware_api_extension::validation::validate_confidence;
 using tier4_autoware_api_extension::validation::validate_distance;
 using tier4_autoware_api_extension::validation::validate_velocity;
@@ -360,7 +366,49 @@ TEST(ValidationUtilsTest, ValidateConfidence_NaN)
 }
 
 // =============================================================================
-// Enum validator tests
+// is_valid_enum template tests
+// =============================================================================
+
+TEST(ValidationUtilsTest, IsValidEnum_CustomArray)
+{
+  constexpr std::array<int, 3> valid_values = {1, 5, 10};
+  EXPECT_TRUE(is_valid_enum(1, valid_values));
+  EXPECT_TRUE(is_valid_enum(5, valid_values));
+  EXPECT_TRUE(is_valid_enum(10, valid_values));
+  EXPECT_FALSE(is_valid_enum(0, valid_values));
+  EXPECT_FALSE(is_valid_enum(2, valid_values));
+  EXPECT_FALSE(is_valid_enum(100, valid_values));
+}
+
+TEST(ValidationUtilsTest, IsValidEnum_EmptyArray)
+{
+  constexpr std::array<int, 0> empty_values = {};
+  EXPECT_FALSE(is_valid_enum(0, empty_values));
+  EXPECT_FALSE(is_valid_enum(1, empty_values));
+}
+
+TEST(ValidationUtilsTest, IsValidEnum_WithPredefinedArrays)
+{
+  // Test using predefined constexpr arrays
+  EXPECT_TRUE(is_valid_enum(static_cast<uint8_t>(0), TRAFFIC_LIGHT_COLORS));
+  EXPECT_TRUE(is_valid_enum(static_cast<uint8_t>(4), TRAFFIC_LIGHT_COLORS));
+  EXPECT_FALSE(is_valid_enum(static_cast<uint8_t>(5), TRAFFIC_LIGHT_COLORS));
+
+  EXPECT_TRUE(is_valid_enum(static_cast<uint8_t>(0), TRAFFIC_LIGHT_SHAPES));
+  EXPECT_TRUE(is_valid_enum(static_cast<uint8_t>(10), TRAFFIC_LIGHT_SHAPES));
+  EXPECT_FALSE(is_valid_enum(static_cast<uint8_t>(11), TRAFFIC_LIGHT_SHAPES));
+
+  EXPECT_TRUE(is_valid_enum(static_cast<uint8_t>(0), TRAFFIC_LIGHT_STATUSES));
+  EXPECT_TRUE(is_valid_enum(static_cast<uint8_t>(3), TRAFFIC_LIGHT_STATUSES));
+  EXPECT_FALSE(is_valid_enum(static_cast<uint8_t>(4), TRAFFIC_LIGHT_STATUSES));
+
+  EXPECT_TRUE(is_valid_enum(static_cast<uint16_t>(0), BEHAVIOR_TYPES));
+  EXPECT_TRUE(is_valid_enum(static_cast<uint16_t>(7), BEHAVIOR_TYPES));
+  EXPECT_FALSE(is_valid_enum(static_cast<uint16_t>(8), BEHAVIOR_TYPES));
+}
+
+// =============================================================================
+// Enum validator wrapper tests
 // =============================================================================
 
 TEST(ValidationUtilsTest, IsValidTrafficLightColor)

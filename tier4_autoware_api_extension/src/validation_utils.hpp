@@ -17,9 +17,12 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <autoware_internal_planning_msgs/msg/planning_factor.hpp>
 #include <tier4_external_api_msgs/msg/response_status.hpp>
+#include <tier4_external_api_msgs/msg/traffic_light_element.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
 #include <string>
@@ -195,35 +198,68 @@ inline ValidationResult validate_confidence(const float confidence)
 // Enum Validators
 // =============================================================================
 
+/// Generic enum validator using constexpr array of valid values
+template <typename T, std::size_t N>
+constexpr bool is_valid_enum(const T value, const std::array<T, N> & valid_values)
+{
+  for (const auto & v : valid_values) {
+    if (value == v) return true;
+  }
+  return false;
+}
+
+// Message type aliases for readability
+using TrafficLightElement = tier4_external_api_msgs::msg::TrafficLightElement;
+using PlanningFactor = autoware_internal_planning_msgs::msg::PlanningFactor;
+
+/// TrafficLightElement color: UNKNOWN, RED, AMBER, GREEN, WHITE
+inline constexpr std::array<uint8_t, 5> TRAFFIC_LIGHT_COLORS = {
+  TrafficLightElement::UNKNOWN, TrafficLightElement::RED, TrafficLightElement::AMBER,
+  TrafficLightElement::GREEN, TrafficLightElement::WHITE};
+
+/// TrafficLightElement shape: UNKNOWN, CIRCLE, LEFT_ARROW, RIGHT_ARROW, UP_ARROW,
+/// UP_LEFT_ARROW, UP_RIGHT_ARROW, DOWN_ARROW, DOWN_LEFT_ARROW, DOWN_RIGHT_ARROW, CROSS
+inline constexpr std::array<uint8_t, 11> TRAFFIC_LIGHT_SHAPES = {
+  TrafficLightElement::UNKNOWN, TrafficLightElement::CIRCLE, TrafficLightElement::LEFT_ARROW,
+  TrafficLightElement::RIGHT_ARROW, TrafficLightElement::UP_ARROW,
+  TrafficLightElement::UP_LEFT_ARROW, TrafficLightElement::UP_RIGHT_ARROW,
+  TrafficLightElement::DOWN_ARROW, TrafficLightElement::DOWN_LEFT_ARROW,
+  TrafficLightElement::DOWN_RIGHT_ARROW, TrafficLightElement::CROSS};
+
+/// TrafficLightElement status: UNKNOWN, SOLID_OFF, SOLID_ON, FLASHING
+inline constexpr std::array<uint8_t, 4> TRAFFIC_LIGHT_STATUSES = {
+  TrafficLightElement::UNKNOWN, TrafficLightElement::SOLID_OFF, TrafficLightElement::SOLID_ON,
+  TrafficLightElement::FLASHING};
+
+/// PlanningFactor behavior: UNKNOWN, NONE, SLOW_DOWN, STOP, SHIFT_LEFT, SHIFT_RIGHT,
+/// TURN_LEFT, TURN_RIGHT
+inline constexpr std::array<uint16_t, 8> BEHAVIOR_TYPES = {
+  PlanningFactor::UNKNOWN, PlanningFactor::NONE, PlanningFactor::SLOW_DOWN, PlanningFactor::STOP,
+  PlanningFactor::SHIFT_LEFT, PlanningFactor::SHIFT_RIGHT, PlanningFactor::TURN_LEFT,
+  PlanningFactor::TURN_RIGHT};
+
 /// Validate TrafficLightElement color enum
-/// UNKNOWN=0, RED=1, AMBER=2, GREEN=3, WHITE=4
 inline bool is_valid_traffic_light_color(const uint8_t color)
 {
-  return color <= 4;
+  return is_valid_enum(color, TRAFFIC_LIGHT_COLORS);
 }
 
 /// Validate TrafficLightElement shape enum
-/// UNKNOWN=0, CIRCLE=1, LEFT_ARROW=2, RIGHT_ARROW=3, UP_ARROW=4,
-/// UP_LEFT_ARROW=5, UP_RIGHT_ARROW=6, DOWN_ARROW=7, DOWN_LEFT_ARROW=8,
-/// DOWN_RIGHT_ARROW=9, CROSS=10
 inline bool is_valid_traffic_light_shape(const uint8_t shape)
 {
-  return shape <= 10;
+  return is_valid_enum(shape, TRAFFIC_LIGHT_SHAPES);
 }
 
 /// Validate TrafficLightElement status enum
-/// UNKNOWN=0, SOLID_OFF=1, SOLID_ON=2, FLASHING=3
 inline bool is_valid_traffic_light_status(const uint8_t status)
 {
-  return status <= 3;
+  return is_valid_enum(status, TRAFFIC_LIGHT_STATUSES);
 }
 
 /// Validate PlanningFactor behavior_type enum
-/// UNKNOWN=0, NONE=1, SLOW_DOWN=2, STOP=3, SHIFT_LEFT=4, SHIFT_RIGHT=5,
-/// TURN_LEFT=6, TURN_RIGHT=7
 inline bool is_valid_behavior_type(const uint16_t behavior_type)
 {
-  return behavior_type <= 7;
+  return is_valid_enum(behavior_type, BEHAVIOR_TYPES);
 }
 
 }  // namespace validation

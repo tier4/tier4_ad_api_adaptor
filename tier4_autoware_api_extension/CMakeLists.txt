@@ -36,7 +36,11 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_validation_utils test/test_validation_utils.cpp)
   target_include_directories(test_validation_utils PRIVATE src)
-  ament_target_dependencies(test_validation_utils rclcpp tier4_external_api_msgs)
+  ament_target_dependencies(test_validation_utils
+    autoware_internal_planning_msgs
+    rclcpp
+    tier4_external_api_msgs
+  )
 endif()
 
 ament_auto_package(INSTALL_TO_SHARE config launch)
