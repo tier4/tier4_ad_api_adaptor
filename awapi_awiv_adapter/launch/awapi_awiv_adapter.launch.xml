@@ -64,7 +64,7 @@
 
   <arg name="node_emergency_stop" default="/control/vehicle_cmd_gate"/>
   <arg name="param_emergency_stop" default="check_external_emergency_heartbeat"/>
-  <arg name="node_max_velocity" default="/planning/scenario_planning/velocity_smoother"/>
+  <arg name="node_max_velocity" default="/planning/trajectory_generator/neural_network_based_planner/trajectory_optimizer_node"/>
   <arg name="param_max_velocity" default="max_velocity"/>
 
   <arg name="set_max_velocity" default="vehicle/put/velocity"/>
