@@ -220,11 +220,17 @@ inline constexpr std::array<uint8_t, 5> TRAFFIC_LIGHT_COLORS = {
 /// TrafficLightElement shape: UNKNOWN, CIRCLE, LEFT_ARROW, RIGHT_ARROW, UP_ARROW,
 /// UP_LEFT_ARROW, UP_RIGHT_ARROW, DOWN_ARROW, DOWN_LEFT_ARROW, DOWN_RIGHT_ARROW, CROSS
 inline constexpr std::array<uint8_t, 11> TRAFFIC_LIGHT_SHAPES = {
-  TrafficLightElement::UNKNOWN, TrafficLightElement::CIRCLE, TrafficLightElement::LEFT_ARROW,
-  TrafficLightElement::RIGHT_ARROW, TrafficLightElement::UP_ARROW,
-  TrafficLightElement::UP_LEFT_ARROW, TrafficLightElement::UP_RIGHT_ARROW,
-  TrafficLightElement::DOWN_ARROW, TrafficLightElement::DOWN_LEFT_ARROW,
-  TrafficLightElement::DOWN_RIGHT_ARROW, TrafficLightElement::CROSS};
+  TrafficLightElement::UNKNOWN,
+  TrafficLightElement::CIRCLE,
+  TrafficLightElement::LEFT_ARROW,
+  TrafficLightElement::RIGHT_ARROW,
+  TrafficLightElement::UP_ARROW,
+  TrafficLightElement::UP_LEFT_ARROW,
+  TrafficLightElement::UP_RIGHT_ARROW,
+  TrafficLightElement::DOWN_ARROW,
+  TrafficLightElement::DOWN_LEFT_ARROW,
+  TrafficLightElement::DOWN_RIGHT_ARROW,
+  TrafficLightElement::CROSS};
 
 /// TrafficLightElement status: UNKNOWN, SOLID_OFF, SOLID_ON, FLASHING
 inline constexpr std::array<uint8_t, 4> TRAFFIC_LIGHT_STATUSES = {
@@ -234,9 +240,9 @@ inline constexpr std::array<uint8_t, 4> TRAFFIC_LIGHT_STATUSES = {
 /// PlanningFactor behavior: UNKNOWN, NONE, SLOW_DOWN, STOP, SHIFT_LEFT, SHIFT_RIGHT,
 /// TURN_LEFT, TURN_RIGHT
 inline constexpr std::array<uint16_t, 8> BEHAVIOR_TYPES = {
-  PlanningFactor::UNKNOWN, PlanningFactor::NONE, PlanningFactor::SLOW_DOWN, PlanningFactor::STOP,
-  PlanningFactor::SHIFT_LEFT, PlanningFactor::SHIFT_RIGHT, PlanningFactor::TURN_LEFT,
-  PlanningFactor::TURN_RIGHT};
+  PlanningFactor::UNKNOWN,   PlanningFactor::NONE,       PlanningFactor::SLOW_DOWN,
+  PlanningFactor::STOP,      PlanningFactor::SHIFT_LEFT, PlanningFactor::SHIFT_RIGHT,
+  PlanningFactor::TURN_LEFT, PlanningFactor::TURN_RIGHT};
 
 /// Validate TrafficLightElement color enum
 inline bool is_valid_traffic_light_color(const uint8_t color)
