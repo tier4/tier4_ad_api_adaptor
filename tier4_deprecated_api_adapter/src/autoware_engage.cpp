@@ -17,6 +17,8 @@
 #include "utils/client.hpp"
 #include "utils/response.hpp"
 
+#include <autoware/qos_utils/qos_compatibility.hpp>
+
 #include <memory>
 #include <string>
 
@@ -29,7 +31,7 @@ AutowareEngage::AutowareEngage(const rclcpp::NodeOptions & options)
   using std::placeholders::_1;
   using std::placeholders::_2;
 
-  const auto service_qos = rmw_qos_profile_services_default;
+  const auto service_qos = AUTOWARE_DEFAULT_SERVICES_QOS_PROFILE();
 
   autoware_control_change_ = declare_parameter("autoware_control_change", false);
   callback_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
