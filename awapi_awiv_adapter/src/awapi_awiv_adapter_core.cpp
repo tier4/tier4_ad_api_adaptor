@@ -69,7 +69,7 @@ AutowareIvAdapter::AutowareIvAdapter()
   sub_steer_ = this->create_subscription<autoware_vehicle_msgs::msg::SteeringReport>(
     "input/steer", 1, std::bind(&AutowareIvAdapter::callbackSteer, this, _1));
   sub_vehicle_cmd_ = this->create_subscription<autoware_control_msgs::msg::Control>(
-    "input/vehicle_cmd", durable_qos, std::bind(&AutowareIvAdapter::callbackVehicleCmd, this, _1));
+    "input/vehicle_cmd", 1, std::bind(&AutowareIvAdapter::callbackVehicleCmd, this, _1));
   sub_turn_indicators_ =
     this->create_subscription<autoware_vehicle_msgs::msg::TurnIndicatorsReport>(
       "input/turn_indicators", 1, std::bind(&AutowareIvAdapter::callbackTurnIndicators, this, _1));
