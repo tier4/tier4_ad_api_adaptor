@@ -14,4 +14,4 @@ repositories:
   universe/tier4_autoware_msgs:
     type: git
     url: https://github.com/tier4/tier4_autoware_msgs.git
-    version: tier4/universe
+    version: beta/v0.64
