@@ -15,6 +15,7 @@
 #include "planning_factor.hpp"
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace
@@ -28,6 +29,42 @@ using ExternalPlanningFactor = tier4_external_api_msgs::msg::PlanningFactor;
 using ExternalControlPoint = tier4_external_api_msgs::msg::PlanningFactorControlPoint;
 using ExternalObjectFactor = tier4_external_api_msgs::msg::DecisionFactorObject;
 using ExternalPointCloudFactor = tier4_external_api_msgs::msg::DecisionFactorPointCloud;
+using Remap = std::unordered_map<std::string, std::string>;
+
+auto parse_remapping(const std::string & remapping)
+{
+  const auto trim = [](const std::string & str) {
+    const auto s = str.find_first_not_of(' ');
+    const auto t = str.find_last_not_of(' ');
+    return (s == std::string::npos || t == std::string::npos) ? str : str.substr(s, t - s + 1);
+  };
+
+  std::unordered_map<std::string, std::string> remap;
+  std::stringstream ss(trim(remapping));
+  std::string line;
+  for (int i = 1; std::getline(ss, line, '\n'); ++i) {
+    const auto pos = line.find(':');
+    if (pos == std::string::npos) {
+      throw std::runtime_error("No delimiter: behavior_name_remapping line " + std::to_string(i));
+    }
+    const auto k = trim(line.substr(0, pos));
+    const auto v = trim(line.substr(pos + 1));
+    if (k.empty() || v.empty()) {
+      throw std::runtime_error("Empty name: behavior_name_remapping line " + std::to_string(i));
+    }
+    remap[k] = v;
+  }
+  return remap;
+}
+
+auto find_with_default(const Remap & remap, const std::string & key, const std::string & value)
+{
+  if (remap.empty()) {
+    return key;
+  }
+  const auto iter = remap.find(key);
+  return iter == remap.end() ? value : iter->second;
+}
 
 auto convert_behavior_type(const uint16_t & type)
 {
@@ -74,13 +111,13 @@ auto convert_point_cloud_factor(const Header & header, const InternalSafetyFacto
   return external;
 }
 
-auto convert(const Header & header, const InternalPlanningFactor & internal)
+auto convert(const Header & header, const InternalPlanningFactor & internal, const Remap & remap)
 {
   ExternalPlanningFactor external;
 
   external.header = header;
   external.behavior_type = convert_behavior_type(internal.behavior);
-  external.behavior_name = internal.module;
+  external.behavior_name = find_with_default(remap, internal.module, "unknown");
   external.behavior_detail = internal.detail;
   for (const auto & control_point : internal.control_points) {
     external.control_points.push_back(convert_control_point(control_point));
@@ -113,6 +150,11 @@ PlanningFactor::PlanningFactor(const rclcpp::NodeOptions & options)
 : Node("planning_factor", options)
 {
   timeout_ = declare_parameter<double>("timeout");
+
+  const auto behavior_name_remapping = declare_parameter<std::string>("behavior_name_remapping");
+  if (!behavior_name_remapping.empty()) {
+    behavior_name_remapping_ = parse_remapping(behavior_name_remapping);
+  }
 
   const auto topics = declare_parameter<std::vector<std::string>>("topics");
   sub_planning_factors_.resize(topics.size());
@@ -149,7 +191,7 @@ void PlanningFactor::on_timer()
   for (const auto & message : factors_) {
     if (message) {
       for (const auto & factor : message->factors) {
-        external.factors.push_back(convert(message->header, factor));
+        external.factors.push_back(convert(message->header, factor, behavior_name_remapping_));
       }
     }
   }
