@@ -22,7 +22,6 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/rtc_controller.cpp
   src/service.cpp
   src/start.cpp
-  src/system_monitor.cpp
   src/vehicle_status.cpp
   src/velocity.cpp
   src/version.cpp
@@ -46,7 +45,6 @@ rclcpp_components_register_nodes(${PROJECT_NAME}
   "external_api::RTCController"
   "external_api::Service"
   "external_api::Start"
-  "external_api::SystemMonitor"
   "external_api::VehicleStatus"
   "external_api::Velocity"
   "external_api::Version"
