@@ -40,6 +40,8 @@
       - /planning/planning_factors/intersection_collision_checker
       - /planning/planning_factors/intersection_occlusion
       - /planning/planning_factors/rear_collision_checker
+      - /planning/planning_factors/trajectory_adapter
+
     behavior_name_remapping: |
       avoidance_by_lane_change: avoidance
       blind_spot: rear_check
@@ -71,3 +73,4 @@
       traffic_light: traffic_signal
       virtual_traffic_light: traffic_signal
       walkway: sidewalk
+      trajectory_adapter: diffusion_planner
