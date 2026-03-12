@@ -1,8 +1,12 @@
 # Monitoring API
 
-## 全体図
+## 全体図(3層)
 
-![block-diagram](./block-diagram.drawio.svg)
+![3-layer](./3-layer.drawio.svg)
+
+## 全体図(2層)
+
+![2-layer](./2-layer.drawio.svg)
 
 ## Lv2監視状態
 
