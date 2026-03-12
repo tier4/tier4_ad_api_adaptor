@@ -1,5 +1,11 @@
 # Monitoring API
 
+## 全体図
+
+![block-diagram](./block-diagram.drawio.svg)
+
+## Lv2監視状態
+
 Lv2の監視状態についてはAD APIでサポートされており、[Manual Control API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-architecture-v1/interfaces/ad-api/features/manual-control/)のHeartbeatで表現できる。
 運転操作への切り替えについては[Operation Mode API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-architecture-v1/interfaces/ad-api/features/operation_mode/)により管理されている。
 
@@ -15,3 +21,7 @@ Lv2の監視状態についてはAD APIでサポートされており、[Manual 
 | ローカル介入可能（緊急停止） | ManualControl/LocalHeartbeat=True   |
 | ローカル介入可能（遠隔運転） | ManualControl/LocalHeartbeat=True   |
 | リモート介入中               | OperationMode=Remote                |
+
+## Lv4監視状態
+
+作成中
