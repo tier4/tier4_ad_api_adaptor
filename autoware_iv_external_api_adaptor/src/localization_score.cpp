@@ -14,6 +14,8 @@
 
 #include "localization_score.hpp"
 
+#include <utility>
+
 namespace external_api
 {
 

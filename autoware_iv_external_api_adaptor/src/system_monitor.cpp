@@ -14,6 +14,8 @@
 
 #include "system_monitor.hpp"
 
+#include <string>
+
 namespace external_api
 {
 
