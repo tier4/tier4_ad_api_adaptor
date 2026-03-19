@@ -2,7 +2,7 @@
 
 本ページの手順は[Autoware Universe source installation](https://autowarefoundation.github.io/autoware-documentation/main/installation/autoware/source-installation/)に従ってAutowareがインストールされていることを前提とします。
 
-1. 以下の内容を`$HOME/autoware/repositories/autoware.repos`に追記します。
+1. 以下の内容を`repositories/autoware.repos`に追記します。
 
    ```txt
      universe/external/tier4_ad_api_adaptor:
