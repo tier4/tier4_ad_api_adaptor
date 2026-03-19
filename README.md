@@ -3,6 +3,11 @@
 This repository provides TIER IV Autoware API that specialized for use cases in TIER IV.
 Some pages in this documentation are only in Japanese.
 
+## Installation
+
+For Pilot.Auto, this repository is included in the repos file, so no additional steps are required.
+For Autoware, please follow [the installation guide](./doc/installation.md).
+
 ## Schedule
 
 - v0.5.0: Remove APIs with EOL 2025/09
