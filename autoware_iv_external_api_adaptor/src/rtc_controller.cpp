@@ -15,6 +15,8 @@
 #include "rtc_controller.hpp"
 
 #include <memory>
+#include <string>
+#include <vector>
 
 RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
 {

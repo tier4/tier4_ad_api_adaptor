@@ -34,6 +34,17 @@ Velocity::Velocity(const rclcpp::NodeOptions & options) : Node("external_api_vel
     rmw_qos_profile_services_default, group_);
   cli_velocity_ = proxy.create_client<tier4_external_api_msgs::srv::SetVelocityLimit>(
     "/api/autoware/set/velocity_limit", rmw_qos_profile_services_default);
+
+  const auto on_velocity_limit = [this](const InternalVelocityLimit & msg) {
+    ExternalVelocityLimit out;
+    out.stamp = msg.stamp;
+    out.velocity = msg.max_velocity;
+    pub_velocity_->publish(out);
+  };
+  sub_velocity_ = create_subscription<InternalVelocityLimit>(
+    "/api/autoware/get/velocity_limit", rclcpp::QoS(1).transient_local(), on_velocity_limit);
+  pub_velocity_ = create_publisher<ExternalVelocityLimit>(
+    "/api/external/get/velocity_limit", rclcpp::QoS(1).transient_local());
 }
 
 void Velocity::setPauseDriving(
