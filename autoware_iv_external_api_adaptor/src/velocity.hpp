@@ -18,8 +18,10 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
-#include "tier4_external_api_msgs/srv/pause_driving.hpp"
-#include "tier4_external_api_msgs/srv/set_velocity_limit.hpp"
+#include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
+#include <tier4_external_api_msgs/msg/velocity_limit.hpp>
+#include <tier4_external_api_msgs/srv/pause_driving.hpp>
+#include <tier4_external_api_msgs/srv/set_velocity_limit.hpp>
 
 namespace external_api
 {
@@ -32,6 +34,8 @@ public:
 private:
   using PauseDriving = tier4_external_api_msgs::srv::PauseDriving;
   using SetVelocityLimit = tier4_external_api_msgs::srv::SetVelocityLimit;
+  using InternalVelocityLimit = autoware_internal_planning_msgs::msg::VelocityLimit;
+  using ExternalVelocityLimit = tier4_external_api_msgs::msg::VelocityLimit;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
@@ -39,6 +43,8 @@ private:
   tier4_api_utils::Client<PauseDriving>::SharedPtr cli_pause_;
   tier4_api_utils::Service<SetVelocityLimit>::SharedPtr srv_velocity_;
   tier4_api_utils::Client<SetVelocityLimit>::SharedPtr cli_velocity_;
+  rclcpp::Subscription<InternalVelocityLimit>::SharedPtr sub_velocity_;
+  rclcpp::Publisher<ExternalVelocityLimit>::SharedPtr pub_velocity_;
 
   // ros callback
   void setPauseDriving(
