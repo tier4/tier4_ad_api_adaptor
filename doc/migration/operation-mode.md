@@ -12,7 +12,7 @@ Engageフィルターは車両の直接操作時（DRIVER）以外では常に�
 AD APIでは、フィルターによる停止コマンドへの上書きは廃止され、代わりにSTOPモードからの入力という形でセレクターに処理が統合された。
 全体では以下のような２つの入力セレクター（operation modeとautoware control）による構成に変更されている。
 DRIVERのみがAutowareを使用せず車両を直接制御している状態であるため、この部分をautoware controlとして分離し、残りをAutoware制御下でのoperation modeの切り替えとしている。
-詳細は[Operation mode API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/features/operation_mode/)を参照のこと。
+詳細は[Operation mode API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-architecture-v1/interfaces/ad-api/features/operation_mode/)を参照のこと。
 
 ![block-adapi](./operation-mode/block-adapi.drawio.svg)
 
