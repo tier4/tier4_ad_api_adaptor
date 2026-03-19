@@ -45,7 +45,7 @@ If the version is `v0.4.0-`, it means version v0.4.0 or earlier.
 ## Deprecated API
 
 These are old implementations used internally by TIER IV.
-Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/) instead.
+Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-architecture-v1/interfaces/ad-api/) instead.
 
 | EOL     | Type    | Name                                                                                                                               | Migration Guide                                                                                                                                                |
 | ------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -147,8 +147,8 @@ Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/
 ## Removed API
 
 These APIs are removed.
-Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/) instead.
+Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-architecture-v1/interfaces/ad-api/) instead.
 
-| Type  | Name                                                                                         | AD API                                                                                                                                            |
-| ----- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| topic | [/api/iv_msgs/vehicle/status/control_mode](./doc/api/iv_msgs/vehicle/status/control_mode.md) | [Operation mode API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-interfaces/ad-api/features/operation_mode/) |
+| Type  | Name                                                                                         | AD API                                                                                                                                                            |
+| ----- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| topic | [/api/iv_msgs/vehicle/status/control_mode](./doc/api/iv_msgs/vehicle/status/control_mode.md) | [Operation mode API](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-architecture-v1/interfaces/ad-api/features/operation_mode/) |
