@@ -1,0 +1,55 @@
+@startuml notification_flow
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName "Noto Sans CJK JP"
+
+title 通知解決フロー
+
+participant "DiagGraphStatus\nトピック" as DiagStatus
+participant "AutowareState\nトピック" as State
+participant "failure_notification\n_node" as Node
+participant "通知設定\nファイル" as Config
+participant "消費側\n(MOT / Remote / Dev)" as Consumer
+
+== 初期化 ==
+
+Node -> Config : 設定ファイル読み込み
+activate Node
+Config --> Node : diag パスごとの\nメッセージ定義
+deactivate Node
+
+== DiagGraphStatus 更新時 ==
+
+DiagStatus -> Node : DiagGraphStatus 受信
+activate Node
+
+Node -> Node : level != OK の\ndiag リーフを抽出
+
+loop 各 異常 diag リーフ
+
+  Node -> Config : diag パスで\nエントリ検索
+
+  alt エントリが存在する
+    Node -> State : 現在の AutowareState を参照
+
+    loop 各 condition を上から評価
+      alt state_topic の field 値が values に一致
+        Node -> Node : マッチした condition の\nメッセージを採用
+      end
+    end
+
+    alt どの condition にもマッチしない
+      Node -> Node : default_messages を採用
+    end
+
+    Node -> Node : audience 別・言語別に\nメッセージを解決
+  end
+
+end
+
+Node -> Node : priority でソート
+
+Node -> Consumer : FailureNotificationArray\n(audience 別トピック)
+deactivate Node
+
+@enduml

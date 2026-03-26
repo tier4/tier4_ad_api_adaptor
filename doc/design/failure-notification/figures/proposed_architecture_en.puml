@@ -1,0 +1,50 @@
+@startuml proposed_architecture_en
+!theme plain
+skinparam backgroundColor white
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+title Proposed Architecture (Option 2: Notification List API)
+
+package "ADK (Autoware)" {
+  component "Diag Nodes" as DiagNodes
+  component "diagnostic_graph\n_aggregator" as Aggregator
+  component "default_adapi\n(DiagnosticsNode)" as ADAPI
+  component "autoware_state\n_node" as StateNode
+
+  package "tier4_ad_api_adaptor" {
+    component "failure_notification\n_node" as FNNode
+    file "Notification Config\n(YAML)" as Config
+  }
+
+  DiagNodes -right-> Aggregator : DiagnosticArray
+  Aggregator -right-> ADAPI : DiagGraphStruct\nDiagGraphStatus
+  ADAPI -down-> FNNode : /api/system/diagnostics/struct\n/api/system/diagnostics/status
+  StateNode -down-> FNNode : /autoware/state\n(AutowareState)
+  Config -left-> FNNode : Load config
+}
+
+package "External Systems" {
+  component "MOT\n(In-vehicle\nOperator)" as MOT
+  component "FMS/Drive\n(Remote\nSupervisor)" as Remote
+  component "Dev Tools\n(developer)" as Dev
+}
+
+FNNode -down-> MOT : /system/failure_notifications/mot
+FNNode -down-> Remote : /system/failure_notifications/remote
+FNNode -down-> Dev : /system/failure_notifications/developer
+
+note bottom of FNNode
+  Processes within ADK:
+  - State condition evaluation
+  - Per-audience message resolution
+  - Multi-language support
+  - Priority sorting
+end note
+
+note right of Config
+  Per-audience / per-language /
+  state-conditional message
+  definitions (~610 entries)
+end note
+@enduml

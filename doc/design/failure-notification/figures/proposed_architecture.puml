@@ -1,0 +1,50 @@
+@startuml proposed_architecture
+!theme plain
+skinparam backgroundColor white
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultFontName "Noto Sans CJK JP"
+
+title 提案アーキテクチャ（案 2: 通知リスト型 API）
+
+package "ADK (Autoware)" {
+  component "各 diag ノード" as DiagNodes
+  component "diagnostic_graph\n_aggregator" as Aggregator
+  component "default_adapi\n(DiagnosticsNode)" as ADAPI
+  component "autoware_state\n_node" as StateNode
+
+  package "tier4_ad_api_adaptor" {
+    component "failure_notification\n_node" as FNNode
+    file "通知設定ファイル\n(YAML)" as Config
+  }
+
+  DiagNodes -right-> Aggregator : DiagnosticArray
+  Aggregator -right-> ADAPI : DiagGraphStruct\nDiagGraphStatus
+  ADAPI -down-> FNNode : /api/system/diagnostics/struct\n/api/system/diagnostics/status
+  StateNode -down-> FNNode : /autoware/state\n(AutowareState)
+  Config -left-> FNNode : 設定読み込み
+}
+
+package "外部システム" {
+  component "MOT\n(車内運行者)" as MOT
+  component "FMS/Drive\n(遠隔監視者)" as Remote
+  component "開発ツール\n(developer)" as Dev
+}
+
+FNNode -down-> MOT : /system/failure_notifications/mot/ja\n/system/failure_notifications/mot/en
+FNNode -down-> Remote : /system/failure_notifications/remote/ja\n/system/failure_notifications/remote/en
+FNNode -down-> Dev : /system/failure_notifications/developer/ja\n/system/failure_notifications/developer/en
+
+note bottom of FNNode
+  ADK 内部で以下を一括処理:
+  ・状態条件の評価
+  ・audience 別メッセージ解決
+  ・多言語適用
+  ・priority ソート
+end note
+
+note right of Config
+  audience 別 / 言語別 / 状態条件付き
+  のメッセージ定義（約 610 件）
+end note
+@enduml

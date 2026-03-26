@@ -1,0 +1,54 @@
+@startuml notification_flow_en
+!theme plain
+skinparam backgroundColor white
+
+title Notification Resolution Flow
+
+participant "DiagGraphStatus\nTopic" as DiagStatus
+participant "AutowareState\nTopic" as State
+participant "failure_notification\n_node" as Node
+participant "Notification\nConfig" as Config
+participant "Consumer\n(MOT / Remote / Dev)" as Consumer
+
+== Initialization ==
+
+Node -> Config : Load config file
+activate Node
+Config --> Node : Message definitions\nper diag path
+deactivate Node
+
+== On DiagGraphStatus Update ==
+
+DiagStatus -> Node : Receive DiagGraphStatus
+activate Node
+
+Node -> Node : Extract diag leaves\nwith level != OK
+
+loop Each abnormal diag leaf
+
+  Node -> Config : Look up entry\nby diag path
+
+  alt Entry exists
+    Node -> State : Get current AutowareState
+
+    loop Evaluate each condition (top to bottom)
+      alt state_topic field value matches values
+        Node -> Node : Adopt messages from\nmatched condition
+      end
+    end
+
+    alt No condition matched
+      Node -> Node : Adopt default_messages
+    end
+
+    Node -> Node : Resolve messages\nper audience and language
+  end
+
+end
+
+Node -> Node : Sort by priority
+
+Node -> Consumer : FailureNotificationArray\n(per-audience topic)
+deactivate Node
+
+@enduml

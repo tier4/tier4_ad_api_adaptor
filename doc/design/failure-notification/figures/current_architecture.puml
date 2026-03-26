@@ -1,0 +1,37 @@
+@startuml current_architecture
+!theme plain
+skinparam backgroundColor white
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultFontName "Noto Sans CJK JP"
+
+title 現行アーキテクチャ: 故障情報の流れ
+
+package "ADK (Autoware)" {
+  component "各 diag ノード" as DiagNodes
+  component "diagnostic_graph\n_aggregator" as Aggregator
+  component "default_adapi\n(DiagnosticsNode)" as ADAPI
+
+  DiagNodes -right-> Aggregator : DiagnosticArray
+  Aggregator -right-> ADAPI : DiagGraphStruct\nDiagGraphStatus
+}
+
+package "外部システム" {
+  component "MOT\n(車内運行者モニター)" as MOT
+  file "mrm_messages.json\n(situation / solution)" as JSON
+}
+
+ADAPI -down-> MOT : /api/system/diagnostics/struct\n/api/system/diagnostics/status
+JSON -left-> MOT : diag パスで\nルックアップ
+
+note bottom of JSON
+  MOT 側にローカル配置
+  ADK とは別管理
+  バージョン不整合のリスクあり
+end note
+
+note bottom of MOT
+  利用者: 車内運行者
+  遠隔システムへの展開が課題
+end note
+@enduml
