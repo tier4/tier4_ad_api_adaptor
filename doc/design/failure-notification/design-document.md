@@ -29,16 +29,14 @@ ADK 側から、故障時に表示すべき文書（situation / solution）を�
 
 ### 2.1 機能要件
 
-| # | 要件 | 詳細 |
-|---|------|------|
+| &nbsp;#&nbsp; | 要件 | 詳細 |
+|:---:|------|------|
 | F-1 | audience 別文書対応 | 対象システム（audience）に応じて異なる situation / solution を配信する |
-| F-2 | audience 拡張性 | audience は任意個に追加可能な設計とする。初期 audience として以下を想定: |
-|     |                 | - `mot`: 車内運行者向け（操作指示中心） |
-|     |                 | - `remote`: 遠隔監視者向け（指示・状況把握中心） |
-|     |                 | - `developer`: 開発者向け（技術的詳細・トピック名・状態値等） |
+| F-2 | audience 拡張性 | audience は任意個に追加可能な設計とする。初期 audience: `mot`（車内運行者向け）/ `remote`（遠隔監視者向け）/ `developer`（開発者向け） |
 | F-3 | 多言語対応 | 最低限、日本語（ja）と英語（en）を初期サポートする。言語の追加は設定ファイルの拡張で対応可能とする |
 | F-4 | 状態条件による文言切り替え | 車両の状態に応じて、同じ diag パスでも異なる situation / solution を出力する。主に `/autoware/state`（AutowareState）を参照する。汎用的な条件指定（`state_topic` / `field` / `values`）により将来的に他のトピックも条件に追加可能 |
 | F-5 | 優先度（priority） | 対応アクションの重要度に基づく priority を設定し、ソートして配信する。例: 「再起動してください」は「復帰操作をしてください」より高優先度 |
+| F-6 | 通知レベル（notification_level） | 通知の表示方式を ADK 側で指定する（uint8: ERROR=2 / WARN=1 / INFO=0）。消費側は全画面通知・スナックバー等の表示方式を自ら判断する必要がない |
 
 ## 3. アプローチ比較
 
@@ -48,43 +46,46 @@ ADK 側から、故障時に表示すべき文書（situation / solution）を�
 
 ADK 側で `mrm_messages.json` 相当のマッピングテーブル全体を API トピックとして配信する。消費側は diag status とマッピングテーブルを突合して表示を行う。
 
-| 観点 | 評価 |
-|------|------|
-| **Pros** | |
-| 移行コスト | 現行 MOT の仕組みに最も近く、移行コストが小さい |
-| 消費側柔軟性 | フィルタリング・表示方法を消費側に委ねることができる |
-| **Cons** | |
-| 解釈ロジックの分散 | 消費側にルックアップ + 状態条件判定 + audience フィルタ等の解釈ロジックの実装が必要。JSON の所在（ADK から配信）は解決するが、解釈ロジックの実装が消費側ごとに必要であり、そのロジックのバージョン不整合リスクは残る |
-| 実装負荷 | audience 別・状態条件による文言切り替えロジックが各消費側に分散し、実装負荷が高い |
+**Pros:**
+
+- 現行 MOT の仕組みに最も近く、移行コストが小さい
+- フィルタリング・表示方法を消費側に委ねることができる
+
+**Cons:**
+
+- 消費側にルックアップ + 状態条件判定 + audience フィルタ等の解釈ロジックの実装が必要。JSON の所在（ADK から配信）は解決するが、解釈ロジックの実装が消費側ごとに必要であり、そのロジックのバージョン不整合リスクは残る
+- audience 別・状態条件による文言切り替えロジックが各消費側に分散し、実装負荷が高い
 
 ### 案 2: 通知リスト型 API（推奨）
 
 ADK 内部で diag 状態 + 車両状態を突合し、解決済みの通知リスト（priority 付き、audience 別、言語別の situation / solution）を API として配信する。消費側はリストをそのまま表示するだけでよい。
 
-| 観点 | 評価 |
-|------|------|
-| **Pros** | |
-| 消費側の簡素さ | 受け取ったリストをそのまま表示するだけでよく、消費側の実装が最もシンプル |
-| バージョン整合 | 状態条件の判定・audience 別メッセージ解決・優先度ソートがすべて ADK 側で完結し、バージョン不整合を根本的に解決 |
-| 拡張性 | 多言語・対象システム拡張も ADK 側の設定変更で完結 |
-| 帯域効率 | 表示されるべき情報だけが配信されるため効率がよい |
-| **Cons** | |
-| 開発コスト | 新規 API + 新規ノードの開発が必要 |
-| 設定管理 | ADK 側にメッセージ解決の設定ファイル管理が増える |
+**Pros:**
+
+- 受け取ったリストをそのまま表示するだけでよく、消費側の実装が最もシンプル
+- 状態条件の判定・audience 別メッセージ解決・優先度ソートがすべて ADK 側で完結し、バージョン不整合を根本的に解決
+- 多言語・対象システム拡張も ADK 側の設定変更で完結
+- 表示されるべき情報だけが配信されるため帯域効率がよい
+
+**Cons:**
+
+- 新規 API + 新規ノードの開発が必要
+- ADK 側にメッセージ解決の設定ファイル管理が増える
 
 ### 案 3: 拡張診断グラフ型
 
 既存の `DiagGraphStatus` メッセージを拡張し、各 diag ノードに situation / solution 等の文書情報を埋め込む。
 
-| 観点 | 評価 |
-|------|------|
-| **Pros** | |
-| 後方互換性 | 既存 API の自然な拡張で後方互換性を保ちやすい |
-| コンテキスト保持 | diag の tree 構造と文書が一体化するためコンテキストが保持される |
-| **Cons** | |
-| メッセージサイズ | DiagGraphStatus は OK のものも含む全ノードのステータスを送信しているため、全ノード x 全 audience x 全言語でメッセージサイズが大幅に増加する |
-| ADAPI 影響 | ADAPI 仕様への影響が大きく、Pilot.Auto X2 スコープを超える可能性がある |
-| 消費側の負荷 | audience 別の内容差異や priority 付きソートを消費側が行う必要がある |
+**Pros:**
+
+- 既存 API の自然な拡張で後方互換性を保ちやすい
+- diag の tree 構造と文書が一体化するためコンテキストが保持される
+
+**Cons:**
+
+- DiagGraphStatus は OK のものも含む全ノードのステータスを送信しているため、全ノード x 全 audience x 全言語でメッセージサイズが大幅に増加する
+- ADAPI 仕様への影響が大きく、Pilot.Auto X2 スコープを超える可能性がある
+- audience 別の内容差異や priority 付きソートを消費側が行う必要がある
 
 ### 比較まとめ
 
@@ -127,12 +128,17 @@ ADK 内部で diag 状態 + 車両状態を突合し、解決済みの通知リ�
 
 ```
 # FailureNotification.msg
-string diag_path       # 対応する diag のパス（例: "/localization/001-topic_status/initialpose"）
-string error_code      # エラーコード（例: "LOC-00-E00-001E"）
-uint8 diag_level       # 元の diag level (OK=0 / WARN=1 / ERROR=2 / STALE=3)
-uint32 priority        # 表示優先度（数値が小さいほど高優先）
-string situation       # 状況説明文（状態条件・言語適用済み）
-string solution        # 対処方法（状態条件・言語適用済み）
+uint8 INFO = 0
+uint8 WARN = 1
+uint8 ERROR = 2
+
+string diag_path            # 対応する diag のパス（例: "/localization/001-topic_status/initialpose"）
+string error_code           # エラーコード（例: "LOC-00-E00-001E"）
+uint8 diag_level            # 元の diag level (OK=0 / WARN=1 / ERROR=2 / STALE=3)
+uint8 notification_level    # 通知レベル（INFO=0 / WARN=1 / ERROR=2）
+uint32 priority             # 表示優先度（数値が小さいほど高優先）
+string situation            # 状況説明文（状態条件・言語適用済み）
+string solution             # 対処方法（状態条件・言語適用済み）
 ```
 
 ```
@@ -150,6 +156,7 @@ notifications:
   "/localization/001-topic_status/initialpose":
     error_code: "LOC-00-E00-001"
     priority: 100
+    notification_level: 2  # ERROR
     conditions:
       # AutowareState = WAITING_FOR_ROUTE のとき: ルート未設定用のメッセージ
       - state_topic: "/autoware/state"
@@ -232,7 +239,8 @@ notifications:
 3. diag パスをキーとして設定ファイルのエントリを検索
 4. 現在の `/autoware/state` の値と `conditions` を照合し、適用するメッセージを決定
 5. 設定された audience と言語の全組み合わせについてメッセージを解決
-6. priority でソートし、`FailureNotificationArray` として publish
+6. 設定ファイルの `notification_level` を各通知に付与
+7. priority でソートし、`FailureNotificationArray` として publish
 
 ### 4.5 配信方式
 
