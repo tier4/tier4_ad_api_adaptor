@@ -21,6 +21,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <memory>
+#include <unordered_map>
 
 namespace autoware::failure_notification
 {
@@ -39,6 +40,7 @@ private:
   autoware::diagnostic_graph_utils::DiagGraphSubscription sub_graph_;
 
   std::unique_ptr<Notifications> notifications_;
+  std::unordered_map<DiagNode *, Notification *> mapping_;
 };
 
 }  // namespace autoware::failure_notification

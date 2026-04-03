@@ -17,6 +17,8 @@
 
 #include "message.hpp"
 
+#include <diagnostic_msgs/msg/diagnostic_status.hpp>
+
 #include <yaml-cpp/yaml.h>
 
 #include <string>
@@ -33,10 +35,17 @@ public:
   const auto & priority() const { return priority_; }
   const auto & messages() const { return messages_.messages(); }
 
+  using DiagStatus = diagnostic_msgs::msg::DiagnosticStatus;
+  using DiagLevel = DiagStatus::_level_type;
+  void update(const Context & context, DiagLevel level);
+
 private:
   const std::string path_;
   int priority_;
   Messages messages_;
+
+  const Message * current_message_ = nullptr;
+  DiagLevel current_level_ = DiagStatus::OK;
 };
 
 class Notifications

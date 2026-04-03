@@ -16,6 +16,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 namespace autoware::failure_notification
 {
@@ -26,14 +27,16 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
   const auto path = declare_parameter<std::string>("message");
   notifications_ = std::make_unique<Notifications>(path);
 
-  for (const auto & notification : notifications_->notifications()) {
-    RCLCPP_INFO_STREAM(get_logger(), notification->path());
-    RCLCPP_INFO_STREAM(get_logger(), "  priority: " << notification->priority());
-    RCLCPP_INFO_STREAM(get_logger(), "  messages:");
-    for (const auto & message : notification->messages()) {
-      RCLCPP_INFO_STREAM(get_logger(), "    " << message->text());
+  /*
+    for (const auto & notification : notifications_->notifications()) {
+      RCLCPP_INFO_STREAM(get_logger(), notification->path());
+      RCLCPP_INFO_STREAM(get_logger(), "  priority: " << notification->priority());
+      RCLCPP_INFO_STREAM(get_logger(), "  messages:");
+      for (const auto & message : notification->messages()) {
+        RCLCPP_INFO_STREAM(get_logger(), "    " << message->text());
+      }
     }
-  }
+  */
 
   using std::placeholders::_1;
   sub_graph_.register_create_callback(std::bind(&FailureNotification::on_create, this, _1));
@@ -43,14 +46,28 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 
 void FailureNotification::on_create(DiagGraph::ConstSharedPtr graph)
 {
+  std::unordered_map<std::string, Notification *> dictionary;
+  for (const auto & notification : notifications_->notifications()) {
+    dictionary[notification->path()] = notification;
+  }
   for (const auto & node : graph->nodes()) {
     RCLCPP_INFO_STREAM(get_logger(), "Node: " << node->path());
+    mapping_[node] = dictionary[node->path()];
   }
 }
 
 void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
 {
-  (void)graph;
+  Context context;
+
+  for (const auto & node : graph->nodes()) {
+    const auto notification = mapping_.at(node);
+    if (notification) {
+      RCLCPP_INFO_STREAM(
+        get_logger(), "Node: " << node->path() << ", Notification: " << notification);
+      notification->update(context, node->level());
+    }
+  }
 }
 
 }  // namespace autoware::failure_notification

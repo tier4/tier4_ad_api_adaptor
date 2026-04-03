@@ -12,45 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CORE__MESSAGE_HPP_
-#define CORE__MESSAGE_HPP_
-
-#include "condition.hpp"
-
-#include <yaml-cpp/yaml.h>
-
-#include <string>
-#include <vector>
+#ifndef CORE__CONTEXT_HPP_
+#define CORE__CONTEXT_HPP_
 
 namespace autoware::failure_notification
 {
 
-class Notification;
-
-class Message
+class Context
 {
 public:
-  Message(const Notification * parent, const YAML::Node yaml);
-  const auto & text() const { return text_; }
-  const auto & condition() const { return condition_; }
-
-private:
-  const Notification * parent_;
-  std::string text_;
-  Condition condition_;
-};
-
-class Messages
-{
-public:
-  void load(const Notification * parent, const YAML::Node yaml);
-  const auto & messages() const { return pointers_; }
-
-private:
-  std::vector<std::unique_ptr<Message>> entities_;
-  std::vector<Message *> pointers_;
 };
 
 }  // namespace autoware::failure_notification
 
-#endif  // CORE__MESSAGE_HPP_
+#endif  // CORE__CONTEXT_HPP_

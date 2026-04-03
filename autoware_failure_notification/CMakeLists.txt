@@ -8,6 +8,8 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/failure_notification.cpp
   src/core/notification.cpp
   src/core/message.cpp
+  src/core/condition.cpp
+  src/core/context.cpp
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}

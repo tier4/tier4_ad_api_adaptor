@@ -1,19 +1,18 @@
 notifications:
-  /autoware/modes/stop:
-  /autoware/modes/autonomous:
-  /autoware/modes/local:
-  /autoware/modes/remote:
-  /autoware/modes/emergency_stop:
-  /autoware/modes/comfortable_stop:
-  /autoware/modes/pull_over:
-  /external/joystick_command:
-  /external/remote_command:
-  /functions/pose_estimation:
-  /functions/obstacle_detection:
-  /sensing/lidars/top:
-  /sensing/lidars/front:
+  # /autoware/modes/stop:
+  # /autoware/modes/autonomous:
+  # /autoware/modes/local:
+  # /autoware/modes/remote:
+  # /autoware/modes/emergency_stop:
+  # /autoware/modes/comfortable_stop:
+  # /autoware/modes/pull_over:
+  # /external/joystick_command:
+  # /external/remote_command:
+  # /functions/pose_estimation:
+  # /functions/obstacle_detection:
+  # /sensing/lidars/top:
+  # /sensing/lidars/front:
   /sensing/radars/front:
-  /localization/001-topic_status/initialpose:
     error_code: LOC-00-E00-001
     priority: 100
     notification_level: 2

@@ -28,6 +28,21 @@ Notification::Notification(const std::string & path, YAML::Node yaml) : path_(pa
   messages_.load(this, yaml["messages"]);
 }
 
+void Notification::update(const Context & context, DiagLevel level)
+{
+  current_level_ = level;
+  current_message_ = nullptr;
+
+  if (level == DiagStatus::OK) return;
+
+  for (const auto & message : messages()) {
+    if (message->condition().evaluate(context)) {
+      current_message_ = message;
+      return;
+    }
+  }
+}
+
 Notifications::Notifications(const std::string & path)
 {
   const auto file = YAML::LoadFile(path);
