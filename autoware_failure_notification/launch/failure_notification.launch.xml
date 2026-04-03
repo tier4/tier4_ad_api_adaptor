@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="autoware_failure_notification" exec="failure_notification_node" name="failure_notification">
+    <param from="$(find-pkg-share autoware_failure_notification)/config/failure_notification.param.yaml"/>
+    <remap from="~/diagnostics_graph" to="/diagnostics_graph"/>
+  </node>
+</launch>
