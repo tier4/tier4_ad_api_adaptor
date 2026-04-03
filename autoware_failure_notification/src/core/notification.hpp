@@ -21,6 +21,7 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -33,7 +34,7 @@ public:
   Notification(const std::string & path, YAML::Node yaml);
   const auto & path() const { return path_; }
   const auto & priority() const { return priority_; }
-  const auto & messages() const { return messages_.messages(); }
+  const auto & messages() const { return messages_->messages(); }
   const auto & current_message() const { return current_message_; }
   const auto & current_level() const { return current_level_; }
 
@@ -44,7 +45,7 @@ public:
 private:
   const std::string path_;
   int priority_;
-  Messages messages_;
+  std::unique_ptr<Messages> messages_;
 
   const Message * current_message_ = nullptr;
   DiagLevel current_level_ = DiagStatus::OK;
@@ -53,7 +54,7 @@ private:
 class Notifications
 {
 public:
-  explicit Notifications(const std::string & path);
+  explicit Notifications(YAML::Node yaml);
   const auto & notifications() const { return pointers_; }
 
 private:

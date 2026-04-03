@@ -17,13 +17,25 @@
 
 #include "context.hpp"
 
+#include <yaml-cpp/yaml.h>
+
+#include <memory>
+
 namespace autoware::failure_notification
 {
 
 class Condition
 {
 public:
-  bool evaluate(const Context & context) const;
+  static std::unique_ptr<Condition> parse(YAML::Node yaml);
+  virtual ~Condition() = default;
+  virtual bool evaluate(const Context & context) const = 0;
+};
+
+class TrueCondition : public Condition
+{
+public:
+  bool evaluate(const Context & context) const override;
 };
 
 }  // namespace autoware::failure_notification

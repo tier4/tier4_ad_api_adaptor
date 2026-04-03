@@ -14,6 +14,8 @@
 
 #include "message.hpp"
 
+#include "notification.hpp"
+
 #include <string>
 
 namespace autoware::failure_notification
@@ -22,10 +24,16 @@ namespace autoware::failure_notification
 Message::Message(const Notification * parent, const YAML::Node yaml)
 {
   parent_ = parent;
-  text_ = yaml["test"].as<std::string>();
+
+  if (!yaml["text"]) {
+    throw std::runtime_error("text is required: " + parent->path());
+  }
+  text_ = yaml["text"].as<std::string>();
+
+  condition_ = Condition::parse(yaml["condition"]);
 }
 
-void Messages::load(const Notification * parent, const YAML::Node yaml)
+Messages::Messages(const Notification * parent, const YAML::Node yaml)
 {
   for (const auto & node : yaml) {
     entities_.emplace_back(std::make_unique<Message>(parent, node));

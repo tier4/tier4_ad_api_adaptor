@@ -12,24 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "condition.hpp"
+#ifndef CORE__EXPRESSION_HPP_
+#define CORE__EXPRESSION_HPP_
 
-#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 namespace autoware::failure_notification
 {
 
-std::unique_ptr<Condition> Condition::parse(YAML::Node yaml)
+struct Token
 {
-  if (!yaml.IsDefined()) {
-    return std::make_unique<TrueCondition>();
-  }
-  return std::make_unique<TrueCondition>();
-}
-
-bool TrueCondition::evaluate(const Context &) const
-{
-  return true;
-}
+  std::string data;
+  std::optional<std::vector<Token>> args;
+};
 
 }  // namespace autoware::failure_notification
+
+#endif  // CORE__EXPRESSION_HPP_

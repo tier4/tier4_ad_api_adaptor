@@ -17,6 +17,7 @@
 #include <rclcpp/logging.hpp>
 
 #include <algorithm>
+#include <memory>
 #include <string>
 
 namespace autoware::failure_notification
@@ -25,7 +26,7 @@ namespace autoware::failure_notification
 Notification::Notification(const std::string & path, YAML::Node yaml) : path_(path)
 {
   priority_ = yaml["priority"].as<int>(0);  // TODO(Takagi, Isamu): Remove default value.
-  messages_.load(this, yaml["messages"]);
+  messages_ = std::make_unique<Messages>(this, yaml["messages"]);
 }
 
 void Notification::update(const Context & context, DiagLevel level)
@@ -36,22 +37,21 @@ void Notification::update(const Context & context, DiagLevel level)
   if (level == DiagStatus::OK) return;
 
   for (const auto & message : messages()) {
-    if (message->condition().evaluate(context)) {
+    if (message->condition()->evaluate(context)) {
       current_message_ = message;
       return;
     }
   }
 }
 
-Notifications::Notifications(const std::string & path)
+Notifications::Notifications(YAML::Node yaml)
 {
-  const auto file = YAML::LoadFile(path);
-  const auto root = file["notifications"];
+  const auto notifications = yaml["notifications"];
 
-  for (const auto & node : root) {
-    const auto path = node.first.as<std::string>();
-    const auto yaml = node.second;
-    entities_.emplace_back(std::make_unique<Notification>(path, yaml));
+  for (const auto & iter : notifications) {
+    const auto path = iter.first.as<std::string>();
+    const auto node = iter.second;
+    entities_.emplace_back(std::make_unique<Notification>(path, node));
   }
 
   for (const auto & entity : entities_) {

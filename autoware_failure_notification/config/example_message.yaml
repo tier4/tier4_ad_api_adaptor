@@ -20,7 +20,7 @@ notifications:
       - state_topic: /autoware/state
         field: state
         values: [2]
-        test: AAAAA
+        text: AAAAA
         audiences:
           mot:
             ja:
@@ -33,7 +33,7 @@ notifications:
       - state_topic: /autoware/state
         field: state
         values: [3, 4, 5, 6]
-        test: BBBBB
+        text: BBBBB
         audiences:
           mot:
             ja:

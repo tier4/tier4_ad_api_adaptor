@@ -12,24 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "condition.hpp"
-
-#include <memory>
+#include "expression.hpp"
 
 namespace autoware::failure_notification
 {
-
-std::unique_ptr<Condition> Condition::parse(YAML::Node yaml)
-{
-  if (!yaml.IsDefined()) {
-    return std::make_unique<TrueCondition>();
-  }
-  return std::make_unique<TrueCondition>();
-}
-
-bool TrueCondition::evaluate(const Context &) const
-{
-  return true;
-}
 
 }  // namespace autoware::failure_notification

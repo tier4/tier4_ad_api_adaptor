@@ -26,7 +26,7 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 : Node("failure_notification", options)
 {
   const auto path = declare_parameter<std::string>("message");
-  notifications_ = std::make_unique<Notifications>(path);
+  notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path));
 
   // Set a non-existent pattern to ensure the first message is published.
   previous_messages_.push_back(nullptr);

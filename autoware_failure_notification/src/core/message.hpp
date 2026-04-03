@@ -19,6 +19,7 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -37,13 +38,13 @@ public:
 private:
   const Notification * parent_;
   std::string text_;
-  Condition condition_;
+  std::unique_ptr<Condition> condition_;
 };
 
 class Messages
 {
 public:
-  void load(const Notification * parent, const YAML::Node yaml);
+  Messages(const Notification * parent, const YAML::Node yaml);
   const auto & messages() const { return pointers_; }
 
 private:
