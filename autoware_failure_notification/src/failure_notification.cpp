@@ -27,7 +27,12 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
   notifications_ = std::make_unique<Notifications>(path);
 
   for (const auto & notification : notifications_->notifications()) {
-    RCLCPP_INFO_STREAM(get_logger(), "\n" << notification->text());
+    RCLCPP_INFO_STREAM(get_logger(), notification->path());
+    RCLCPP_INFO_STREAM(get_logger(), "  priority: " << notification->priority());
+    RCLCPP_INFO_STREAM(get_logger(), "  messages:");
+    for (const auto & message : notification->messages()) {
+      RCLCPP_INFO_STREAM(get_logger(), "    " << message->text());
+    }
   }
 
   using std::placeholders::_1;

@@ -25,14 +25,7 @@ namespace autoware::failure_notification
 Notification::Notification(const std::string & path, YAML::Node yaml) : path_(path)
 {
   priority_ = yaml["priority"].as<int>(0);  // TODO(Takagi, Isamu): Remove default value.
-}
-
-const std::string Notification::text() const
-{
-  std::string result;
-  result += "Path: " + path_ + "\n";
-  result += " - Priority: " + std::to_string(priority_);
-  return result;
+  messages_.load(this, yaml["messages"]);
 }
 
 Notifications::Notifications(const std::string & path)
@@ -40,9 +33,9 @@ Notifications::Notifications(const std::string & path)
   const auto file = YAML::LoadFile(path);
   const auto root = file["notifications"];
 
-  for (const auto & iter : root) {
-    const auto path = iter.first.as<std::string>();
-    const auto yaml = iter.second;
+  for (const auto & node : root) {
+    const auto path = node.first.as<std::string>();
+    const auto yaml = node.second;
     entities_.emplace_back(std::make_unique<Notification>(path, yaml));
   }
 

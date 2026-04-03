@@ -12,44 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CORE__NOTIFICATION_HPP_
-#define CORE__NOTIFICATION_HPP_
-
 #include "message.hpp"
 
-#include <yaml-cpp/yaml.h>
-
 #include <string>
-#include <vector>
 
 namespace autoware::failure_notification
 {
 
-class Notification
+Message::Message(const Notification * parent, const YAML::Node yaml)
 {
-public:
-  Notification(const std::string & path, YAML::Node yaml);
-  const auto & path() const { return path_; }
-  const auto & priority() const { return priority_; }
-  const auto & messages() const { return messages_.messages(); }
+  parent_ = parent;
+  text_ = yaml["test"].as<std::string>();
+}
 
-private:
-  const std::string path_;
-  int priority_;
-  Messages messages_;
-};
-
-class Notifications
+void Messages::load(const Notification * parent, const YAML::Node yaml)
 {
-public:
-  explicit Notifications(const std::string & path);
-  const auto & notifications() const { return pointers_; }
+  for (const auto & node : yaml) {
+    entities_.emplace_back(std::make_unique<Message>(parent, node));
+  }
 
-private:
-  std::vector<std::unique_ptr<Notification>> entities_;
-  std::vector<Notification *> pointers_;
-};
+  for (const auto & entity : entities_) {
+    pointers_.push_back(entity.get());
+  }
+}
 
 }  // namespace autoware::failure_notification
-
-#endif  // CORE__NOTIFICATION_HPP_

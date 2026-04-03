@@ -7,6 +7,7 @@ autoware_package()
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/failure_notification.cpp
   src/core/notification.cpp
+  src/core/message.cpp
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}

@@ -17,11 +17,12 @@ notifications:
     error_code: LOC-00-E00-001
     priority: 100
     notification_level: 2
-    conditions:
+    messages:
       - state_topic: /autoware/state
         field: state
         values: [2]
-        messages:
+        test: AAAAA
+        audiences:
           mot:
             ja:
               situation: ""
@@ -33,7 +34,8 @@ notifications:
       - state_topic: /autoware/state
         field: state
         values: [3, 4, 5, 6]
-        messages:
+        test: BBBBB
+        audiences:
           mot:
             ja:
               situation: ""
