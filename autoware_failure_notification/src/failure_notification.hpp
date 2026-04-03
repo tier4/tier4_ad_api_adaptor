@@ -15,8 +15,12 @@
 #ifndef FAILURE_NOTIFICATION_HPP_
 #define FAILURE_NOTIFICATION_HPP_
 
+#include "core/notification.hpp"
+
 #include <autoware/diagnostic_graph_utils/subscription.hpp>
 #include <rclcpp/rclcpp.hpp>
+
+#include <memory>
 
 namespace autoware::failure_notification
 {
@@ -24,7 +28,7 @@ namespace autoware::failure_notification
 class FailureNotification : public rclcpp::Node
 {
 public:
-  explicit Converter(const rclcpp::NodeOptions & options);
+  explicit FailureNotification(const rclcpp::NodeOptions & options);
 
 private:
   using DiagGraph = autoware::diagnostic_graph_utils::DiagGraph;
@@ -33,6 +37,8 @@ private:
   void on_create(DiagGraph::ConstSharedPtr graph);
   void on_update(DiagGraph::ConstSharedPtr graph);
   autoware::diagnostic_graph_utils::DiagGraphSubscription sub_graph_;
+
+  std::unique_ptr<Notifications> notifications_;
 };
 
 }  // namespace autoware::failure_notification

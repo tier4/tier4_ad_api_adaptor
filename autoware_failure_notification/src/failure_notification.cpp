@@ -14,12 +14,22 @@
 
 #include "failure_notification.hpp"
 
+#include <memory>
+#include <string>
+
 namespace autoware::failure_notification
 {
 
 FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 : Node("failure_notification", options)
 {
+  const auto path = declare_parameter<std::string>("message");
+  notifications_ = std::make_unique<Notifications>(path);
+
+  for (const auto & notification : notifications_->notifications()) {
+    RCLCPP_INFO_STREAM(get_logger(), "\n" << notification->text());
+  }
+
   using std::placeholders::_1;
   sub_graph_.register_create_callback(std::bind(&FailureNotification::on_create, this, _1));
   sub_graph_.register_update_callback(std::bind(&FailureNotification::on_update, this, _1));
@@ -28,8 +38,8 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 
 void FailureNotification::on_create(DiagGraph::ConstSharedPtr graph)
 {
-  for (const auto & node : graph.nodes()) {
-    RCLCPP_INFO_STREAM(get_logger(), "Node: " << node->name());
+  for (const auto & node : graph->nodes()) {
+    RCLCPP_INFO_STREAM(get_logger(), "Node: " << node->path());
   }
 }
 
