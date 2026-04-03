@@ -40,4 +40,4 @@
       - /planning/planning_factors/intersection_collision_checker
       - /planning/planning_factors/intersection_occlusion
       - /planning/planning_factors/rear_collision_checker
-      - /planning/planning_factors/trajectory_adapter
+      - /planning/planning_factors/diffusion_planner
