@@ -34,6 +34,8 @@ public:
   const auto & path() const { return path_; }
   const auto & priority() const { return priority_; }
   const auto & messages() const { return messages_.messages(); }
+  const auto & current_message() const { return current_message_; }
+  const auto & current_level() const { return current_level_; }
 
   using DiagStatus = diagnostic_msgs::msg::DiagnosticStatus;
   using DiagLevel = DiagStatus::_level_type;

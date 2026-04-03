@@ -17,6 +17,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace autoware::failure_notification
 {
@@ -26,6 +27,9 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 {
   const auto path = declare_parameter<std::string>("message");
   notifications_ = std::make_unique<Notifications>(path);
+
+  // Set a non-existent pattern to ensure the first message is published.
+  previous_messages_.push_back(nullptr);
 
   /*
     for (const auto & notification : notifications_->notifications()) {
@@ -63,10 +67,24 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
   for (const auto & node : graph->nodes()) {
     const auto notification = mapping_.at(node);
     if (notification) {
-      RCLCPP_INFO_STREAM(
-        get_logger(), "Node: " << node->path() << ", Notification: " << notification);
       notification->update(context, node->level());
     }
+  }
+
+  std::vector<const Message *> messages;
+  for (const auto & notification : notifications_->notifications()) {
+    const auto message = notification->current_message();
+    if (message) {
+      messages.push_back(message);
+    }
+  }
+
+  if (previous_messages_ != messages) {
+    RCLCPP_INFO_STREAM(get_logger(), "Messages updated");
+    for (const auto & message : messages) {
+      RCLCPP_INFO_STREAM(get_logger(), "  " << message->text());
+    }
+    previous_messages_ = messages;
   }
 }
 

@@ -22,6 +22,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 namespace autoware::failure_notification
 {
@@ -40,7 +41,8 @@ private:
   autoware::diagnostic_graph_utils::DiagGraphSubscription sub_graph_;
 
   std::unique_ptr<Notifications> notifications_;
-  std::unordered_map<DiagNode *, Notification *> mapping_;
+  std::unordered_map<const DiagNode *, Notification *> mapping_;
+  std::vector<const Message *> previous_messages_;
 };
 
 }  // namespace autoware::failure_notification

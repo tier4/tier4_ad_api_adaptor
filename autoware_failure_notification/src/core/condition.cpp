@@ -17,4 +17,11 @@
 namespace autoware::failure_notification
 {
 
+bool Condition::evaluate(const Context & context) const
+{
+  // TODO(Takagi, Isamu): Implement the actual evaluation logic.
+  (void)context;
+  return true;
+}
+
 }  // namespace autoware::failure_notification
