@@ -36,6 +36,9 @@ RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
 
   cli_set_auto_mode_ = proxy.create_client<AutoMode>(
     enable_auto_mode_namespace_ + "/" + name, rmw_qos_profile_services_default);
+
+  cli_set_creep_ = proxy.create_client<CreepCommands>(
+    creep_commands_namespace_ + "/" + name, rmw_qos_profile_services_default);
 }
 
 void RTCModule::moduleCallback(const CooperateStatusArray::ConstSharedPtr message)
@@ -80,6 +83,17 @@ void RTCModule::callAutoModeService(
     return;
   }
   response->success = resp->success;
+}
+
+void RTCModule::callCreepService(
+  CreepCommands::Request::SharedPtr request, const CreepCommands::Response::SharedPtr & responses)
+{
+  const auto [status, resp] = cli_set_creep_->call(request);
+  if (!tier4_api_utils::is_success(status)) {
+    return;
+  }
+  responses->responses.insert(
+    responses->responses.end(), resp->responses.begin(), resp->responses.end());
 }
 
 namespace external_api
@@ -127,6 +141,9 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   srv_set_rtc_auto_mode_ = proxy.create_service<AutoModeWithModule>(
     "/api/external/set/rtc_auto_mode", std::bind(&RTCController::setRTCAutoMode, this, _1, _2),
     rmw_qos_profile_services_default, group_);
+  srv_set_creep_ = proxy.create_service<CreepCommands>(
+    "/api/external/set/rtc_creep_commands", std::bind(&RTCController::setCreepRTC, this, _1, _2),
+    rmw_qos_profile_services_default, group_);
 
   timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
   auto_mode_timer_ = rclcpp::create_timer(
@@ -153,7 +170,7 @@ void RTCController::insertionSortAndValidation(std::vector<CooperateStatus> & st
   }
 }
 
-void RTCController::checkInfDistance(CooperateStatus & status)  // Temporary fix for ROS2 humble
+void RTCController::checkInfDistance(CooperateStatus & status)  // Temporary fix for ROS 2 humble
 {
   if (!std::isfinite(status.start_distance)) {
     status.start_distance = -100000.0;
@@ -393,6 +410,95 @@ void RTCController::setRTCAutoMode(
       // virtual_traffic not found
   }
   response->success = auto_mode_response->success;
+}
+
+void RTCController::setCreepRTC(
+  const CreepCommands::Request::SharedPtr requests,
+  const CreepCommands::Response::SharedPtr responses)
+{
+  for (tier4_rtc_msgs::msg::CreepCommand & command : requests->commands) {
+    auto request = std::make_shared<CreepCommands::Request>();
+    request->stamp = requests->stamp;
+    request->commands = {command};
+    switch (command.module.type) {
+      case Module::LANE_CHANGE_LEFT: {
+        lane_change_left_->callCreepService(request, responses);
+        break;
+      }
+      case Module::LANE_CHANGE_RIGHT: {
+        lane_change_right_->callCreepService(request, responses);
+        break;
+      }
+      case Module::EXT_REQUEST_LANE_CHANGE_LEFT: {
+        ext_request_lane_change_left_->callCreepService(request, responses);
+        break;
+      }
+      case Module::EXT_REQUEST_LANE_CHANGE_RIGHT: {
+        ext_request_lane_change_right_->callCreepService(request, responses);
+        break;
+      }
+      case Module::AVOIDANCE_LEFT: {
+        avoidance_left_->callCreepService(request, responses);
+        break;
+      }
+      case Module::AVOIDANCE_RIGHT: {
+        avoidance_right_->callCreepService(request, responses);
+        break;
+      }
+      case Module::AVOIDANCE_BY_LC_LEFT: {
+        avoidance_by_lc_left_->callCreepService(request, responses);
+        break;
+      }
+      case Module::AVOIDANCE_BY_LC_RIGHT: {
+        avoidance_by_lc_right_->callCreepService(request, responses);
+        break;
+      }
+      case Module::GOAL_PLANNER: {
+        goal_planner_->callCreepService(request, responses);
+        break;
+      }
+      case Module::START_PLANNER: {
+        start_planner_->callCreepService(request, responses);
+        break;
+      }
+      case Module::TRAFFIC_LIGHT: {
+        traffic_light_->callCreepService(request, responses);
+        break;
+      }
+      case Module::INTERSECTION: {
+        intersection_->callCreepService(request, responses);
+        break;
+      }
+      case Module::INTERSECTION_OCCLUSION: {
+        intersection_occlusion_->callCreepService(request, responses);
+        break;
+      }
+      case Module::CROSSWALK: {
+        crosswalk_->callCreepService(request, responses);
+        break;
+      }
+      case Module::BLIND_SPOT: {
+        blind_spot_->callCreepService(request, responses);
+        break;
+      }
+      case Module::DETECTION_AREA: {
+        detection_area_->callCreepService(request, responses);
+        break;
+      }
+      case Module::NO_STOPPING_AREA: {
+        no_stopping_area_->callCreepService(request, responses);
+        break;
+      }
+      case Module::OCCLUSION_SPOT: {
+        occlusion_spot_->callCreepService(request, responses);
+        break;
+      }
+      case Module::SUPERVISED_PERCEPTION_FILTER: {
+        supervised_perception_filter_->callCreepService(request, responses);
+        break;
+      }
+    }
+  }
 }
 
 }  // namespace external_api
