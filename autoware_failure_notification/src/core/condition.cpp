@@ -15,21 +15,69 @@
 #include "condition.hpp"
 
 #include <memory>
+#include <stdexcept>
+#include <string>
 
 namespace autoware::failure_notification
 {
 
-std::unique_ptr<Condition> Condition::parse(YAML::Node yaml)
+std::unique_ptr<Condition> parse_expr(const Expression & expr)
 {
-  if (!yaml.IsDefined()) {
+  if (expr.data == "Not") {
+    return std::make_unique<NotCondition>(expr);
+  }
+  if (expr.data == "RouteState") {
+    return std::make_unique<RouteStateCondition>(expr);
+  }
+  throw std::runtime_error("unknown condition: " + expr.data);
+}
+
+std::unique_ptr<Condition> Condition::parse(const std::string & str)
+{
+  if (str.empty()) {
     return std::make_unique<TrueCondition>();
   }
-  return std::make_unique<TrueCondition>();
+  return parse_expr(Expression::parse(str));
 }
 
 bool TrueCondition::evaluate(const Context &) const
 {
   return true;
+}
+
+NotCondition::NotCondition(const Expression & expr)
+{
+  if (!expr.args || expr.args->size() != 1) {
+    throw std::runtime_error("Not condition requires exactly one argument");
+  }
+  condition_ = parse_expr(expr.args->front());
+}
+
+bool NotCondition::evaluate(const Context & context) const
+{
+  return !condition_->evaluate(context);
+}
+
+RouteStateCondition::RouteStateCondition(const Expression & expr)
+{
+  const auto get_state = [](const std::string & str) {
+    if (str == "Unknown") return RouteState::UNKNOWN;
+    if (str == "Unset") return RouteState::UNSET;
+    if (str == "Set") return RouteState::SET;
+    throw std::runtime_error("Invalid RouteState: " + str);
+  };
+
+  if (!expr.args) {
+    throw std::runtime_error("RouteState condition requires arguments");
+  }
+  for (const auto & arg : *expr.args) {
+    states_.insert(get_state(arg.data));
+  }
+}
+
+bool RouteStateCondition::evaluate(const Context & context) const
+{
+  return states_.count(context.route_state.state) != 0;
 }
 
 }  // namespace autoware::failure_notification

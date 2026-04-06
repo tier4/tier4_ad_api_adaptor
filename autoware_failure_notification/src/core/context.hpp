@@ -15,12 +15,15 @@
 #ifndef CORE__CONTEXT_HPP_
 #define CORE__CONTEXT_HPP_
 
+#include <autoware_adapi_v1_msgs/msg/route_state.hpp>
+
 namespace autoware::failure_notification
 {
 
-class Context
+struct Context
 {
-public:
+  using RouteState = autoware_adapi_v1_msgs::msg::RouteState;
+  RouteState route_state;
 };
 
 }  // namespace autoware::failure_notification

@@ -43,6 +43,9 @@ private:
   std::unique_ptr<Notifications> notifications_;
   std::unordered_map<const DiagNode *, Notification *> mapping_;
   std::vector<const Message *> previous_messages_;
+
+  Context context_;
+  rclcpp::Subscription<Context::RouteState>::SharedPtr sub_route_state_;
 };
 
 }  // namespace autoware::failure_notification

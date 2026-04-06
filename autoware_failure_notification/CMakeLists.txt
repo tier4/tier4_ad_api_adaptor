@@ -10,6 +10,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/core/message.cpp
   src/core/condition.cpp
   src/core/context.cpp
+  src/core/expression.cpp
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}

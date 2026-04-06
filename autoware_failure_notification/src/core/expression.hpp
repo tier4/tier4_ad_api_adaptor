@@ -22,10 +22,11 @@
 namespace autoware::failure_notification
 {
 
-struct Token
+struct Expression
 {
+  static Expression parse(const std::string & str);
   std::string data;
-  std::optional<std::vector<Token>> args;
+  std::optional<std::vector<Expression>> args;
 };
 
 }  // namespace autoware::failure_notification

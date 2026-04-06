@@ -16,10 +16,11 @@
 #define CORE__CONDITION_HPP_
 
 #include "context.hpp"
-
-#include <yaml-cpp/yaml.h>
+#include "expression.hpp"
 
 #include <memory>
+#include <string>
+#include <unordered_set>
 
 namespace autoware::failure_notification
 {
@@ -27,7 +28,7 @@ namespace autoware::failure_notification
 class Condition
 {
 public:
-  static std::unique_ptr<Condition> parse(YAML::Node yaml);
+  static std::unique_ptr<Condition> parse(const std::string & str);
   virtual ~Condition() = default;
   virtual bool evaluate(const Context & context) const = 0;
 };
@@ -36,6 +37,27 @@ class TrueCondition : public Condition
 {
 public:
   bool evaluate(const Context & context) const override;
+};
+
+class NotCondition : public Condition
+{
+public:
+  explicit NotCondition(const Expression & expr);
+  bool evaluate(const Context & context) const override;
+
+private:
+  std::unique_ptr<Condition> condition_;
+};
+
+class RouteStateCondition : public Condition
+{
+public:
+  explicit RouteStateCondition(const Expression & expr);
+  bool evaluate(const Context & context) const override;
+
+private:
+  using RouteState = Context::RouteState;
+  std::unordered_set<RouteState::_state_type> states_;
 };
 
 }  // namespace autoware::failure_notification

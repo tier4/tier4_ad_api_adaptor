@@ -31,16 +31,12 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
   // Set a non-existent pattern to ensure the first message is published.
   previous_messages_.push_back(nullptr);
 
-  /*
-    for (const auto & notification : notifications_->notifications()) {
-      RCLCPP_INFO_STREAM(get_logger(), notification->path());
-      RCLCPP_INFO_STREAM(get_logger(), "  priority: " << notification->priority());
-      RCLCPP_INFO_STREAM(get_logger(), "  messages:");
-      for (const auto & message : notification->messages()) {
-        RCLCPP_INFO_STREAM(get_logger(), "    " << message->text());
-      }
-    }
-  */
+  // Context.
+  context_.route_state.stamp = now();
+  context_.route_state.state = autoware_adapi_v1_msgs::msg::RouteState::UNKNOWN;
+  sub_route_state_ = create_subscription<Context::RouteState>(
+    "/api/routing/state", rclcpp::QoS(1).transient_local(),
+    [this](const Context::RouteState & msg) { context_.route_state = msg; });
 
   using std::placeholders::_1;
   sub_graph_.register_create_callback(std::bind(&FailureNotification::on_create, this, _1));
@@ -62,12 +58,10 @@ void FailureNotification::on_create(DiagGraph::ConstSharedPtr graph)
 
 void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
 {
-  Context context;
-
   for (const auto & node : graph->nodes()) {
     const auto notification = mapping_.at(node);
     if (notification) {
-      notification->update(context, node->level());
+      notification->update(context_, node->level());
     }
   }
 

@@ -30,7 +30,9 @@ Message::Message(const Notification * parent, const YAML::Node yaml)
   }
   text_ = yaml["text"].as<std::string>();
 
-  condition_ = Condition::parse(yaml["condition"]);
+  if (const auto node = yaml["condition"]) {
+    condition_ = Condition::parse(node.as<std::string>());
+  }
 }
 
 Messages::Messages(const Notification * parent, const YAML::Node yaml)

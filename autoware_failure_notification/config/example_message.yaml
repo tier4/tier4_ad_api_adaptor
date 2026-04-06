@@ -17,9 +17,7 @@ notifications:
     priority: 100
     notification_level: 2
     messages:
-      - state_topic: /autoware/state
-        field: state
-        values: [2]
+      - condition: RouteState(Unknown, Unset)
         text: AAAAA
         audiences:
           mot:
@@ -30,9 +28,7 @@ notifications:
             ja:
               situation: ""
               solution: ""
-      - state_topic: /autoware/state
-        field: state
-        values: [3, 4, 5, 6]
+      - condition: RouteState(Set)
         text: BBBBB
         audiences:
           mot:
