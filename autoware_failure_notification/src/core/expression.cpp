@@ -53,13 +53,18 @@ std::vector<std::string> tokenize(const std::string & str)
   return tokens;
 }
 
+bool check_index(const std::vector<std::string> & tokens, size_t index, const std::string & str)
+{
+  return index < tokens.size() && tokens.at(index) == str;
+}
+
 std::pair<size_t, Expression> parse_token(const std::vector<std::string> & tokens, size_t index)
 {
   Expression expression;
   expression.data = tokens.at(index);
   index += 1;
 
-  if (tokens.at(index) != "(") {
+  if (!check_index(tokens, index, "(")) {
     return {index, expression};
   }
   index += 1;
@@ -70,14 +75,11 @@ std::pair<size_t, Expression> parse_token(const std::vector<std::string> & token
     index = result.first;
     expression.args->push_back(result.second);
 
-    if (tokens.size() <= index) {
-      throw std::runtime_error("expect close token");
-    }
-    if (tokens.at(index) == ")") {
+    if (check_index(tokens, index, ")")) {
       index += 1;
       break;
     }
-    if (tokens.at(index) == ",") {
+    if (check_index(tokens, index, ",")) {
       index += 1;
       continue;
     }

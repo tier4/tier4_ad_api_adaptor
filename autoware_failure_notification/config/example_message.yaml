@@ -2,7 +2,7 @@ notifications:
   /autoware/localization/state:
     priority: 50
     messages:
-      - condition: ""
+      - condition: Always
         audiences:
           mot:
             en:
