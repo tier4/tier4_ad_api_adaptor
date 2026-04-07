@@ -1,41 +1,25 @@
 notifications:
-  # /autoware/modes/stop:
-  # /autoware/modes/autonomous:
-  # /autoware/modes/local:
-  # /autoware/modes/remote:
-  # /autoware/modes/emergency_stop:
-  # /autoware/modes/comfortable_stop:
-  # /autoware/modes/pull_over:
-  # /external/joystick_command:
-  # /external/remote_command:
-  # /functions/pose_estimation:
-  # /functions/obstacle_detection:
-  # /sensing/lidars/top:
-  # /sensing/lidars/front:
-  /sensing/radars/front:
-    error_code: LOC-00-E00-001
-    priority: 100
-    notification_level: 2
+  /autoware/localization/state:
+    priority: 50
     messages:
-      - condition: RouteState(Unknown, Unset)
-        text: AAAAA
+      - condition: ""
         audiences:
           mot:
-            ja:
-              situation: ""
-              solution: ""
-          remote:
-            ja:
-              situation: ""
-              solution: ""
+            en:
+              situation: waiting for the pose initialization
+  /autoware/planning/routing/state:
+    priority: 0
+    messages:
+      - condition: LocalizationState(Initialized)
+        audiences:
+          mot:
+            en:
+              situation: waiting for the route
+  /autoware/control:
+    priority: 100
+    messages:
       - condition: RouteState(Set)
-        text: BBBBB
         audiences:
           mot:
-            ja:
-              situation: ""
-              solution: ""
-          remote:
-            ja:
-              situation: ""
-              solution: ""
+            en:
+              situation: control module error

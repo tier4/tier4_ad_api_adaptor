@@ -25,10 +25,11 @@ Message::Message(const Notification * parent, const YAML::Node yaml)
 {
   parent_ = parent;
 
-  if (!yaml["text"]) {
-    throw std::runtime_error("text is required: " + parent->path());
+  if (const auto node = yaml["audiences"]["mot"]["en"]["situation"]) {
+    text_ = node.as<std::string>();
+  } else {
+    throw std::runtime_error("audiences field is required in " + parent->path());
   }
-  text_ = yaml["text"].as<std::string>();
 
   if (const auto node = yaml["condition"]) {
     condition_ = Condition::parse(node.as<std::string>());

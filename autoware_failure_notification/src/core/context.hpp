@@ -15,6 +15,7 @@
 #ifndef CORE__CONTEXT_HPP_
 #define CORE__CONTEXT_HPP_
 
+#include <autoware_adapi_v1_msgs/msg/localization_initialization_state.hpp>
 #include <autoware_adapi_v1_msgs/msg/route_state.hpp>
 
 namespace autoware::failure_notification
@@ -23,7 +24,10 @@ namespace autoware::failure_notification
 struct Context
 {
   using RouteState = autoware_adapi_v1_msgs::msg::RouteState;
+  using LocalizationState = autoware_adapi_v1_msgs::msg::LocalizationInitializationState;
+
   RouteState route_state;
+  LocalizationState localization_state;
 };
 
 }  // namespace autoware::failure_notification

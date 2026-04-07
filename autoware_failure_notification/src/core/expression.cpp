@@ -70,6 +70,9 @@ std::pair<size_t, Expression> parse_token(const std::vector<std::string> & token
     index = result.first;
     expression.args->push_back(result.second);
 
+    if (tokens.size() <= index) {
+      throw std::runtime_error("expect close token");
+    }
     if (tokens.at(index) == ")") {
       index += 1;
       break;
@@ -78,7 +81,6 @@ std::pair<size_t, Expression> parse_token(const std::vector<std::string> & token
       index += 1;
       continue;
     }
-
     throw std::runtime_error("expect delimiter or arguments after " + tokens.at(index));
   }
   return {index, expression};

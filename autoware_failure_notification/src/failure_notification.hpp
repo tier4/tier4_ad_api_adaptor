@@ -46,6 +46,7 @@ private:
 
   Context context_;
   rclcpp::Subscription<Context::RouteState>::SharedPtr sub_route_state_;
+  rclcpp::Subscription<Context::LocalizationState>::SharedPtr sub_localization_state_;
 };
 
 }  // namespace autoware::failure_notification

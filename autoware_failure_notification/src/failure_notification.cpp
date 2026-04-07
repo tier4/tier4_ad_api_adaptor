@@ -33,10 +33,15 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 
   // Context.
   context_.route_state.stamp = now();
-  context_.route_state.state = autoware_adapi_v1_msgs::msg::RouteState::UNKNOWN;
+  context_.route_state.state = Context::RouteState::UNKNOWN;
+  context_.localization_state.stamp = now();
+  context_.localization_state.state = Context::LocalizationState::UNKNOWN;
   sub_route_state_ = create_subscription<Context::RouteState>(
     "/api/routing/state", rclcpp::QoS(1).transient_local(),
     [this](const Context::RouteState & msg) { context_.route_state = msg; });
+  sub_localization_state_ = create_subscription<Context::LocalizationState>(
+    "/api/localization/initialization_state", rclcpp::QoS(1).transient_local(),
+    [this](const Context::LocalizationState & msg) { context_.localization_state = msg; });
 
   using std::placeholders::_1;
   sub_graph_.register_create_callback(std::bind(&FailureNotification::on_create, this, _1));
@@ -51,7 +56,6 @@ void FailureNotification::on_create(DiagGraph::ConstSharedPtr graph)
     dictionary[notification->path()] = notification;
   }
   for (const auto & node : graph->nodes()) {
-    RCLCPP_INFO_STREAM(get_logger(), "Node: " << node->path());
     mapping_[node] = dictionary[node->path()];
   }
 }
@@ -74,9 +78,9 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
   }
 
   if (previous_messages_ != messages) {
-    RCLCPP_INFO_STREAM(get_logger(), "Messages updated");
+    RCLCPP_INFO_STREAM(get_logger(), "==================================================");
     for (const auto & message : messages) {
-      RCLCPP_INFO_STREAM(get_logger(), "  " << message->text());
+      RCLCPP_INFO_STREAM(get_logger(), message->text());
     }
     previous_messages_ = messages;
   }

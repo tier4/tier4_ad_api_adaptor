@@ -26,6 +26,9 @@ std::unique_ptr<Condition> parse_expr(const Expression & expr)
   if (expr.data == "Not") {
     return std::make_unique<NotCondition>(expr);
   }
+  if (expr.data == "LocalizationState") {
+    return std::make_unique<LocalizationStateCondition>(expr);
+  }
   if (expr.data == "RouteState") {
     return std::make_unique<RouteStateCondition>(expr);
   }
@@ -58,12 +61,35 @@ bool NotCondition::evaluate(const Context & context) const
   return !condition_->evaluate(context);
 }
 
+LocalizationStateCondition::LocalizationStateCondition(const Expression & expr)
+{
+  const auto get_state = [](const std::string & str) {
+    if (str == "Uninitialized") return LocalizationState::UNINITIALIZED;
+    if (str == "Initializing") return LocalizationState::INITIALIZING;
+    if (str == "Initialized") return LocalizationState::INITIALIZED;
+    throw std::runtime_error("Invalid LocalizationState: " + str);
+  };
+
+  if (!expr.args) {
+    throw std::runtime_error("LocalizationState condition requires arguments");
+  }
+  for (const auto & arg : *expr.args) {
+    states_.insert(get_state(arg.data));
+  }
+}
+
+bool LocalizationStateCondition::evaluate(const Context & context) const
+{
+  return states_.count(context.localization_state.state) != 0;
+}
+
 RouteStateCondition::RouteStateCondition(const Expression & expr)
 {
   const auto get_state = [](const std::string & str) {
     if (str == "Unknown") return RouteState::UNKNOWN;
     if (str == "Unset") return RouteState::UNSET;
     if (str == "Set") return RouteState::SET;
+    if (str == "Arrived") return RouteState::ARRIVED;
     throw std::runtime_error("Invalid RouteState: " + str);
   };
 

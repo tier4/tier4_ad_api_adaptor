@@ -49,6 +49,17 @@ private:
   std::unique_ptr<Condition> condition_;
 };
 
+class LocalizationStateCondition : public Condition
+{
+public:
+  explicit LocalizationStateCondition(const Expression & expr);
+  bool evaluate(const Context & context) const override;
+
+private:
+  using LocalizationState = Context::LocalizationState;
+  std::unordered_set<LocalizationState::_state_type> states_;
+};
+
 class RouteStateCondition : public Condition
 {
 public:
