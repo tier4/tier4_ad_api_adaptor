@@ -64,6 +64,7 @@ bool NotCondition::evaluate(const Context & context) const
 LocalizationStateCondition::LocalizationStateCondition(const Expression & expr)
 {
   const auto get_state = [](const std::string & str) {
+    if (str == "Unknown") return LocalizationState::UNKNOWN;
     if (str == "Uninitialized") return LocalizationState::UNINITIALIZED;
     if (str == "Initializing") return LocalizationState::INITIALIZING;
     if (str == "Initialized") return LocalizationState::INITIALIZED;
