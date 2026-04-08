@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="tier4_maintenance_management" exec="maintenance_management_node" name="maintenance_management">
+    <param from="$(find-pkg-share tier4_maintenance_management)/config/maintenance_management.param.yaml"/>
+  </node>
+</launch>
