@@ -14,12 +14,37 @@
 
 #include "maintenance_management.hpp"
 
+#include <string>
+
 namespace tier4_maintenance_management
 {
+
+std::string state_text(const maintenance::State & state)
+{
+  switch (state) {
+    case maintenance::State::UNKNOWN:
+      return "UNKNOWN";
+    case maintenance::State::ON:
+      return "ON";
+    case maintenance::State::OFF:
+      return "OFF";
+    default:
+      return "INVALID";
+  }
+}
 
 MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options)
 : Node("maintenance_management", options)
 {
+  const auto path = declare_parameter<std::string>("path");
+  store_ = maintenance::Store(path);
+  RCLCPP_INFO_STREAM(get_logger(), "Store Path: " << path);
+
+  const auto state = store_.read();
+  RCLCPP_INFO_STREAM(get_logger(), "State: " << state_text(state));
+
+  const auto ok = store_.write(maintenance::State::ON);
+  RCLCPP_INFO_STREAM(get_logger(), "Write OK: " << ok);
 }
 
 }  // namespace tier4_maintenance_management
