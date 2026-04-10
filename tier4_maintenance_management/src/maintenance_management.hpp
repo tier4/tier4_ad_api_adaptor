@@ -18,6 +18,9 @@
 #include <maintenance_state_store/maintenance_state_store.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include <std_msgs/srv/set_bool.hpp>
+#include <std_msgs/srv/trigger.hpp>
+
 namespace tier4_maintenance_management
 {
 
@@ -27,6 +30,18 @@ public:
   explicit MaintenanceManagement(const rclcpp::NodeOptions & options);
 
 private:
+  using SetState = std_msgs::srv::SetBool;
+  using GetState = std_msgs::srv::Trigger;
+
+  rclcpp::Service<SetState>::SharedPtr srv_set_state_;
+  rclcpp::Service<GetState>::SharedPtr srv_get_state_;
+  // Operation Mode
+
+  void on_get_state(
+    const GetState::Request::SharedPtr req, const GetState::Response::SharedPtr res);
+  void on_set_state(
+    const SetState::Request::SharedPtr req, const SetState::Response::SharedPtr res);
+
   maintenance::Store store_;
 };
 

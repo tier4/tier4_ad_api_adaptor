@@ -47,6 +47,20 @@ MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options
   RCLCPP_INFO_STREAM(get_logger(), "Write OK: " << ok);
 }
 
+void on_get_state(const GetState::Request::SharedPtr req, const GetState::Response::SharedPtr res)
+{
+  // lock
+  (void)req;
+  (void)res;
+}
+
+void on_set_state(const SetState::Request::SharedPtr req, const SetState::Response::SharedPtr res)
+{
+  // lock
+  (void)req;
+  (void)res;
+}
+
 }  // namespace tier4_maintenance_management
 
 #include <rclcpp_components/register_node_macro.hpp>
