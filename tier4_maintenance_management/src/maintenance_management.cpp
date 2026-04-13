@@ -35,10 +35,11 @@ std::string state_text(const maintenance::State & state)
 }
 
 MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options)
-: Node("maintenance_management", options), diagnostics_(this, 5.0)
+: Node("maintenance_management", options)
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
+  operation_mode_.mode = OperationModeState::UNKNOWN;
 
   const auto path = declare_parameter<std::string>("path");
   store_ = maintenance::Store(path);
@@ -49,21 +50,14 @@ MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options
   srv_get_state_ = create_service<GetState>(
     "/api/external/get/maintenance/state",
     std::bind(&MaintenanceManagement::on_get_state, this, _1, _2));
-  sub_operation_mode_ = create_subscription<OperationMode>(
+  sub_operation_mode_ = create_subscription<OperationModeState>(
     "/api/operation_mode/state", rclcpp::QoS(1).transient_local(),
-    [this](const OperationMode & msg) { operation_mode_ = msg; });
+    [this](const OperationModeState & msg) { operation_mode_ = msg; });
 
-  diagnostics_.setHardwareID("none");
-  diagnostics_.add("state", [this](diagnostic_updater::DiagnosticStatusWrapper & stat) {
-    const auto state = store_.read();
-    if (state == maintenance::State::OFF) {
-      stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, state_text(state));
-    } else {
-      stat.summary(diagnostic_msgs::msg::DiagnosticStatus::ERROR, state_text(state));
-    }
-  });
-
-  operation_mode_.mode = OperationMode::UNKNOWN;
+  // The diagnostic_updater cannot be used because it publishes OK level at initialization.
+  const auto period = rclcpp::Duration::from_seconds(5.0);
+  timer_ = rclcpp::create_timer(this, get_clock(), period, [this]() { publish_diagnostics(); });
+  pub_diagnostics_ = create_publisher<DiagnosticArray>("/diagnostics", rclcpp::QoS(1));
 }
 
 void MaintenanceManagement::on_get_state(
@@ -97,7 +91,7 @@ void MaintenanceManagement::on_set_state(
   using tier4_external_api_msgs::msg::ResponseStatus;
   SetState::Response res;
 
-  if (operation_mode_.mode != OperationMode::STOP) {
+  if (operation_mode_.mode != OperationModeState::STOP) {
     res.status.code = ResponseStatus::ERROR;
     res.status.message = "operation mode is not stop";
     return srv_set_state_->send_response(*header, res);
@@ -110,10 +104,26 @@ void MaintenanceManagement::on_set_state(
     return srv_set_state_->send_response(*header, res);
   }
 
-  diagnostics_.force_update();
+  publish_diagnostics();
 
   res.status.code = ResponseStatus::SUCCESS;
   return srv_set_state_->send_response(*header, res);
+}
+
+void MaintenanceManagement::publish_diagnostics()
+{
+  const auto state = store_.read();
+  const auto is_ok = state == maintenance::State::OFF;
+
+  DiagnosticStatus status;
+  status.name = std::string(this->get_name()) + ": state";
+  status.level = is_ok ? DiagnosticStatus::OK : DiagnosticStatus::ERROR;
+  status.message = state_text(state);
+
+  DiagnosticArray msg;
+  msg.header.stamp = this->now();
+  msg.status.push_back(status);
+  pub_diagnostics_->publish(msg);
 }
 
 }  // namespace tier4_maintenance_management

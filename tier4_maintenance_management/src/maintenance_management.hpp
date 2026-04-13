@@ -15,11 +15,11 @@
 #ifndef MAINTENANCE_MANAGEMENT_HPP_
 #define MAINTENANCE_MANAGEMENT_HPP_
 
-#include <diagnostic_updater/diagnostic_updater.hpp>
 #include <maintenance_state_store/maintenance_state_store.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/operation_mode_state.hpp>
+#include <diagnostic_msgs/msg/diagnostic_array.hpp>
 #include <tier4_external_api_msgs/srv/get_maintenance_state.hpp>
 #include <tier4_external_api_msgs/srv/set_maintenance_state.hpp>
 
@@ -34,22 +34,26 @@ public:
   explicit MaintenanceManagement(const rclcpp::NodeOptions & options);
 
 private:
-  using OperationMode = autoware_adapi_v1_msgs::msg::OperationModeState;
   using SetState = tier4_external_api_msgs::srv::SetMaintenanceState;
   using GetState = tier4_external_api_msgs::srv::GetMaintenanceState;
+  using OperationModeState = autoware_adapi_v1_msgs::msg::OperationModeState;
+  using DiagnosticArray = diagnostic_msgs::msg::DiagnosticArray;
+  using DiagnosticStatus = diagnostic_msgs::msg::DiagnosticStatus;
 
   rclcpp::Service<SetState>::SharedPtr srv_set_state_;
   rclcpp::Service<GetState>::SharedPtr srv_get_state_;
-  rclcpp::Subscription<OperationMode>::SharedPtr sub_operation_mode_;
-
+  rclcpp::Subscription<OperationModeState>::SharedPtr sub_operation_mode_;
   void on_get_state(
     const std::shared_ptr<rmw_request_id_t> header, const GetState::Request::SharedPtr req);
   void on_set_state(
     const std::shared_ptr<rmw_request_id_t> header, const SetState::Request::SharedPtr req);
 
-  diagnostic_updater::Updater diagnostics_;
+  rclcpp::Publisher<DiagnosticArray>::SharedPtr pub_diagnostics_;
+  rclcpp::TimerBase::SharedPtr timer_;
+  void publish_diagnostics();
+
   maintenance::Store store_;
-  OperationMode operation_mode_;
+  OperationModeState operation_mode_;
 };
 
 }  // namespace tier4_maintenance_management
