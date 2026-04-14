@@ -1,0 +1,135 @@
+<svg
+  host="65bd71144e"
+  xmlns="http://www.w3.org/2000/svg"
+  style="background: transparent; background-color: transparent;"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  version="1.1"
+  width="441px"
+  height="361px"
+  viewBox="-0.5 -0.5 441 361"
+  content="&lt;mxfile&gt;&lt;diagram id=&quot;yWkmCRLsk3odk6L70eoA&quot; name=&quot;Page-1&quot;&gt;zZc9b4MwEEB/DTvYlCRr07RdOmXobOErtgQYOU6B/vqacnw5itShtbwg+50PfI+TBRE9Vt2LZo14UxzKiMS8i+hTRMg+I/Y6gH4EO/IwgkJLPqJkAWf5BQhjpFfJ4bJZaJQqjWy2MFd1DbnZMKa1arfLPlS5fWrDCrgB55yVt/RdciOQJtlhCbyCLAQ+ek92Y6Bi02Ks5CIYV+0K0VNEj1opM46q7gjl4G7yMuY934nOG9NQm18lYMYnK69YHG7M9FO1Wl1rDkNCHNHHVkgD54blQ7S1r9cyYarSzhI7xNuBNtDd3VMyV2o7BFQFRvd2yZQwycHuoBnO28V1miITa83IGL7eYr71YsAOUMIdIXH4QhKfQkh4Pua6+m2ZKx2zsrWO9A900PB0JKnTHj59pOH5cNvDq4+H8Hyk7vHh00cWng+3P7yeH7vwfLjnB/XpYx+eD7c/vPo4hOfDPT/+04edLh+/P7HVHwQ9fQM=&lt;/diagram&gt;&lt;/mxfile&gt;"
+>
+  <defs/>
+  <g>
+    <g>
+      <rect
+        x="0"
+        y="280"
+        width="440"
+        height="80"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="0"
+        y="80"
+        width="440"
+        height="80"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="160"
+        y="0"
+        width="120"
+        height="40"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="20"
+        y="100"
+        width="120"
+        height="40"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="160"
+        y="100"
+        width="120"
+        height="40"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="300"
+        y="100"
+        width="120"
+        height="40"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="160"
+        y="200"
+        width="120"
+        height="40"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="20"
+        y="300"
+        width="120"
+        height="40"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="160"
+        y="300"
+        width="120"
+        height="40"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+    <g>
+      <rect
+        x="300"
+        y="300"
+        width="120"
+        height="40"
+        fill="#ffffff"
+        stroke="#000000"
+        pointer-events="all"
+        style="fill: light-dark(#ffffff, var(--ge-dark-color, #121212)); stroke: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));"
+      />
+    </g>
+  </g>
+</svg>
