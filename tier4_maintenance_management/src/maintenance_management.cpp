@@ -20,20 +20,6 @@
 namespace tier4_maintenance_management
 {
 
-std::string state_text(const maintenance::State & state)
-{
-  switch (state) {
-    case maintenance::State::UNKNOWN:
-      return "UNKNOWN";
-    case maintenance::State::ON:
-      return "ON";
-    case maintenance::State::OFF:
-      return "OFF";
-    default:
-      return "INVALID";
-  }
-}
-
 MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options)
 : Node("maintenance_management", options), store_(declare_parameter<std::string>("path"))
 {
@@ -55,14 +41,14 @@ MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options
 
   // The diagnostic_updater cannot be used because it publishes OK level at initialization.
   const auto period = rclcpp::Duration::from_seconds(1.0);
-  timer_ = rclcpp::create_timer(this, get_clock(), period, [this]() { publish_diagnostics(); });
+  timer_ = rclcpp::create_timer(this, get_clock(), period, [this]() { on_timer(); });
   pub_diagnostics_ = create_publisher<DiagnosticArray>("/diagnostics", rclcpp::QoS(1));
 }
 
 void MaintenanceManagement::on_get_state(
   const std::shared_ptr<rmw_request_id_t> header, const GetState::Request::SharedPtr)
 {
-  using tier4_external_api_msgs::msg::ResponseStatus;
+  std::lock_guard<std::mutex> lock(mutex_);
   GetState::Response res;
 
   switch (store_.read()) {
@@ -87,7 +73,7 @@ void MaintenanceManagement::on_get_state(
 void MaintenanceManagement::on_set_state(
   const std::shared_ptr<rmw_request_id_t> header, const SetState::Request::SharedPtr req)
 {
-  using tier4_external_api_msgs::msg::ResponseStatus;
+  std::lock_guard<std::mutex> lock(mutex_);
   SetState::Response res;
 
   if (store_.read() == maintenance::State::UNKNOWN) {
@@ -116,15 +102,32 @@ void MaintenanceManagement::on_set_state(
   return srv_set_state_->send_response(*header, res);
 }
 
+void MaintenanceManagement::on_timer()
+{
+  std::lock_guard<std::mutex> lock(mutex_);
+  publish_diagnostics();
+}
+
 void MaintenanceManagement::publish_diagnostics()
 {
+  // clang-format off
+  const auto stringify = [](const maintenance::State & state) {
+    switch (state) {
+      case maintenance::State::UNKNOWN: return "UNKNOWN";
+      case maintenance::State::ON:      return "ON";
+      case maintenance::State::OFF:     return "OFF";
+      default:                          return "INVALID";
+    }
+  };
+  // clang-format on
+
   const auto state = store_.read();
   const auto is_ok = state == maintenance::State::OFF;
 
   DiagnosticStatus status;
   status.name = std::string(this->get_name()) + ": state";
   status.level = is_ok ? DiagnosticStatus::OK : DiagnosticStatus::ERROR;
-  status.message = state_text(state);
+  status.message = stringify(state);
 
   DiagnosticArray msg;
   msg.header.stamp = this->now();
