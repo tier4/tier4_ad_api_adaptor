@@ -35,14 +35,13 @@ std::string state_text(const maintenance::State & state)
 }
 
 MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options)
-: Node("maintenance_management", options)
+: Node("maintenance_management", options), store_(declare_parameter<std::string>("path"))
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
-  operation_mode_.mode = OperationModeState::UNKNOWN;
 
-  const auto path = declare_parameter<std::string>("path");
-  store_ = maintenance::Store(path);
+  operation_mode_.stamp = now();
+  operation_mode_.mode = OperationModeState::UNKNOWN;
 
   srv_set_state_ = create_service<SetState>(
     "/api/external/set/maintenance/state",
@@ -55,7 +54,7 @@ MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options
     [this](const OperationModeState & msg) { operation_mode_ = msg; });
 
   // The diagnostic_updater cannot be used because it publishes OK level at initialization.
-  const auto period = rclcpp::Duration::from_seconds(5.0);
+  const auto period = rclcpp::Duration::from_seconds(1.0);
   timer_ = rclcpp::create_timer(this, get_clock(), period, [this]() { publish_diagnostics(); });
   pub_diagnostics_ = create_publisher<DiagnosticArray>("/diagnostics", rclcpp::QoS(1));
 }
@@ -91,6 +90,12 @@ void MaintenanceManagement::on_set_state(
   using tier4_external_api_msgs::msg::ResponseStatus;
   SetState::Response res;
 
+  if (store_.read() == maintenance::State::UNKNOWN) {
+    res.status.code = ResponseStatus::ERROR;
+    res.status.message = "unknown state";
+    return srv_set_state_->send_response(*header, res);
+  }
+
   if (operation_mode_.mode != OperationModeState::STOP) {
     res.status.code = ResponseStatus::ERROR;
     res.status.message = "operation mode is not stop";
@@ -104,6 +109,7 @@ void MaintenanceManagement::on_set_state(
     return srv_set_state_->send_response(*header, res);
   }
 
+  // Notify the state change immediately.
   publish_diagnostics();
 
   res.status.code = ResponseStatus::SUCCESS;
