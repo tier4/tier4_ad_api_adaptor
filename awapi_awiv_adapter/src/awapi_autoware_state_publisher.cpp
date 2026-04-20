@@ -19,7 +19,6 @@
 
 #include <diagnostic_msgs/msg/diagnostic_status.hpp>
 
-#include <algorithm>
 #include <regex>
 #include <string>
 #include <vector>
@@ -169,27 +168,28 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
       diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_spf);
     if (
       status->autoware_state == AutowareState::WAITING_FOR_ROUTE && status->arrived_goal) {
-      spf.erase(
-        std::remove_if(
-          spf.begin(), spf.end(),
-          [](const DiagnosticStatus & d) {
-            if (d.level != DiagnosticStatus::ERROR || !d.values.empty()) {
-              return false;
-            }
-            if (
-              d.name == "/adapi/node/routing: state" && d.message == "2" &&
-              (d.hardware_id.empty() || d.hardware_id == "none")) {
-              return true;
-            }
-            if (!d.message.empty() || !d.hardware_id.empty()) {
-              return false;
-            }
-            return d.name == "/autoware/modes/autonomous" ||
-                   d.name == "/planning/autonomous_available" ||
-                   d.name == "/planning/in_lane_moderate_stop" ||
-                   d.name == "/planning/000-component_status/route_state";
-          }),
-        spf.end());
+      const auto should_downgrade_error_to_ok = [](const DiagnosticStatus & d) -> bool {
+        if (d.level != DiagnosticStatus::ERROR || !d.values.empty()) {
+          return false;
+        }
+        if (
+          d.name == "/adapi/node/routing: state" && d.message == "2" &&
+          (d.hardware_id.empty() || d.hardware_id == "none")) {
+          return true;
+        }
+        if (!d.message.empty() || !d.hardware_id.empty()) {
+          return false;
+        }
+        return d.name == "/autoware/modes/autonomous" ||
+               d.name == "/planning/autonomous_available" ||
+               d.name == "/planning/in_lane_moderate_stop" ||
+               d.name == "/planning/000-component_status/route_state";
+      };
+      for (auto & d : spf) {
+        if (should_downgrade_error_to_ok(d)) {
+          d.level = DiagnosticStatus::OK;
+        }
+      }
     }
     status->hazard_status.status.diagnostics_spf = std::move(spf);
   }
