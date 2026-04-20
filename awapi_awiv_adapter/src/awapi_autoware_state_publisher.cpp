@@ -17,6 +17,9 @@
 #include "awapi_awiv_adapter/diagnostics_filter.hpp"
 #include "tier4_auto_msgs_converter/tier4_auto_msgs_converter.hpp"
 
+#include <diagnostic_msgs/msg/diagnostic_status.hpp>
+
+#include <algorithm>
 #include <regex>
 #include <string>
 #include <vector>
@@ -158,8 +161,38 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
   status->hazard_status = convert(*aw_info.hazard_status_ptr);
 
   // filter leaf diagnostics
-  status->hazard_status.status.diagnostics_spf =
-    diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_spf);
+  {
+    using diagnostic_msgs::msg::DiagnosticStatus;
+    using tier4_system_msgs::msg::AutowareState;
+
+    auto spf =
+      diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_spf);
+    if (
+      status->autoware_state == AutowareState::WAITING_FOR_ROUTE && status->arrived_goal) {
+      spf.erase(
+        std::remove_if(
+          spf.begin(), spf.end(),
+          [](const DiagnosticStatus & d) {
+            if (d.level != DiagnosticStatus::ERROR || !d.values.empty()) {
+              return false;
+            }
+            if (
+              d.name == "/adapi/node/routing: state" && d.message == "2" &&
+              (d.hardware_id.empty() || d.hardware_id == "none")) {
+              return true;
+            }
+            if (!d.message.empty() || !d.hardware_id.empty()) {
+              return false;
+            }
+            return d.name == "/autoware/modes/autonomous" ||
+                   d.name == "/planning/autonomous_available" ||
+                   d.name == "/planning/in_lane_moderate_stop" ||
+                   d.name == "/planning/000-component_status/route_state";
+          }),
+        spf.end());
+    }
+    status->hazard_status.status.diagnostics_spf = std::move(spf);
+  }
   status->hazard_status.status.diagnostics_lf =
     diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_lf);
   status->hazard_status.status.diagnostics_sf =
