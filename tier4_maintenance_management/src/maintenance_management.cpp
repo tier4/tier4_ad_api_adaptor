@@ -26,15 +26,17 @@ MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options
   using std::placeholders::_1;
   using std::placeholders::_2;
 
+  operation_mode_check_duration_ = declare_parameter<double>("operation_mode_check_duration", 5.0);
+  is_maintenance_requesting_ = false;
   operation_mode_.stamp = now();
   operation_mode_.mode = OperationModeState::UNKNOWN;
 
-  srv_set_state_ = create_service<SetState>(
-    "/api/external/set/maintenance/state",
-    std::bind(&MaintenanceManagement::on_set_state, this, _1, _2));
-  srv_get_state_ = create_service<GetState>(
-    "/api/external/get/maintenance/state",
-    std::bind(&MaintenanceManagement::on_get_state, this, _1, _2));
+  srv_set_mode_ = create_service<SetMode>(
+    "/api/external/set/maintenance/mode",
+    std::bind(&MaintenanceManagement::on_set_mode, this, _1, _2));
+  srv_get_mode_ = create_service<GetMode>(
+    "/api/external/get/maintenance/mode",
+    std::bind(&MaintenanceManagement::on_get_mode, this, _1, _2));
   sub_operation_mode_ = create_subscription<OperationModeState>(
     "/api/operation_mode/state", rclcpp::QoS(1).transient_local(),
     [this](const OperationModeState & msg) { operation_mode_ = msg; });
@@ -45,66 +47,114 @@ MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options
   pub_diagnostics_ = create_publisher<DiagnosticArray>("/diagnostics", rclcpp::QoS(1));
 }
 
-void MaintenanceManagement::on_get_state(
-  const std::shared_ptr<rmw_request_id_t> header, const GetState::Request::SharedPtr)
+void MaintenanceManagement::on_get_mode(
+  const std::shared_ptr<rmw_request_id_t> header, const GetMode::Request::SharedPtr)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
-  GetState::Response res;
+  using MaintenanceMode = GetMode::Response::_mode_type;
 
+  GetMode::Response res;
   switch (store_.read()) {
     case maintenance::State::ON:
-      res.maintenance = true;
+      res.mode.state = MaintenanceMode::ON;
       res.status.code = ResponseStatus::SUCCESS;
       break;
     case maintenance::State::OFF:
-      res.maintenance = false;
+      res.mode.state = MaintenanceMode::OFF;
       res.status.code = ResponseStatus::SUCCESS;
       break;
     default:
-      res.maintenance = false;
-      res.status.code = ResponseStatus::ERROR;
-      res.status.message = "unknown state";
+      res.mode.state = MaintenanceMode::UNKNOWN;
+      res.status.code = ResponseStatus::SUCCESS;
       break;
   }
-
-  srv_get_state_->send_response(*header, res);
+  srv_get_mode_->send_response(*header, res);
 }
 
-void MaintenanceManagement::on_set_state(
-  const std::shared_ptr<rmw_request_id_t> header, const SetState::Request::SharedPtr req)
+void MaintenanceManagement::on_set_mode(
+  const std::shared_ptr<rmw_request_id_t> header, const SetMode::Request::SharedPtr req)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
-  SetState::Response res;
+  using MaintenanceMode = SetMode::Request::_mode_type;
 
-  if (store_.read() == maintenance::State::UNKNOWN) {
+  const auto send_error_response = [this, header](const std::string & message) {
+    SetMode::Response res;
     res.status.code = ResponseStatus::ERROR;
-    res.status.message = "unknown state";
-    return srv_set_state_->send_response(*header, res);
+    res.status.message = message;
+    srv_set_mode_->send_response(*header, res);
+  };
+
+  std::unique_lock<std::mutex> lock(mutex_, std::defer_lock);
+  if (!lock.try_lock()) {
+    return send_error_response("another request is being processed");
+  }
+  if (req->mode.state != MaintenanceMode::ON && req->mode.state != MaintenanceMode::OFF) {
+    return send_error_response("unknown mode requested");
+  }
+  if (store_.read() == maintenance::State::UNKNOWN) {
+    return send_error_response("unknown state");
+  }
+  if (operation_mode_.mode != OperationModeState::STOP) {
+    return send_error_response("operation mode is not stop");
   }
 
+  if (req->mode.state == MaintenanceMode::ON) {
+    lock.release();
+    return set_mode_on1(header);
+  }
+  if (req->mode.state == MaintenanceMode::OFF) {
+    lock.release();
+    return set_mode_off(header);
+  }
+  throw std::logic_error("unreachable");
+}
+
+void MaintenanceManagement::set_mode_off(const std::shared_ptr<rmw_request_id_t> header)
+{
+  std::unique_lock<std::mutex> lock(mutex_, std::adopt_lock);
+
+  SetMode::Response res;
+  if (!store_.write(maintenance::State::OFF)) {
+    res.status.code = ResponseStatus::ERROR;
+    res.status.message = "failed to write state";
+  } else {
+    res.status.code = ResponseStatus::SUCCESS;
+  }
+  publish_diagnostics();
+  srv_set_mode_->send_response(*header, res);
+}
+
+void MaintenanceManagement::set_mode_on1(const std::shared_ptr<rmw_request_id_t> header)
+{
+  is_maintenance_requesting_ = true;
+  publish_diagnostics();
+
+  mode_on_timer_ = rclcpp::create_timer(
+    this, get_clock(), rclcpp::Duration::from_seconds(operation_mode_check_duration_),
+    [this, header]() { set_mode_on2(header); });
+}
+
+void MaintenanceManagement::set_mode_on2(const std::shared_ptr<rmw_request_id_t> header)
+{
+  std::unique_lock<std::mutex> lock(mutex_, std::adopt_lock);
+
+  SetMode::Response res;
   if (operation_mode_.mode != OperationModeState::STOP) {
     res.status.code = ResponseStatus::ERROR;
     res.status.message = "operation mode is not stop";
-    return srv_set_state_->send_response(*header, res);
-  }
-
-  const auto state = req->maintenance ? maintenance::State::ON : maintenance::State::OFF;
-  if (!store_.write(state)) {
+  } else if (!store_.write(maintenance::State::ON)) {
     res.status.code = ResponseStatus::ERROR;
     res.status.message = "failed to write state";
-    return srv_set_state_->send_response(*header, res);
+  } else {
+    res.status.code = ResponseStatus::SUCCESS;
   }
 
-  // Notify the state change immediately.
+  mode_on_timer_->cancel();
+  is_maintenance_requesting_ = false;
   publish_diagnostics();
-
-  res.status.code = ResponseStatus::SUCCESS;
-  return srv_set_state_->send_response(*header, res);
+  srv_set_mode_->send_response(*header, res);
 }
 
 void MaintenanceManagement::on_timer()
 {
-  std::lock_guard<std::mutex> lock(mutex_);
   publish_diagnostics();
 }
 
@@ -122,7 +172,7 @@ void MaintenanceManagement::publish_diagnostics()
   // clang-format on
 
   const auto state = store_.read();
-  const auto is_ok = state == maintenance::State::OFF;
+  const auto is_ok = (state == maintenance::State::OFF) && (!is_maintenance_requesting_);
 
   DiagnosticStatus status;
   status.name = std::string(this->get_name()) + ": state";

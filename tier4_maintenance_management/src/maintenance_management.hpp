@@ -20,8 +20,8 @@
 
 #include <autoware_adapi_v1_msgs/msg/operation_mode_state.hpp>
 #include <diagnostic_msgs/msg/diagnostic_array.hpp>
-#include <tier4_external_api_msgs/srv/get_maintenance_state.hpp>
-#include <tier4_external_api_msgs/srv/set_maintenance_state.hpp>
+#include <tier4_external_api_msgs/srv/get_maintenance_mode.hpp>
+#include <tier4_external_api_msgs/srv/set_maintenance_mode.hpp>
 
 #include <memory>
 #include <mutex>
@@ -36,25 +36,32 @@ public:
 
 private:
   using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
-  using SetState = tier4_external_api_msgs::srv::SetMaintenanceState;
-  using GetState = tier4_external_api_msgs::srv::GetMaintenanceState;
+  using SetMode = tier4_external_api_msgs::srv::SetMaintenanceMode;
+  using GetMode = tier4_external_api_msgs::srv::GetMaintenanceMode;
   using OperationModeState = autoware_adapi_v1_msgs::msg::OperationModeState;
   using DiagnosticArray = diagnostic_msgs::msg::DiagnosticArray;
   using DiagnosticStatus = diagnostic_msgs::msg::DiagnosticStatus;
 
-  rclcpp::Service<SetState>::SharedPtr srv_set_state_;
-  rclcpp::Service<GetState>::SharedPtr srv_get_state_;
   rclcpp::Subscription<OperationModeState>::SharedPtr sub_operation_mode_;
-  void on_get_state(
-    const std::shared_ptr<rmw_request_id_t> header, const GetState::Request::SharedPtr req);
-  void on_set_state(
-    const std::shared_ptr<rmw_request_id_t> header, const SetState::Request::SharedPtr req);
+  rclcpp::Service<SetMode>::SharedPtr srv_set_mode_;
+  rclcpp::Service<GetMode>::SharedPtr srv_get_mode_;
+  void on_get_mode(
+    const std::shared_ptr<rmw_request_id_t> header, const GetMode::Request::SharedPtr req);
+  void on_set_mode(
+    const std::shared_ptr<rmw_request_id_t> header, const SetMode::Request::SharedPtr req);
+
+  rclcpp::TimerBase::SharedPtr mode_on_timer_;
+  void set_mode_off(const std::shared_ptr<rmw_request_id_t> header);
+  void set_mode_on1(const std::shared_ptr<rmw_request_id_t> header);
+  void set_mode_on2(const std::shared_ptr<rmw_request_id_t> header);
 
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<DiagnosticArray>::SharedPtr pub_diagnostics_;
   void on_timer();
   void publish_diagnostics();
 
+  double operation_mode_check_duration_;
+  bool is_maintenance_requesting_;
   maintenance::Store store_;
   OperationModeState operation_mode_;
   std::mutex mutex_;
