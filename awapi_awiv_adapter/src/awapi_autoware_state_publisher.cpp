@@ -170,24 +170,35 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
       // it's not changed status->arrived_goal if set force goal.
       status->autoware_state == AutowareState::WAITING_FOR_ROUTE ) {
       const auto should_downgrade_error_to_ok = [](const DiagnosticStatus & d) -> bool {
-        if (d.level != DiagnosticStatus::ERROR || !d.values.empty()) {
-          return false;
-        }
         if (
-          d.name == "/adapi/node/routing: state" && d.message == "2" &&
-          (d.hardware_id.empty() || d.hardware_id == "none")) {
+          d.level == DiagnosticStatus::STALE && 
+          d.values.empty() && 
+          d.message.empty() &&
+          d.hardware_id.empty() &&
+          d.name == "vehicle_cmd_gate: emergency_stop_operation") {
           return true;
         }
-        if (!d.message.empty() || !d.hardware_id.empty()) {
-          return false;
+        if (
+          d.level == DiagnosticStatus::ERROR && 
+          d.values.empty() &&
+          d.message.empty() &&
+          d.hardware_id.empty()) {
+          return  d.name == "/autoware/modes/autonomous" ||
+                  d.name == "/planning/autonomous_available" ||
+                  d.name == "/planning/in_lane_moderate_stop" ||
+                  d.name == "/planning/emergency_stop" ||
+                  d.name == "/system/002-emergency_stop_operation/vehicle_cmd_gate" ||
+                  d.name == "/planning/000-component_status/route_state";
         }
-        return d.name == "/autoware/modes/autonomous" ||
-               d.name == "/planning/autonomous_available" ||
-               d.name == "/planning/in_lane_moderate_stop" ||
-               d.name == "/planning/emergency_stop" ||
-               d.name == "/system/002-emergency_stop_operation/vehicle_cmd_gate" ||
-               d.name == "vehicle_cmd_gate: emergency_stop_operation" ||
-               d.name == "/planning/000-component_status/route_state";
+        if (
+          d.name == "/adapi/node/routing: state" && 
+          d.values.empty() &&
+          d.message == "2" &&
+          d.hardware_id == "none") {
+          return true;
+        }
+        
+        return false;
       };
       for (auto & d : spf) {
         if (should_downgrade_error_to_ok(d)) {
