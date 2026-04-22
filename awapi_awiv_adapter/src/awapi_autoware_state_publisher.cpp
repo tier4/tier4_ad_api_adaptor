@@ -185,6 +185,8 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
                d.name == "/planning/autonomous_available" ||
                d.name == "/planning/in_lane_moderate_stop" ||
                d.name == "/planning/emergency_stop" ||
+               d.name == "/system/002-emergency_stop_operation/vehicle_cmd_gate" ||
+               d.name == "vehicle_cmd_gate: emergency_stop_operation" ||
                d.name == "/planning/000-component_status/route_state";
       };
       for (auto & d : spf) {
