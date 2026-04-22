@@ -167,7 +167,8 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
     auto spf =
       diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_spf);
     if (
-      status->autoware_state == AutowareState::WAITING_FOR_ROUTE && status->arrived_goal) {
+      // it's not changed status->arrived_goal if set force goal.
+      status->autoware_state == AutowareState::WAITING_FOR_ROUTE ) {
       const auto should_downgrade_error_to_ok = [](const DiagnosticStatus & d) -> bool {
         if (d.level != DiagnosticStatus::ERROR || !d.values.empty()) {
           return false;
