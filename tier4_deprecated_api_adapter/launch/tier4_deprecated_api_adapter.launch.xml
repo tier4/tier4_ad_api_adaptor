@@ -1,13 +1,12 @@
 <launch>
-  <arg name="api_mode" default="0" description="options: 0(All), 1(Without 2025/09 EOL API), 2(Without 2025/12 EOL API)"/>
+  <arg name="launch_api_0_4_3" default="false" description="Launch APIs with an EOL of v0.4.3."/>
 
   <group>
     <push-ros-namespace namespace="tier4_api"/>
     <node_container pkg="rclcpp_components" exec="component_container_mt" name="deprecated_api_container" namespace=""/>
     <include file="$(find-pkg-share tier4_deprecated_api_adapter)/launch/namespace.launch.py"/>
 
-    <!-- 2025/12 EOL API, launch if api_mode < 2 -->
-    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container" if="$(eval &quot; $(var api_mode) &lt; 2 &quot;)">
+    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container" if="$(var launch_api_0_4_3)">
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::AutowareEngage" name="engage"/>
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualStatus" name="status" namespace="manual"/>
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="local" namespace="manual">
@@ -16,6 +15,9 @@
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::ManualControl" name="remote" namespace="manual">
         <param name="mode" value="remote"/>
       </composable_node>
+    </load_composable_node>
+
+    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container">
       <composable_node pkg="topic_tools" plugin="topic_tools::RelayNode" name="relay_route_distance">
         <param name="input_topic" value="/tier4_api/utils/path_distance_calculator/distance"/>
         <param name="output_topic" value="/autoware_api/utils/path_distance_calculator/distance"/>
@@ -23,12 +25,12 @@
       </composable_node>
     </load_composable_node>
 
-    <!-- 2026/09 EOL API, use autoware_iv_external_api_adaptor if api_mode < 2, else use this package -->
-    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container" unless="$(eval &quot; $(var api_mode) &lt; 2 &quot;)">
+    <!-- For the initial pose API, use the autoware_iv_external_api_adaptor before v0.4.4. -->
+    <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container" unless="$(var launch_api_0_4_3)">
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::InitialPose" name="initial_pose"/>
     </load_composable_node>
 
-    <!-- 2026/09 EOL API, launch regardless of the api_mode because it doesn't conflict with old implementation -->
+    <!-- 2026/09 EOL API -->
     <load_composable_node target="$(var current_ros_namespace)/deprecated_api_container">
       <composable_node pkg="tier4_deprecated_api_adapter" plugin="tier4_deprecated_api_adapter::HazardStatus" name="hazard_status"/>
     </load_composable_node>
