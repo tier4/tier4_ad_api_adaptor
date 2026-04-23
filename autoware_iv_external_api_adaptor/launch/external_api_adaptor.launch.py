@@ -29,8 +29,9 @@ class Namespace(Substitution):
         self.suffix = suffix
 
     def perform(self, context):
-        namespace = context.launch_configurations.get("ros_namespace")
-        return f"{namespace}{self.separator}{self.suffix}" if namespace else self.suffix
+        namespace = context.launch_configurations.get("ros_namespace", "")
+        namespace = f"{namespace}{self.separator}{self.suffix}"
+        return namespace.replace("/", self.separator).lstrip(self.separator)
 
 
 def _create_api_node(node_name, class_name, **kwargs):
