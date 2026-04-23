@@ -13,8 +13,24 @@
 # limitations under the License.
 
 import launch
+from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
+from launch.substitution import Substitution
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
+from launch_ros.actions import LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
+
+
+class Namespace(Substitution):
+    def __init__(self, separator, suffix):
+        super().__init__()
+        self.separator = separator
+        self.suffix = suffix
+
+    def perform(self, context):
+        namespace = context.launch_configurations.get("ros_namespace")
+        return f"{namespace}{self.separator}{self.suffix}" if namespace else self.suffix
 
 
 def _create_api_node(node_name, class_name, **kwargs):
@@ -23,22 +39,37 @@ def _create_api_node(node_name, class_name, **kwargs):
         name=node_name,
         package="autoware_iv_internal_api_adaptor",
         plugin="internal_api::" + class_name,
-        **kwargs
+        **kwargs,
     )
 
 
 def generate_launch_description():
-    components = [
-        _create_api_node("iv_msgs", "IVMsgs"),
-        _create_api_node("operator", "Operator"),
-        _create_api_node("velocity", "Velocity"),
-    ]
     container = ComposableNodeContainer(
         namespace="internal",
         name="autoware_iv_adaptor",
         package="rclcpp_components",
         executable="component_container_mt",
-        composable_node_descriptions=components,
+        composable_node_descriptions=[
+            _create_api_node("iv_msgs", "IVMsgs"),
+        ],
+        ros_arguments=[
+            "--log-level",
+            Namespace(".", "internal.autoware_iv_adaptor:=WARN"),
+        ],
         output="screen",
     )
-    return launch.LaunchDescription([container])
+    loader_0_4_3 = LoadComposableNodes(
+        target_container=Namespace("/", "internal/autoware_iv_adaptor"),
+        condition=IfCondition(LaunchConfiguration("launch_api_0_4_3")),
+        composable_node_descriptions=[
+            _create_api_node("operator", "Operator"),
+            _create_api_node("velocity", "Velocity"),
+        ],
+    )
+    return launch.LaunchDescription(
+        [
+            DeclareLaunchArgument("launch_api_0_4_3", default_value="false"),
+            container,
+            loader_0_4_3,
+        ]
+    )

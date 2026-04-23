@@ -8,11 +8,6 @@ Some pages in this documentation are only in Japanese.
 For Pilot.Auto, this repository is included in the repos file, so no additional steps are required.
 For Autoware, please follow [the installation guide](./doc/installation.md).
 
-## Schedule
-
-- v0.5.0: Remove APIs with EOL 2025/09
-- v1.0.0: Remove APIs with EOL 2025/12
-
 ## Note
 
 TIER IV Autoware API is sometimes called High-level API or TIER IV External API.
@@ -115,34 +110,34 @@ Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/
 | 2025/12 | /awapi/vehicle/get/status (target_acceleration)      |
 | 2025/12 | /awapi/vehicle/get/status (target_steering)          |
 | 2025/12 | /awapi/vehicle/get/status (target_steering_velocity) |
-| 2025/09 | /awapi/autoware/put/engage                           |
-| 2025/09 | /awapi/autoware/put/route                            |
-| 2025/09 | /awapi/autoware/put/goal                             |
-| 2025/09 | /awapi/autoware/get/route                            |
-| 2025/09 | /awapi/autoware/put/pose_initialization_request      |
-| 2025/09 | /awapi/vehicle/put/stop                              |
-| 2025/09 | /awapi/vehicle/put/velocity                          |
-| 2025/09 | /awapi/tmp/virtual_traffic_light_states              |
-| 2025/09 | /awapi/tmp/infrastructure_commands                   |
-| 2025/09 | /awapi/prediction/get/objects                        |
-| 2025/09 | /awapi/autoware/get/stop_speed_exceeded              |
-| 2025/09 | /awapi/autoware/put/expand_stop_range                |
-| 2025/09 | /awapi/traffic_light/get/traffic_signals             |
-| 2025/09 | /awapi/traffic_light/get/nearest_traffic_signal      |
-| 2025/09 | /awapi/path_change/get/ready_module                  |
-| 2025/09 | /awapi/path_change/get/force_available               |
-| 2025/09 | /awapi/path_change/get/running_modules               |
-| 2025/09 | /awapi/path_change/put/approval                      |
-| 2025/09 | /awapi/path_change/put/force                         |
-| 2025/09 | /awapi/lane_change/put/approval                      |
-| 2025/09 | /awapi/lane_change/put/force                         |
-| 2025/09 | /awapi/object_avoidance/put/approval                 |
-| 2025/09 | /awapi/object_avoidance/put/force                    |
-| 2025/09 | /awapi/traffic_light/put/traffic_signals             |
-| 2025/09 | /awapi/autoware/put/crosswalk_states                 |
-| 2025/09 | /awapi/autoware/put/intersection_states              |
-| 2025/09 | /awapi/lane_change/get/status                        |
-| 2025/09 | /awapi/object_avoidance/get/status                   |
+| v0.4.3  | /awapi/autoware/put/engage                           |
+| v0.4.3  | /awapi/autoware/put/route                            |
+| v0.4.3  | /awapi/autoware/put/goal                             |
+| v0.4.3  | /awapi/autoware/get/route                            |
+| v0.4.3  | /awapi/autoware/put/pose_initialization_request      |
+| v0.4.3  | /awapi/vehicle/put/stop                              |
+| v0.4.3  | /awapi/vehicle/put/velocity                          |
+| v0.4.3  | /awapi/tmp/virtual_traffic_light_states              |
+| v0.4.3  | /awapi/tmp/infrastructure_commands                   |
+| v0.4.3  | /awapi/prediction/get/objects                        |
+| v0.4.3  | /awapi/autoware/get/stop_speed_exceeded              |
+| v0.4.3  | /awapi/autoware/put/expand_stop_range                |
+| v0.4.3  | /awapi/traffic_light/get/traffic_signals             |
+| v0.4.3  | /awapi/traffic_light/get/nearest_traffic_signal      |
+| v0.4.3  | /awapi/path_change/get/ready_module                  |
+| v0.4.3  | /awapi/path_change/get/force_available               |
+| v0.4.3  | /awapi/path_change/get/running_modules               |
+| v0.4.3  | /awapi/path_change/put/approval                      |
+| v0.4.3  | /awapi/path_change/put/force                         |
+| v0.4.3  | /awapi/lane_change/put/approval                      |
+| v0.4.3  | /awapi/lane_change/put/force                         |
+| v0.4.3  | /awapi/object_avoidance/put/approval                 |
+| v0.4.3  | /awapi/object_avoidance/put/force                    |
+| v0.4.3  | /awapi/traffic_light/put/traffic_signals             |
+| v0.4.3  | /awapi/autoware/put/crosswalk_states                 |
+| v0.4.3  | /awapi/autoware/put/intersection_states              |
+| v0.4.3  | /awapi/lane_change/get/status                        |
+| v0.4.3  | /awapi/object_avoidance/get/status                   |
 
 ## Removed API
 
