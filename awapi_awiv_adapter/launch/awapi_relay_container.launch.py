@@ -382,6 +382,7 @@ def generate_launch_description():
         package="rclcpp_components",
         executable=LaunchConfiguration("container_executable"),
         composable_node_descriptions=relay_components,
+        ros_arguments=["--log-level", "awapi.awapi_relay_container:=WARN"],
         output="screen",
     )
 
