@@ -16,6 +16,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>tier4_external_api_msgs</depend>
+  <depend>tier4_planning_msgs</depend>
 
   <exec_depend>autoware_path_distance_calculator</exec_depend>
   <exec_depend>tier4_v2x_msgs</exec_depend>
