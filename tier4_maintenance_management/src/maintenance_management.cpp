@@ -135,6 +135,7 @@ void MaintenanceManagement::set_mode_on1(const std::shared_ptr<rmw_request_id_t>
 void MaintenanceManagement::set_mode_on2(const std::shared_ptr<rmw_request_id_t> header)
 {
   std::unique_lock<std::mutex> lock(mutex_, std::adopt_lock);
+  mode_on_timer_->cancel();
 
   SetMode::Response res;
   if (operation_mode_.mode != OperationModeState::STOP) {
@@ -147,7 +148,6 @@ void MaintenanceManagement::set_mode_on2(const std::shared_ptr<rmw_request_id_t>
     res.status.code = ResponseStatus::SUCCESS;
   }
 
-  mode_on_timer_->cancel();
   is_maintenance_requesting_ = false;
   publish_diagnostics();
   srv_set_mode_->send_response(*header, res);
