@@ -26,7 +26,7 @@ MaintenanceManagement::MaintenanceManagement(const rclcpp::NodeOptions & options
   using std::placeholders::_1;
   using std::placeholders::_2;
 
-  operation_mode_check_duration_ = declare_parameter<double>("operation_mode_check_duration", 5.0);
+  operation_mode_check_duration_ = declare_parameter<double>("operation_mode_check_duration");
   is_maintenance_requesting_ = false;
   operation_mode_.stamp = now();
   operation_mode_.mode = OperationModeState::UNKNOWN;
