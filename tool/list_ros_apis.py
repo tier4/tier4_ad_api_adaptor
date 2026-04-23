@@ -47,10 +47,10 @@ class RosNode:
 
 
 def is_external_api(name):
-    return (
-        name.startswith("/api/external/")
-        or name.startswith("/api/iv_msgs/")
-        or name.startswith("/awapi/")
+    return any(
+        name.startswith("/api/external/"),
+        name.startswith("/api/iv_msgs/"),
+        name.startswith("/awapi/"),
     )
 
 
