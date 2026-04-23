@@ -14,7 +14,7 @@
 
 #include "lateral_offset.hpp"
 
-#include <tier4_external_api_msgs/msg/response_status.hpp>
+#include <autoware_common_msgs/msg/response_status.hpp>
 
 #include <memory>
 
@@ -36,32 +36,27 @@ LateralOffset::LateralOffset(const rclcpp::NodeOptions & options) : Node("latera
 void LateralOffset::on_service(
   const std::shared_ptr<rmw_request_id_t> header, const ExternalService::Request::SharedPtr request)
 {
-  using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
-
   if (!cli_->service_is_ready()) {
     ExternalService::Response response;
-    response.status.code = ResponseStatus::ERROR;
+    response.response_code = autoware_common_msgs::msg::ResponseStatus::SERVICE_UNREADY;
+    response.status.success = false;
+    response.status.code = response.response_code;
     response.status.message = "Internal service is not available.";
     srv_->send_response(*header, response);
     return;
   }
 
-  // Direct copy of the request fields to the planning service request.
   const auto planning_request = std::make_shared<PlanningService::Request>();
   planning_request->shift_mode = request->shift_mode;
   planning_request->shift_value = request->shift_value;
   planning_request->shift_direction_value = request->shift_direction_value;
 
-  // Forward the downstream response to the external caller via the client
-  // callback.
   cli_->async_send_request(
     planning_request, [this, header](rclcpp::Client<PlanningService>::SharedFuture future) {
       const auto & planning_response = future.get();
-
-      // Direct copy of the planning service response to the external response.
       ExternalService::Response response;
-      response.status.code = planning_response->status.code;
-      response.status.message = planning_response->status.message;
+      response.response_code = planning_response->response_code;
+      response.status = planning_response->status;
       srv_->send_response(*header, response);
     });
 }
