@@ -36,7 +36,7 @@
     <load_composable_node target="$(var current_ros_namespace)/api_extension_container">
       <composable_node pkg="topic_tools" plugin="topic_tools::RelayNode" name="relay_virtual_traffic_light_status">
         <param name="input_topic" value="/api/external/set/virtual_traffic_light/states"/>
-        <param name="output_topic" value="/awapi/tmp/virtual_traffic_light_states"/>
+        <param name="output_topic" value="/perception/virtual_traffic_light_states"/>
         <param name="type" value="tier4_v2x_msgs/msg/VirtualTrafficLightStateArray"/>
       </composable_node>
       <composable_node pkg="topic_tools" plugin="topic_tools::RelayNode" name="relay_virtual_traffic_light_commands">

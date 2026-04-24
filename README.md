@@ -82,62 +82,38 @@ Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/
 
 ## Deprecated API (AWAPI)
 
-| EOL     | Name (Field)                                         |
-| ------- | ---------------------------------------------------- |
-| 2025/12 | /awapi/autoware/get/status (autoware_state)          |
-| 2025/12 | /awapi/autoware/get/status (control_mode)            |
-| 2025/12 | /awapi/autoware/get/status (gate_mode)               |
-| 2025/12 | /awapi/autoware/get/status (emergency_stopped)       |
-| 2025/12 | /awapi/autoware/get/status (current_max_velocity)    |
-| 2025/12 | /awapi/autoware/get/status (hazard_status)           |
-| 2025/12 | /awapi/autoware/get/status (stop_reason)             |
-| 2025/12 | /awapi/autoware/get/status (diagnostics)             |
-| 2025/12 | /awapi/autoware/get/status (error_diagnostics)       |
-| 2025/12 | /awapi/autoware/get/status (autonomous_overridden)   |
-| 2025/12 | /awapi/autoware/get/status (arrived_goal)            |
-| 2025/12 | /awapi/vehicle/get/status (pose)                     |
-| 2025/12 | /awapi/vehicle/get/status (eulerangle)               |
-| 2025/12 | /awapi/vehicle/get/status (geo_point)                |
-| 2025/12 | /awapi/vehicle/get/status (velocity)                 |
-| 2025/12 | /awapi/vehicle/get/status (acceleration)             |
-| 2025/12 | /awapi/vehicle/get/status (steering)                 |
-| 2025/12 | /awapi/vehicle/get/status (steering_velocity)        |
-| 2025/12 | /awapi/vehicle/get/status (angular_velocity)         |
-| 2025/12 | /awapi/vehicle/get/status (gear)                     |
-| 2025/12 | /awapi/vehicle/get/status (energy_level)             |
-| 2025/12 | /awapi/vehicle/get/status (turn_signal)              |
-| 2025/12 | /awapi/vehicle/get/status (target_velocity)          |
-| 2025/12 | /awapi/vehicle/get/status (target_acceleration)      |
-| 2025/12 | /awapi/vehicle/get/status (target_steering)          |
-| 2025/12 | /awapi/vehicle/get/status (target_steering_velocity) |
-| v0.4.3  | /awapi/autoware/put/engage                           |
-| v0.4.3  | /awapi/autoware/put/route                            |
-| v0.4.3  | /awapi/autoware/put/goal                             |
-| v0.4.3  | /awapi/autoware/get/route                            |
-| v0.4.3  | /awapi/autoware/put/pose_initialization_request      |
-| v0.4.3  | /awapi/vehicle/put/stop                              |
-| v0.4.3  | /awapi/vehicle/put/velocity                          |
-| v0.4.3  | /awapi/tmp/virtual_traffic_light_states              |
-| v0.4.3  | /awapi/tmp/infrastructure_commands                   |
-| v0.4.3  | /awapi/prediction/get/objects                        |
-| v0.4.3  | /awapi/autoware/get/stop_speed_exceeded              |
-| v0.4.3  | /awapi/autoware/put/expand_stop_range                |
-| v0.4.3  | /awapi/traffic_light/get/traffic_signals             |
-| v0.4.3  | /awapi/traffic_light/get/nearest_traffic_signal      |
-| v0.4.3  | /awapi/path_change/get/ready_module                  |
-| v0.4.3  | /awapi/path_change/get/force_available               |
-| v0.4.3  | /awapi/path_change/get/running_modules               |
-| v0.4.3  | /awapi/path_change/put/approval                      |
-| v0.4.3  | /awapi/path_change/put/force                         |
-| v0.4.3  | /awapi/lane_change/put/approval                      |
-| v0.4.3  | /awapi/lane_change/put/force                         |
-| v0.4.3  | /awapi/object_avoidance/put/approval                 |
-| v0.4.3  | /awapi/object_avoidance/put/force                    |
-| v0.4.3  | /awapi/traffic_light/put/traffic_signals             |
-| v0.4.3  | /awapi/autoware/put/crosswalk_states                 |
-| v0.4.3  | /awapi/autoware/put/intersection_states              |
-| v0.4.3  | /awapi/lane_change/get/status                        |
-| v0.4.3  | /awapi/object_avoidance/get/status                   |
+| EOL    | Name (Field)                                    |
+| ------ | ----------------------------------------------- |
+| v0.4.3 | /awapi/autoware/get/status                      |
+| v0.4.3 | /awapi/vehicle/get/status                       |
+| v0.4.3 | /awapi/autoware/put/engage                      |
+| v0.4.3 | /awapi/autoware/put/route                       |
+| v0.4.3 | /awapi/autoware/put/goal                        |
+| v0.4.3 | /awapi/autoware/get/route                       |
+| v0.4.3 | /awapi/autoware/put/pose_initialization_request |
+| v0.4.3 | /awapi/vehicle/put/stop                         |
+| v0.4.3 | /awapi/vehicle/put/velocity                     |
+| v0.4.3 | /awapi/tmp/virtual_traffic_light_states         |
+| v0.4.3 | /awapi/tmp/infrastructure_commands              |
+| v0.4.3 | /awapi/prediction/get/objects                   |
+| v0.4.3 | /awapi/autoware/get/stop_speed_exceeded         |
+| v0.4.3 | /awapi/autoware/put/expand_stop_range           |
+| v0.4.3 | /awapi/traffic_light/get/traffic_signals        |
+| v0.4.3 | /awapi/traffic_light/get/nearest_traffic_signal |
+| v0.4.3 | /awapi/path_change/get/ready_module             |
+| v0.4.3 | /awapi/path_change/get/force_available          |
+| v0.4.3 | /awapi/path_change/get/running_modules          |
+| v0.4.3 | /awapi/path_change/put/approval                 |
+| v0.4.3 | /awapi/path_change/put/force                    |
+| v0.4.3 | /awapi/lane_change/put/approval                 |
+| v0.4.3 | /awapi/lane_change/put/force                    |
+| v0.4.3 | /awapi/object_avoidance/put/approval            |
+| v0.4.3 | /awapi/object_avoidance/put/force               |
+| v0.4.3 | /awapi/traffic_light/put/traffic_signals        |
+| v0.4.3 | /awapi/autoware/put/crosswalk_states            |
+| v0.4.3 | /awapi/autoware/put/intersection_states         |
+| v0.4.3 | /awapi/lane_change/get/status                   |
+| v0.4.3 | /awapi/object_avoidance/get/status              |
 
 ## Removed API
 

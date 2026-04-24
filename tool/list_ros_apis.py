@@ -36,21 +36,29 @@ class RosNode:
     def get_service_names_and_types(self):
         return self.__remove_builtins(self.node.get_service_names_and_types())
 
-    @staticmethod
-    def __remove_builtins(names_and_types):
-        builtins = ["rcl_interfaces", "composition_interfaces"]
+    @classmethod
+    def __remove_builtins(cls, names_and_types):
         for name, types in names_and_types:
             if len(types) == 1:
-                for prefix in builtins:
-                    if name.startswith(prefix):
-                        yield name, types
+                if not cls.__is_builtin_type(types[0]):
+                    yield name, types
+
+    @classmethod
+    def __is_builtin_type(cls, type_name):
+        builtins = ["rcl_interfaces", "composition_interfaces"]
+        for prefix in builtins:
+            if type_name.startswith(prefix):
+                return True
+        return False
 
 
 def is_external_api(name):
     return any(
-        name.startswith("/api/external/"),
-        name.startswith("/api/iv_msgs/"),
-        name.startswith("/awapi/"),
+        (
+            name.startswith("/api/external/"),
+            name.startswith("/api/iv_msgs/"),
+            name.startswith("/awapi/"),
+        )
     )
 
 
@@ -66,7 +74,7 @@ def main():
                 print(name)
         for name, types in node.get_service_names_and_types():
             if is_external_api(name):
-                print(name, types)
+                print(name)
 
 
 if __name__ == "__main__":

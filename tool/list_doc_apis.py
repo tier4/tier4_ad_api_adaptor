@@ -20,19 +20,29 @@ def find_dummy(line):
 def find_api_extension(line):
     parts = line.split("|")
     if len(parts) == 6:
-        print(parts[1].strip(), strip_markdown_link(parts[3].strip()))
+        return (parts[1].strip(), strip_markdown_link(parts[3].strip()), False)
 
 
 def find_deprecated_api(line):
     parts = line.split("|")
     if len(parts) == 6:
-        print(parts[1].strip(), strip_markdown_link(parts[3].strip()))
+        return (parts[1].strip(), strip_markdown_link(parts[3].strip()), True)
 
 
 def find_deprecated_awapi(line):
     parts = line.split("|")
     if len(parts) == 4:
-        print(parts[1].strip(), strip_markdown_link(parts[2].strip()))
+        return (parts[1].strip(), strip_markdown_link(parts[2].strip()), True)
+
+
+def is_header(data):
+    if data == "Version":
+        return True
+    if data == "EOL":
+        return True
+    if set(data) == set("-"):
+        return True
+    return False
 
 
 def main():
@@ -42,7 +52,7 @@ def main():
     apis = []
     find_func_dict = {
         "## TIER IV Autoware API": find_api_extension,
-        "## External API": find_deprecated_api,
+        "## Deprecated API": find_deprecated_api,
         "## Deprecated API (AWAPI)": find_deprecated_awapi,
     }
     find_func = find_dummy
@@ -55,6 +65,7 @@ def main():
                 apis.append(find_func(line))
 
     apis = [api for api in apis if api is not None]
+    apis = [api for api in apis if not is_header(api[0])]
     for api in apis:
         print(api)
 
