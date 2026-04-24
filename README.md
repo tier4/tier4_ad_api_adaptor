@@ -82,7 +82,7 @@ Please use [AD API](https://autowarefoundation.github.io/autoware-documentation/
 
 ## Deprecated API (AWAPI)
 
-| EOL    | Name (Field)                                    |
+| EOL    | Name                                            |
 | ------ | ----------------------------------------------- |
 | v0.4.3 | /awapi/autoware/get/status                      |
 | v0.4.3 | /awapi/vehicle/get/status                       |
