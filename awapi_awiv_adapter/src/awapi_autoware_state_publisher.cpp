@@ -167,20 +167,28 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
     auto spf =
       diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_spf);
 
-    const bool wfr = (status->autoware_state == AutowareState::WAITING_FOR_ROUTE);
-    const bool pln = (status->autoware_state == AutowareState::PLANNING);
+    const bool waiting_for_route =
+      (status->autoware_state == AutowareState::WAITING_FOR_ROUTE);
+    const bool planning = (status->autoware_state == AutowareState::PLANNING);
     // it's not changed status->arrived_goal if set force goal.
-    if (wfr || pln) {
-      const auto should_downgrade = [wfr, pln](const DiagnosticStatus & d) -> bool {
+    if (waiting_for_route || planning) {
+      const auto should_downgrade = [waiting_for_route, planning](
+                                      const DiagnosticStatus & d) -> bool {
         const bool routing_unset =
           d.name == "/adapi/node/routing: state" && d.values.empty() &&
-          d.message == "2" && d.hardware_id == "none";  // tier4_planning_msgs/RouteState UNSET
-        if (pln) {
+          d.message == "2" && d.hardware_id == "none";  // autoware_planning_msgs/RouteState::UNSET
+
+        if (planning) {
+          const bool empty_error = d.level == DiagnosticStatus::ERROR && d.values.empty() &&
+                                   d.message.empty() && d.hardware_id.empty();
           return routing_unset ||
-                 (d.level == DiagnosticStatus::ERROR && d.values.empty() && d.message.empty() &&
-                  d.hardware_id.empty() &&
-                  d.name == "/planning/000-component_status/route_state");
+                 (empty_error && d.name == "/planning/000-component_status/route_state");
         }
+
+        if (!waiting_for_route) {
+          return false;
+        }
+
         if (
           d.level == DiagnosticStatus::STALE && d.values.empty() && d.message.empty() &&
           d.hardware_id.empty() && d.name == "vehicle_cmd_gate: emergency_stop_operation") {
