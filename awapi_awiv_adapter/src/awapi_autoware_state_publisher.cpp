@@ -167,16 +167,15 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
     auto spf =
       diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_spf);
 
-    const bool waiting_for_route =
-      (status->autoware_state == AutowareState::WAITING_FOR_ROUTE);
+    const bool waiting_for_route = (status->autoware_state == AutowareState::WAITING_FOR_ROUTE);
     const bool planning = (status->autoware_state == AutowareState::PLANNING);
     // it's not changed status->arrived_goal if set force goal.
     if (waiting_for_route || planning) {
-      const auto should_downgrade = [waiting_for_route, planning](
-                                      const DiagnosticStatus & d) -> bool {
+      const auto should_downgrade = [waiting_for_route,
+                                     planning](const DiagnosticStatus & d) -> bool {
         const bool routing_unset =
-          d.name == "/adapi/node/routing: state" && d.values.empty() &&
-          d.message == "2" && d.hardware_id == "none";  // autoware_planning_msgs/RouteState::UNSET
+          d.name == "/adapi/node/routing: state" && d.values.empty() && d.message == "2" &&
+          d.hardware_id == "none";  // autoware_planning_msgs/RouteState::UNSET
 
         if (planning) {
           const bool empty_error = d.level == DiagnosticStatus::ERROR && d.values.empty() &&
