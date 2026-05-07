@@ -169,7 +169,7 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
 
     const bool waiting_for_route = (status->autoware_state == AutowareState::WAITING_FOR_ROUTE);
     const bool planning = (status->autoware_state == AutowareState::PLANNING);
-    // it's not changed status->arrived_goal if set force goal.
+    // status->arrived_goal is not updated when a forced-goal condition is used.
     if (waiting_for_route || planning) {
       const auto should_downgrade = [waiting_for_route,
                                      planning](const DiagnosticStatus & d) -> bool {
