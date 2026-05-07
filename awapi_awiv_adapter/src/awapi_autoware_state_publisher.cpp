@@ -17,6 +17,8 @@
 #include "awapi_awiv_adapter/diagnostics_filter.hpp"
 #include "tier4_auto_msgs_converter/tier4_auto_msgs_converter.hpp"
 
+#include <diagnostic_msgs/msg/diagnostic_status.hpp>
+
 #include <regex>
 #include <string>
 #include <vector>
@@ -158,8 +160,60 @@ void AutowareIvAutowareStatePublisher::getHazardStatusInfo(
   status->hazard_status = convert(*aw_info.hazard_status_ptr);
 
   // filter leaf diagnostics
-  status->hazard_status.status.diagnostics_spf =
-    diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_spf);
+  {
+    using diagnostic_msgs::msg::DiagnosticStatus;
+    using tier4_system_msgs::msg::AutowareState;
+
+    auto spf =
+      diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_spf);
+
+    const bool waiting_for_route = (status->autoware_state == AutowareState::WAITING_FOR_ROUTE);
+    const bool planning = (status->autoware_state == AutowareState::PLANNING);
+    // status->arrived_goal is not updated when a forced-goal condition is used.
+    if (waiting_for_route || planning) {
+      const auto should_downgrade = [waiting_for_route,
+                                     planning](const DiagnosticStatus & d) -> bool {
+        const bool routing_unset =
+          d.name == "/adapi/node/routing: state" && d.values.empty() && d.message == "2" &&
+          d.hardware_id == "none";  // autoware_planning_msgs/RouteState::UNSET
+
+        if (planning) {
+          const bool empty_error = d.level == DiagnosticStatus::ERROR && d.values.empty() &&
+                                   d.message.empty() && d.hardware_id.empty();
+          return routing_unset ||
+                 (empty_error && d.name == "/planning/000-component_status/route_state");
+        }
+
+        if (!waiting_for_route) {
+          return false;
+        }
+
+        if (
+          d.level == DiagnosticStatus::STALE && d.values.empty() && d.message.empty() &&
+          d.hardware_id.empty() && d.name == "vehicle_cmd_gate: emergency_stop_operation") {
+          return true;
+        }
+        if (
+          d.level == DiagnosticStatus::ERROR && d.values.empty() && d.message.empty() &&
+          d.hardware_id.empty()) {
+          return d.name == "/autoware/modes/autonomous" ||
+                 d.name == "/planning/autonomous_available" ||
+                 d.name == "/planning/in_lane_moderate_stop" ||
+                 d.name == "/planning/emergency_stop" ||
+                 d.name == "/system/002-emergency_stop_operation/vehicle_cmd_gate" ||
+                 d.name == "/planning/000-component_status/route_state";
+        }
+        return routing_unset;
+      };
+      for (auto & d : spf) {
+        if (should_downgrade(d)) {
+          d.level = DiagnosticStatus::OK;
+        }
+      }
+    }
+
+    status->hazard_status.status.diagnostics_spf = std::move(spf);
+  }
   status->hazard_status.status.diagnostics_lf =
     diagnostics_filter::extractLeafDiagnostics(status->hazard_status.status.diagnostics_lf);
   status->hazard_status.status.diagnostics_sf =
