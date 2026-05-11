@@ -35,8 +35,8 @@ ADK 側から、故障時に表示すべき文書（situation / solution）を�
 | F-2 | audience 拡張性 | audience は任意個に追加可能な設計とする。初期 audience: `mot`（車内運行者向け）/ `remote`（遠隔監視者向け）/ `developer`（開発者向け） |
 | F-3 | 多言語対応 | 最低限、日本語（ja）と英語（en）を初期サポートする。言語の追加は設定ファイルの拡張で対応可能とする |
 | F-4 | 状態条件による文言切り替え | 車両の状態に応じて、同じ diag パスでも異なる situation / solution を出力する。主に `/autoware/state`（AutowareState）を参照する。汎用的な条件指定（`state_topic` / `field` / `values`）により将来的に他のトピックも条件に追加可能 |
-| F-5 | 優先度（priority） | 対応アクションの重要度に基づく priority を設定し、ソートして配信する。例: 「再起動してください」は「復帰操作をしてください」より高優先度 |
-| F-6 | 通知レベル（notification_level） | 通知の表示方式を ADK 側で指定する（uint8: ERROR=2 / WARN=1 / INFO=0）。消費側は全画面通知・スナックバー等の表示方式を自ら判断する必要がない |
+| F-5 | 優先度（priority） | 対応アクションの重要度に基づく `priority`（uint32）を設定し、数値が大きいほど高優先度とする。API はこの値でソート済みの通知リストを配信する。例: 「再起動してください」側の数値を「復帰操作をしてください」より大きく設定する |
+| F-6 | 通知レベル（notification_level） | 通知の表示方式を ADK 側で `uint8` の数値として指定する（値と UI の対応は消費側との合意で定める）。消費側は数値に応じて全画面通知・スナックバー等にマッピングする |
 
 ## 3. アプローチ比較
 
@@ -122,29 +122,41 @@ ADK 内部で diag 状態 + 車両状態を突合し、解決済みの通知リ�
 
 | トピック | メッセージ型 | QoS | 用途 |
 |---------|-------------|-----|------|
-| `/system/failure_notifications` | `FailureNotificationArray` | best_effort | audience / 言語ごとの通知リスト |
+| `/system/failure_notifications/mot` | `FailureNotificationArray` | best_effort | MOT 向け通知リスト |
+| `/system/failure_notifications/remote` | `FailureNotificationArray` | best_effort | 遠隔監視向け通知リスト |
+| `/system/failure_notifications/developer` | `FailureNotificationArray` | best_effort | 開発者向け通知リスト |
+
+ノードパラメータで、実際に publish する audience を選択する（初期値は上記 3 本すべて、など運用で定める）。
 
 ### 4.2 メッセージ型
 
+**1 通知（`FailureNotification` 1 要素）**は、diag 上の 1 件の非 OK に対応する表示単位とする。多言語は **同一要素内の平行配列**で持ち、**`FailureNotificationArray.notifications` の要素数＝その audience 向けに表示すべき通知の件数**と読む（消費側は配列を順にマッピングしやすい）。
+
+**`priority` の意味と「どちらが自然か」:** 優先度の数値設計には次の 2 スタイルがある。
+
+- **スタイル A（小さいほど強い）:** OS の nice 値や「priority 1 が最優先」のように、0 に近いほど重要。
+- **スタイル B（大きいほど強い）:** 重大度スコアのように、**数値が大きいほど緊急度が高い**と解釈する方式。
+
+いずれも業界であり得るため、**API ではスタイル B を採用する**（**数値が大きいほど高優先度**）。議事録の「優先順位は高い数字」と整合する。設定 YAML の `priority` も同じ解釈で記述する。混乱を避けるため、メッセージ定義と本節にコメントで必ず明記する。
+
+**ソート順:** `FailureNotificationArray.notifications` は、各要素の `priority` の **降順**（大きい値が先頭）に並べる。先頭 index 0 が「最も先にユーザーに見せるべき通知」に相当する。`priority` が同一の要素同士の順序は実装定義とし、安定ソートを推奨する。
+
 ```
 # FailureNotification.msg
-uint8 INFO = 0
-uint8 WARN = 1
-uint8 ERROR = 2
-
 string diag_path            # 対応する diag のパス（例: "/localization/001-topic_status/initialpose"）
 string error_code           # エラーコード（例: "LOC-00-E00-001E"）
-uint8 diag_level            # 元の diag level (OK=0 / WARN=1 / ERROR=2 / STALE=3)
-uint8 notification_level    # 通知レベル（INFO=0 / WARN=1 / ERROR=2）
-uint32 priority             # 表示優先度（数値が小さいほど高優先）
-string situation            # 状況説明文（状態条件・言語適用済み）
-string solution             # 対処方法（状態条件・言語適用済み）
+uint8 diag_level            # 元の diag level（0=OK, 1=WARN, 2=ERROR, 3=STALE）
+uint8 notification_level    # 通知レベル（数値。意味は消費側との合意で定める。MOT の 4 系統表示などは拡張で別途定義してもよい）
+uint32 priority             # 表示優先度。数値が大きいほど高優先（notifications[] では降順で並ぶ）
+string[] language_codes     # 言語コード（例: "ja", "en"）。index i が situations[i] / solutions[i] に対応
+string[] situations         # 状況説明（状態条件適用済み）。language_codes と同じ長さ必須
+string[] solutions          # 対処方法（状態条件適用済み）。language_codes と同じ長さ必須
 ```
 
 ```
 # FailureNotificationArray.msg
 builtin_interfaces/Time stamp
-FailureNotification[] notifications  # priority 順にソート済み
+FailureNotification[] notifications  # priority 降順にソート済み（[4.2](#42-メッセージ型)）
 ```
 
 ### 4.3 設定ファイル形式
@@ -246,29 +258,26 @@ notifications:
 
 | 方式 | Pros | Cons |
 |------|------|------|
-| **audience ごとに別トピック** (`/system/failure_notifications/mot`, `/system/failure_notifications/remote` 等) | 消費側は自分のトピックだけ subscribe すればよい。不要なデータを受信しない | トピック数が audience x 言語で増加する可能性がある |
-| **単一トピックに audience フィールドを含める** | トピック管理がシンプル | 消費側で不要な audience のメッセージもフィルタリングする必要がある |
+| **audience ごとに 1 トピック**（本設計） | 消費側は自 audience のトピックだけ subscribe すればよい。言語はメッセージ内の配列でまとめて受け取れる | 1 メッセージのサイズが audience 内の全言語分を含む |
+| **単一トピックに audience フィールド** | トピック本数が最少 | 全消費者が同一ストリームを受け、不要な audience をフィルタする必要がある |
 
-推奨: **audience / 言語ごとに別トピック** を採用する。消費側のシンプルさを重視し、不要なデータの受信を避ける。
+**採用:** **audience ごとに 1 トピック**（[4.1](#41-アーキテクチャ) の表）。言語はトピックで分けない。
 
 トピック名の構造:
 
 ```
-/system/failure_notifications/<audience>/<language>
+/system/failure_notifications/<audience>
 ```
 
 具体例:
 
 | トピック | 用途 |
 |---------|------|
-| `/system/failure_notifications/mot/ja` | MOT 向け・日本語 |
-| `/system/failure_notifications/mot/en` | MOT 向け・英語 |
-| `/system/failure_notifications/remote/ja` | 遠隔監視向け・日本語 |
-| `/system/failure_notifications/remote/en` | 遠隔監視向け・英語 |
-| `/system/failure_notifications/developer/ja` | 開発者向け・日本語 |
-| `/system/failure_notifications/developer/en` | 開発者向け・英語 |
+| `/system/failure_notifications/mot` | MOT 向け（`language_codes` 等に ja / en を載せる） |
+| `/system/failure_notifications/remote` | 遠隔監視向け |
+| `/system/failure_notifications/developer` | 開発者向け |
 
-`audience` と `language` はトピック名自体に含まれるため、`FailureNotificationArray` メッセージ型にはこれらのフィールドを持たない。ノードのパラメータで配信する audience / 言語の組み合わせを指定する（デフォルト: 全組み合わせ）。
+`FailureNotificationArray` に audience フィールドは持たない（トピック名で区別する）。ノードパラメータで publish する audience と、YAML に含める言語集合を指定する。
 
 ### 4.6 既存システムとの関係
 
@@ -287,3 +296,9 @@ notifications:
 | `error_code` | `error_code` |
 | `initialization_state_condition` | `conditions` の `state_topic: "/autoware/state"` で表現 |
 | `routing_state_condition` | `conditions` の `state_topic: "/autoware/state"` で表現 |
+
+## 変更履歴
+
+| 日付 | 概要 |
+|------|------|
+| 2026-05-11 | 通知リスト型 API の詳細を更新。配信は audience ごと 1 トピック（言語はトピックで分離しない）、`FailureNotification` は `language_codes` / `situations` / `solutions` の平行配列（B'）、`priority` は大きいほど高優先・配列は降順ソート、F-5 / F-6 および 4.1〜4.2・4.5 の整合、`proposed_architecture` 図の更新。根拠議事録: [2026-04-01 MRM message.json API meeting](https://tier4.atlassian.net/wiki/spaces/AIP/pages/5080352231/2026-04-01+MRM_message.json+API+meeting)（Atlassian Confluence。アクセスにはログインが必要な場合あり） |

@@ -31,9 +31,9 @@ package "外部システム" {
   component "開発ツール\n(developer)" as Dev
 }
 
-FNNode -down-> MOT : /system/failure_notifications/mot/ja\n/system/failure_notifications/mot/en
-FNNode -down-> Remote : /system/failure_notifications/remote/ja\n/system/failure_notifications/remote/en
-FNNode -down-> Dev : /system/failure_notifications/developer/ja\n/system/failure_notifications/developer/en
+FNNode -down-> MOT : /system/failure_notifications/mot
+FNNode -down-> Remote : /system/failure_notifications/remote
+FNNode -down-> Dev : /system/failure_notifications/developer
 
 note bottom of FNNode
   ADK 内部で以下を一括処理:
