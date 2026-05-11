@@ -1,5 +1,5 @@
 @startuml proposed_architecture_en
-!theme plain
+!theme _none_
 skinparam backgroundColor white
 skinparam componentStyle rectangle
 skinparam packageStyle rectangle
