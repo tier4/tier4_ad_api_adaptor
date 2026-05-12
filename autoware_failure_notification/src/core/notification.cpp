@@ -26,8 +26,29 @@ namespace autoware::failure_notification
 Notification::Notification(const std::string & path, YAML::Node yaml, const Settings & settings)
 : path_(path)
 {
-  priority_ = yaml["priority"].as<int>(0);  // TODO(Takagi, Isamu): Remove default value.
-  messages_ = std::make_unique<Messages>(this, yaml["messages"], settings);
+  if (const auto node = yaml["error_code"]) {
+    error_code_ = node.as<std::string>();
+  } else {
+    throw std::runtime_error("error_code field is required in " + path);
+  }
+
+  if (const auto node = yaml["priority"]) {
+    priority_ = node.as<int>();
+  } else {
+    throw std::runtime_error("priority field is required in " + path);
+  }
+
+  if (const auto node = yaml["notification_level"]) {
+    notification_level_ = node.as<int>();
+  } else {
+    throw std::runtime_error("notification_level field is required in " + path);
+  }
+
+  if (const auto node = yaml["messages"]) {
+    messages_ = std::make_unique<Messages>(this, node, settings);
+  } else {
+    throw std::runtime_error("messages field is required in " + path);
+  }
 }
 
 void Notification::update(const Context & context, DiagLevel level)
@@ -37,7 +58,7 @@ void Notification::update(const Context & context, DiagLevel level)
 
   if (level == DiagStatus::OK) return;
 
-  for (const auto & message : messages()) {
+  for (const auto & message : messages_->list()) {
     if (message->condition()->evaluate(context)) {
       current_message_ = message;
       return;

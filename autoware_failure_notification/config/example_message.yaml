@@ -1,6 +1,8 @@
 notifications:
   /autoware/localization/state:
+    error_code: LOC-001
     priority: 50
+    notification_level: 1
     messages:
       - condition: Always
         audiences:
@@ -20,7 +22,9 @@ notifications:
               solution: 姿勢を初期化してください
 
   /autoware/planning/routing/state:
+    error_code: PLN-001
     priority: 0
+    notification_level: 2
     messages:
       - condition: LocalizationState(Initialized)
         audiences:
@@ -40,7 +44,9 @@ notifications:
               solution: ルートを設定してください
 
   /autoware/control:
+    error_code: CTL-001
     priority: 100
+    notification_level: 3
     messages:
       - condition: RouteState(Set)
         audiences:

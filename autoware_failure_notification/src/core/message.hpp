@@ -33,6 +33,7 @@ class Message
 {
 public:
   Message(const Notification * parent, const YAML::Node yaml, const Settings & settings);
+  const auto & parent() const { return parent_; }
   const auto & condition() const { return condition_; }
   const auto & situations(const size_t audience) const { return situations_.at(audience); }
   const auto & solutions(const size_t audience) const { return solutions_.at(audience); }
@@ -48,7 +49,7 @@ class Messages
 {
 public:
   Messages(const Notification * parent, const YAML::Node yaml, const Settings & settings);
-  const auto & messages() const { return pointers_; }
+  const auto & list() const { return pointers_; }
 
 private:
   std::vector<std::unique_ptr<Message>> entities_;

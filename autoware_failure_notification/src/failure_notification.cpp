@@ -28,13 +28,13 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
   settings_.audiences = declare_parameter<std::vector<std::string>>("audiences");
   settings_.languages = declare_parameter<std::vector<std::string>>("languages");
 
-  const auto path = declare_parameter<std::string>("message");
+  const auto path = declare_parameter<std::string>("message_file");
   notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path), settings_);
 
   // Set a non-existent pattern to ensure the first message is published.
   previous_messages_.push_back(nullptr);
 
-  // Context.
+  // Create context and related interfaces.
   context_.route_state.stamp = now();
   context_.route_state.state = Context::RouteState::UNKNOWN;
   context_.localization_state.stamp = now();
@@ -46,6 +46,7 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
     "/api/localization/initialization_state", rclcpp::QoS(1).transient_local(),
     [this](const Context::LocalizationState & msg) { context_.localization_state = msg; });
 
+  // Create publishers for each audience.
   for (const auto & audience : settings_.audiences) {
     pub_failure_notification_.push_back(
       create_publisher<FailureNotificationArray>(
@@ -61,7 +62,7 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 void FailureNotification::on_create(DiagGraph::ConstSharedPtr graph)
 {
   std::unordered_map<std::string, Notification *> dictionary;
-  for (const auto & notification : notifications_->notifications()) {
+  for (const auto & notification : notifications_->list()) {
     dictionary[notification->path()] = notification;
   }
   for (const auto & node : graph->nodes()) {
@@ -79,7 +80,7 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
   }
 
   std::vector<const Message *> messages;
-  for (const auto & notification : notifications_->notifications()) {
+  for (const auto & notification : notifications_->list()) {
     const auto message = notification->current_message();
     if (message) {
       messages.push_back(message);
@@ -90,12 +91,19 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
     for (size_t audiences = 0; audiences < settings_.audiences.size(); ++audiences) {
       FailureNotificationArray msg;
       for (const auto & message : messages) {
-        FailureNotificationMsg notification;
-        notification.language_codes = settings_.languages;
-        notification.situations = message->situations(audiences);
-        notification.solutions = message->solutions(audiences);
-        msg.notifications.push_back(notification);
+        const auto & notification = message->parent();
+        FailureNotificationMsg item;
+        item.diag_path = notification->path();
+        item.diag_level = notification->current_level();
+        item.error_code = notification->error_code();
+        item.priority = notification->priority();
+        item.notification_level = notification->notification_level();
+        item.language_codes = settings_.languages;
+        item.situations = message->situations(audiences);
+        item.solutions = message->solutions(audiences);
+        msg.notifications.push_back(item);
       }
+      msg.stamp = now();
       pub_failure_notification_.at(audiences)->publish(msg);
     }
     previous_messages_ = messages;

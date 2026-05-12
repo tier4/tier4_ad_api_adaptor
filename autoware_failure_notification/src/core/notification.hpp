@@ -33,8 +33,9 @@ class Notification
 public:
   Notification(const std::string & path, YAML::Node yaml, const Settings & settings);
   const auto & path() const { return path_; }
+  const auto & error_code() const { return error_code_; }
   const auto & priority() const { return priority_; }
-  const auto & messages() const { return messages_->messages(); }
+  const auto & notification_level() const { return notification_level_; }
   const auto & current_message() const { return current_message_; }
   const auto & current_level() const { return current_level_; }
 
@@ -45,6 +46,8 @@ public:
 private:
   const std::string path_;
   int priority_;
+  int notification_level_;
+  std::string error_code_;
   std::unique_ptr<Messages> messages_;
 
   const Message * current_message_ = nullptr;
@@ -55,7 +58,7 @@ class Notifications
 {
 public:
   Notifications(YAML::Node yaml, const Settings & settings);
-  const auto & notifications() const { return pointers_; }
+  const auto & list() const { return pointers_; }
 
 private:
   std::vector<std::unique_ptr<Notification>> entities_;

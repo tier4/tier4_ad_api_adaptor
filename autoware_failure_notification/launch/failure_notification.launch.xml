@@ -1,7 +1,10 @@
 <launch>
+  <arg name="message_file" default="$(find-pkg-share autoware_failure_notification)/config/example_message.yaml"/>
+  <arg name="param_file" default="$(find-pkg-share autoware_failure_notification)/config/failure_notification.param.yaml"/>
+
   <node pkg="autoware_failure_notification" exec="failure_notification_node" name="failure_notification">
-    <param name="message" value="$(find-pkg-share autoware_failure_notification)/config/example_message.yaml"/>
-    <param from="$(find-pkg-share autoware_failure_notification)/config/failure_notification.param.yaml"/>
+    <param name="message_file" value="$(var message_file)"/>
+    <param from="$(var param_file)"/>
     <remap from="~/diagnostics_graph" to="/diagnostics_graph"/>
   </node>
 </launch>
