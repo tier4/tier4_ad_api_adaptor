@@ -50,7 +50,7 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
   for (const auto & audience : settings_.audiences) {
     pub_failure_notification_.push_back(
       create_publisher<FailureNotificationArray>(
-        "/system/failure_notification/" + audience, rclcpp::QoS(1).best_effort()));
+        "/system/failure_notification/" + audience, rclcpp::QoS(1).transient_local()));
   }
 
   using std::placeholders::_1;
