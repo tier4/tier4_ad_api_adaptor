@@ -16,6 +16,7 @@
 #define CORE__MESSAGE_HPP_
 
 #include "condition.hpp"
+#include "settings.hpp"
 
 #include <yaml-cpp/yaml.h>
 
@@ -31,20 +32,22 @@ class Notification;
 class Message
 {
 public:
-  Message(const Notification * parent, const YAML::Node yaml);
-  const auto & text() const { return text_; }
+  Message(const Notification * parent, const YAML::Node yaml, const Settings & settings);
   const auto & condition() const { return condition_; }
+  const auto & situations(const size_t audience) const { return situations_.at(audience); }
+  const auto & solutions(const size_t audience) const { return solutions_.at(audience); }
 
 private:
   const Notification * parent_;
-  std::string text_;
   std::unique_ptr<Condition> condition_;
+  std::vector<std::vector<std::string>> situations_;
+  std::vector<std::vector<std::string>> solutions_;
 };
 
 class Messages
 {
 public:
-  Messages(const Notification * parent, const YAML::Node yaml);
+  Messages(const Notification * parent, const YAML::Node yaml, const Settings & settings);
   const auto & messages() const { return pointers_; }
 
 private:

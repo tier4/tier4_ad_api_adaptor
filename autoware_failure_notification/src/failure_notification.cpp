@@ -25,8 +25,11 @@ namespace autoware::failure_notification
 FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 : Node("failure_notification", options)
 {
+  settings_.audiences = declare_parameter<std::vector<std::string>>("audiences");
+  settings_.languages = declare_parameter<std::vector<std::string>>("languages");
+
   const auto path = declare_parameter<std::string>("message");
-  notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path));
+  notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path), settings_);
 
   // Set a non-existent pattern to ensure the first message is published.
   previous_messages_.push_back(nullptr);
@@ -42,6 +45,12 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
   sub_localization_state_ = create_subscription<Context::LocalizationState>(
     "/api/localization/initialization_state", rclcpp::QoS(1).transient_local(),
     [this](const Context::LocalizationState & msg) { context_.localization_state = msg; });
+
+  for (const auto & audience : settings_.audiences) {
+    pub_failure_notification_.push_back(
+      create_publisher<FailureNotificationArray>(
+        "/system/failure_notification/" + audience, rclcpp::QoS(1).best_effort()));
+  }
 
   using std::placeholders::_1;
   sub_graph_.register_create_callback(std::bind(&FailureNotification::on_create, this, _1));
@@ -78,9 +87,16 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
   }
 
   if (previous_messages_ != messages) {
-    RCLCPP_INFO_STREAM(get_logger(), "==================================================");
-    for (const auto & message : messages) {
-      RCLCPP_INFO_STREAM(get_logger(), message->text());
+    for (size_t audiences = 0; audiences < settings_.audiences.size(); ++audiences) {
+      FailureNotificationArray msg;
+      for (const auto & message : messages) {
+        FailureNotificationMsg notification;
+        notification.language_codes = settings_.languages;
+        notification.situations = message->situations(audiences);
+        notification.solutions = message->solutions(audiences);
+        msg.notifications.push_back(notification);
+      }
+      pub_failure_notification_.at(audiences)->publish(msg);
     }
     previous_messages_ = messages;
   }

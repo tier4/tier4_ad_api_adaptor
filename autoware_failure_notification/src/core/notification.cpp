@@ -23,10 +23,11 @@
 namespace autoware::failure_notification
 {
 
-Notification::Notification(const std::string & path, YAML::Node yaml) : path_(path)
+Notification::Notification(const std::string & path, YAML::Node yaml, const Settings & settings)
+: path_(path)
 {
   priority_ = yaml["priority"].as<int>(0);  // TODO(Takagi, Isamu): Remove default value.
-  messages_ = std::make_unique<Messages>(this, yaml["messages"]);
+  messages_ = std::make_unique<Messages>(this, yaml["messages"], settings);
 }
 
 void Notification::update(const Context & context, DiagLevel level)
@@ -44,14 +45,14 @@ void Notification::update(const Context & context, DiagLevel level)
   }
 }
 
-Notifications::Notifications(YAML::Node yaml)
+Notifications::Notifications(YAML::Node yaml, const Settings & settings)
 {
   const auto notifications = yaml["notifications"];
 
   for (const auto & iter : notifications) {
     const auto path = iter.first.as<std::string>();
     const auto node = iter.second;
-    entities_.emplace_back(std::make_unique<Notification>(path, node));
+    entities_.emplace_back(std::make_unique<Notification>(path, node, settings));
   }
 
   for (const auto & entity : entities_) {

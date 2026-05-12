@@ -1,3 +1,4 @@
 /**:
   ros__parameters:
-    test: test
+    audiences: [mot, remote]
+    languages: [ja, en]

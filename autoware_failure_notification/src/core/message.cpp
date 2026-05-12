@@ -17,29 +17,68 @@
 #include "notification.hpp"
 
 #include <string>
+#include <vector>
 
 namespace autoware::failure_notification
 {
 
-Message::Message(const Notification * parent, const YAML::Node yaml)
+Message::Message(const Notification * parent, const YAML::Node yaml, const Settings & settings)
+: parent_(parent)
 {
-  parent_ = parent;
-
-  if (const auto node = yaml["audiences"]["mot"]["en"]["situation"]) {
-    text_ = node.as<std::string>();
-  } else {
-    throw std::runtime_error("audiences field is required in " + parent->path());
-  }
+  const auto get_audiences = [parent, settings](YAML::Node yaml) {
+    std::vector<YAML::Node> result;
+    for (const auto & audiences : settings.audiences) {
+      if (const auto node = yaml[audiences]) {
+        result.push_back(node);
+      } else {
+        throw std::runtime_error(audiences + " audience is required in " + parent->path());
+      }
+    }
+    return result;
+  };
+  const auto get_languages = [parent, settings](YAML::Node yaml) {
+    std::vector<YAML::Node> result;
+    for (const auto & languages : settings.languages) {
+      if (const auto node = yaml[languages]) {
+        result.push_back(node);
+      } else {
+        throw std::runtime_error(languages + " language is required in " + parent->path());
+      }
+    }
+    return result;
+  };
+  const auto get_text = [parent](YAML::Node yaml, const std::string & field) {
+    if (const auto node = yaml[field]) {
+      return node.as<std::string>();
+    } else {
+      throw std::runtime_error(field + " field is required in " + parent->path());
+    }
+  };
 
   if (const auto node = yaml["condition"]) {
     condition_ = Condition::parse(node.as<std::string>());
   }
+
+  if (const auto node = yaml["audiences"]) {
+    for (const auto & audience : get_audiences(node)) {
+      std::vector<std::string> situations;
+      std::vector<std::string> solutions;
+      for (const auto & language : get_languages(audience)) {
+        situations.push_back(get_text(language, "situation"));
+        solutions.push_back(get_text(language, "solution"));
+      }
+      situations_.push_back(situations);
+      solutions_.push_back(solutions);
+    }
+  } else {
+    throw std::runtime_error("audiences field is required in " + parent->path());
+  }
 }
 
-Messages::Messages(const Notification * parent, const YAML::Node yaml)
+Messages::Messages(const Notification * parent, const YAML::Node yaml, const Settings & settings)
 {
   for (const auto & node : yaml) {
-    entities_.emplace_back(std::make_unique<Message>(parent, node));
+    entities_.emplace_back(std::make_unique<Message>(parent, node, settings));
   }
 
   for (const auto & entity : entities_) {

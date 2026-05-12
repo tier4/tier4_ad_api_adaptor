@@ -31,7 +31,7 @@ namespace autoware::failure_notification
 class Notification
 {
 public:
-  Notification(const std::string & path, YAML::Node yaml);
+  Notification(const std::string & path, YAML::Node yaml, const Settings & settings);
   const auto & path() const { return path_; }
   const auto & priority() const { return priority_; }
   const auto & messages() const { return messages_->messages(); }
@@ -54,7 +54,7 @@ private:
 class Notifications
 {
 public:
-  explicit Notifications(YAML::Node yaml);
+  Notifications(YAML::Node yaml, const Settings & settings);
   const auto & notifications() const { return pointers_; }
 
 private:
