@@ -41,6 +41,7 @@ If the version is `v0.4.0-`, it means version v0.4.0 or earlier.
 | v0.4.0- | topic   | [/api/external/get/calibration_status](./doc/api/external/get/calibration_status.md)                           | [tier4_external_api_msgs/msg/CalibrationStatusArray](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/CalibrationStatusArray.msg)                   |
 | v0.4.0- | service | [/api/external/get/accel_brake_map_calibrator/data](./doc/api/external/get/accel_brake_map_calibrator/data.md) | [tier4_external_api_msgs/srv/GetAccelBrakeMapCalibrationData](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/srv/GetAccelBrakeMapCalibrationData.srv) |
 | v0.4.0- | topic   | [/api/external/get/system_monitor](./doc/api/external/get/system_monitor.md)                                   | [tier4_external_api_msgs/msg/SystemMonitor](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/SystemMonitor.msg)                                     |
+| v0.4.0- | topic   | [/api/external/get/failure_notification/audience](./doc/api/external/get/failure_notification.md)              | [tier4_external_api_msgs/msg/FailureNotificationArray](https://github.com/tier4/tier4_autoware_msgs/blob/tier4/universe/tier4_external_api_msgs/msg/FailureNotificationArray.msg)               |
 
 ## Deprecated API
 
