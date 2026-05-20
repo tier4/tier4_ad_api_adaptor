@@ -51,7 +51,13 @@ def generate_launch_description():
         package="rclcpp_components",
         executable="component_container_mt",
         composable_node_descriptions=[
-            _create_api_node("iv_msgs", "IVMsgs"),
+            _create_api_node(
+                "iv_msgs",
+                "IVMsgs",
+                parameters=[
+                    {"launch_api_0_4_3": LaunchConfiguration("launch_api_0_4_3")},
+                ],
+            ),
         ],
         ros_arguments=[
             "--log-level",

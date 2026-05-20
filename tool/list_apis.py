@@ -74,7 +74,7 @@ class RosNode:
 
 
 class API:
-    def __init__(self, name, *, doc=False, ros=False, eol=None, release=None):
+    def __init__(self, name, *, doc=False, ros=False, eol="", release=""):
         self.name = name
         self.doc = doc
         self.ros = ros
@@ -122,20 +122,11 @@ def find_deprecated_api(line):
             return API(name, doc=True, eol=info)
 
 
-def find_deprecated_awapi(line):
-    parts = line.split("|")
-    if len(parts) == 4:
-        name = strip_markdown_link(parts[2].strip())
-        info = strip_markdown_link(parts[1].strip())
-        if not is_header(name):
-            return API(name, doc=True, eol=info)
-
-
 def list_docs_apis(args):
     find_func_dict = {
         "## TIER IV Autoware API": find_api_extension,
         "## Deprecated API": find_deprecated_api,
-        "## Deprecated API (AWAPI)": find_deprecated_awapi,
+        "## Removed API": find_deprecated_api,
     }
     find_func = find_dummy
     apis = []
@@ -174,7 +165,7 @@ def main():
         else:
             apis[api.name] = api
 
-    for api in sorted(apis.values(), key=lambda api: api.name):
+    for api in sorted(apis.values(), key=lambda api: api.eol):
         if api.eol not in args.exclude_eol:
             doc = "doc" if api.doc else "   "
             ros = "ros" if api.ros else "   "
