@@ -1,0 +1,6 @@
+/**:
+  ros__parameters:
+    # AWAPI plugin-specific params
+    awapi_vehicle_status:
+      accel_lowpass_gain: 0.2
+      steer_vel_lowpass_gain: 0.2

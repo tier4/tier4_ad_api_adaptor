@@ -1,0 +1,65 @@
+/**:
+  ros__parameters:
+    api_mode: 1
+
+    # Load + run order (pluginlib class names in execution order)
+    plugin_names:
+      # AWAPI coordinator (pose, stop_reason, max_velocity, v2x) — must run before status publishers
+      - "tier4_autoware_api_host::plugin::AwapiCoordinatorPlugin"
+      - "tier4_autoware_api_host::plugin::AwapiVehicleStatusPlugin"
+      - "tier4_autoware_api_host::plugin::AwapiAutowareStatusPlugin"
+      # api_mode < 1 only (gated at load)
+      - "tier4_autoware_api_host::plugin::AwapiLaneChangePlugin"
+      - "tier4_autoware_api_host::plugin::AwapiObstacleAvoidancePlugin"
+
+      # External API — always active
+      - "tier4_autoware_api_host::plugin::ExternalCalibrationStatusPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalCpuUsagePlugin"
+      - "tier4_autoware_api_host::plugin::ExternalLocalizationScorePlugin"
+      - "tier4_autoware_api_host::plugin::ExternalMapPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalMetadataPackagesPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalRosbagLoggingModePlugin"
+      - "tier4_autoware_api_host::plugin::ExternalSystemMonitorPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalVersionPlugin"
+
+      # External API — api_mode < 2 (active in 0, 1)
+      - "tier4_autoware_api_host::plugin::ExternalDiagnosticsPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalDoorPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalEmergencyPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalFailSafeStatePlugin"
+      - "tier4_autoware_api_host::plugin::ExternalInitialPosePlugin"
+      - "tier4_autoware_api_host::plugin::ExternalOperatorPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalRoutePlugin"
+      - "tier4_autoware_api_host::plugin::ExternalStartPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalVehicleStatusPlugin"
+      - "tier4_autoware_api_host::plugin::ExternalVelocityPlugin"
+
+      # Internal API — api_mode < 2 (active in 0, 1)
+      - "tier4_autoware_api_host::plugin::InternalIVMsgsPlugin"
+      - "tier4_autoware_api_host::plugin::InternalOperatorPlugin"
+      - "tier4_autoware_api_host::plugin::InternalVelocityPlugin"
+
+      # Extension (always)
+      - "tier4_autoware_api_host::plugin::ExtensionPlanningFactorPlugin"
+      - "tier4_autoware_api_host::plugin::ExtensionTrafficLightPlugin"
+      - "tier4_autoware_api_host::plugin::ExtensionRouteDistancePlugin"
+
+      # api_mode >= 2 only (gated at load)
+      - "tier4_autoware_api_host::plugin::ExtensionVelocityLimitPlugin"
+      - "tier4_autoware_api_host::plugin::DeprecatedInitialPosePlugin"
+
+      # Deprecated — api_mode < 2
+      - "tier4_autoware_api_host::plugin::DeprecatedEngagePlugin"
+      - "tier4_autoware_api_host::plugin::DeprecatedManualStatusPlugin"
+      - "tier4_autoware_api_host::plugin::DeprecatedManualControlPlugin"
+      - "tier4_autoware_api_host::plugin::DeprecatedHazardStatusPlugin"
+
+      # RTC Controller (always)
+      - "tier4_autoware_api_host::plugin::RTCControllerPlugin"
+
+    timer_period_ms: 200
+
+    status_pub_hz: 5.0
+    stop_reason_timeout: 0.5
+    stop_reason_thresh_dist: 100.0
+    use_control_command_gate: false

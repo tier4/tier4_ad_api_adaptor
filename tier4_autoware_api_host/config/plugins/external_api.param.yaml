@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    # External API plugin-specific params
+    auto_operator_change: false

@@ -1,0 +1,5 @@
+/**:
+  ros__parameters:
+    # Deprecated API plugin-specific params
+    deprecated_manual_control:
+      mode: "local"  # "local" or "remote" per instance

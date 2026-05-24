@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    # Internal operator plugin (see internal_operator_plugin.cpp)
+    send_engage_in_emergency: false

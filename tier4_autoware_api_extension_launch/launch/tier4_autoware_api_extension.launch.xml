@@ -1,13 +1,16 @@
 <launch>
-  <!-- For API EOL information, see https://github.com/tier4/tier4_ad_api_adaptor -->
   <arg name="api_mode" default="2" description="options: 0(All), 1(Without 2025/09 EOL API), 2(Without 2025/12 EOL API)"/>
 
-  <!-- rosbridge options -->
   <arg name="rosbridge_enabled" default="false"/>
   <arg name="rosbridge_respawn" default="true"/>
   <arg name="rosbridge_max_message_size" default="10000000"/>
 
-  <!-- rosbridge -->
+  <arg name="use_control_command_gate" default="false"/>
+  <arg name="node_emergency_stop" default="/control/vehicle_cmd_gate"/>
+  <arg name="param_emergency_stop" default="check_external_emergency_heartbeat"/>
+  <arg name="node_max_velocity" default="/planning/scenario_planning/velocity_smoother"/>
+  <arg name="param_max_velocity" default="max_velocity"/>
+
   <group if="$(var rosbridge_enabled)">
     <include file="$(find-pkg-share rosbridge_server)/launch/rosbridge_websocket_launch.xml">
       <arg name="respawn" value="$(var rosbridge_respawn)"/>
@@ -15,47 +18,44 @@
     </include>
   </group>
 
-  <!-- awapi -->
+  <!-- Single merged TIER IV API host node (AWAPI-relative topics under /awapi) -->
   <group>
-    <include file="$(find-pkg-share awapi_awiv_adapter)/launch/awapi_awiv_adapter.launch.xml">
-      <arg name="api_mode" value="$(var api_mode)"/>
-    </include>
+    <push-ros-namespace namespace="awapi"/>
+    <node pkg="tier4_autoware_api_host" exec="tier4_api_host_node"
+          name="tier4_api_host" output="screen">
+      <param from="$(find-pkg-share tier4_autoware_api_host)/config/tier4_api_host.param.yaml"/>
+      <param from="$(find-pkg-share tier4_autoware_api_host)/config/plugins/awapi.param.yaml"/>
+      <param from="$(find-pkg-share tier4_autoware_api_host)/config/plugins/external_api.param.yaml"/>
+      <param from="$(find-pkg-share tier4_autoware_api_host)/config/plugins/internal_api.param.yaml"/>
+      <param from="$(find-pkg-share tier4_autoware_api_host)/config/plugins/extension_api.param.yaml"/>
+      <param from="$(find-pkg-share tier4_autoware_api_host)/config/plugins/deprecated_api.param.yaml"/>
+      <param name="api_mode" value="$(var api_mode)"/>
+      <param name="use_control_command_gate" value="$(var use_control_command_gate)"/>
+      <param name="node/emergency_stop" value="$(var node_emergency_stop)"/>
+      <param name="param/emergency_stop" value="$(var param_emergency_stop)"/>
+      <param name="node/max_velocity" value="$(var node_max_velocity)"/>
+      <param name="param/max_velocity" value="$(var param_max_velocity)"/>
+
+      <!-- AWAPI I/O remaps (mirrors awapi_awiv_adapter.launch.xml) -->
+      <remap from="input/max_velocity" to="vehicle/put/velocity"/>
+      <remap from="input/temporary_stop" to="vehicle/put/stop"/>
+      <remap from="output/vehicle_status" to="vehicle/get/status"/>
+      <remap from="output/autoware_status" to="autoware/get/status"/>
+      <remap from="output/lane_change_status" to="lane_change/get/status"/>
+      <remap from="output/obstacle_avoid_status" to="object_avoidance/get/status"/>
+      <remap from="output/max_velocity" to="/planning/scenario_planning/max_velocity_default"/>
+      <remap from="output/v2x_command" to="/awapi/tmp/infrastructure_commands"/>
+      <remap from="output/v2x_state" to="/awapi/tmp/virtual_traffic_light_states"/>
+    </node>
   </group>
 
-  <!-- external api adaptor -->
+  <!-- Path distance calculator (feeds extension route_distance plugin) -->
   <group>
-    <push-ros-namespace namespace="autoware_api"/>
-    <include file="$(find-pkg-share autoware_iv_external_api_adaptor)/launch/external_api_adaptor.launch.py">
-      <arg name="api_mode" value="$(var api_mode)"/>
-    </include>
-  </group>
-
-  <!-- external api adaptor (RTC controller) -->
-  <group>
-    <push-ros-namespace namespace="autoware_api/external/rtc_controller"/>
-    <node_container pkg="rclcpp_components" exec="component_container_mt" name="container" namespace="" ros_args="--log-level autoware_api.external.rtc_controller.container:=warn">
-      <composable_node pkg="autoware_iv_external_api_adaptor" plugin="external_api::RTCController" name="node"/>
-    </node_container>
-  </group>
-
-  <!-- internal api adaptor -->
-  <group if="$(eval &quot; $(var api_mode) &lt; 2 &quot;)">
-    <push-ros-namespace namespace="autoware_api"/>
-    <include file="$(find-pkg-share autoware_iv_internal_api_adaptor)/launch/internal_api_adaptor.launch.py"/>
-    <include file="$(find-pkg-share autoware_iv_internal_api_adaptor)/launch/internal_api_relay.launch.xml"/>
-  </group>
-
-  <!-- tier4 autoware api extension -->
-  <group>
-    <include file="$(find-pkg-share tier4_autoware_api_extension)/launch/tier4_autoware_api_extension.launch.xml">
-      <arg name="api_mode" value="$(var api_mode)"/>
-    </include>
-  </group>
-
-  <!-- tier4 deprecated api adapter -->
-  <group>
-    <include file="$(find-pkg-share tier4_deprecated_api_adapter)/launch/tier4_deprecated_api_adapter.launch.xml">
-      <arg name="api_mode" value="$(var api_mode)"/>
-    </include>
+    <push-ros-namespace namespace="tier4_api"/>
+    <node pkg="autoware_path_distance_calculator" exec="autoware_path_distance_calculator_node"
+          name="path_distance_calculator" namespace="utils" output="screen">
+      <remap from="~/input/path" to="/planning/scenario_planning/lane_driving/behavior_planning/path"/>
+      <remap from="~/output/distance" to="/tier4_api/utils/path_distance_calculator/distance"/>
+    </node>
   </group>
 </launch>

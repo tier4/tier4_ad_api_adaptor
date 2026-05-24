@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<library path="tier4_autoware_api_host_plugins">
+  <class type="tier4_autoware_api_host::plugin::AwapiCoordinatorPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>AWAPI coordinator (TF pose, stop_reason, max_velocity, v2x)</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::AwapiVehicleStatusPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>AWAPI vehicle status publisher plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::AwapiAutowareStatusPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>AWAPI autoware state publisher plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::AwapiLaneChangePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>AWAPI lane change state publisher plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::AwapiObstacleAvoidancePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>AWAPI obstacle avoidance state publisher plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalCalibrationStatusPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API calibration status plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalCpuUsagePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API CPU usage plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalDiagnosticsPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API diagnostics plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalDoorPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API door plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalEmergencyPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API emergency plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalFailSafeStatePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API fail-safe state plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalInitialPosePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API initial pose plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalLocalizationScorePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API localization score plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalMapPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API map plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalMetadataPackagesPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API metadata packages plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalOperatorPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API operator plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalRosbagLoggingModePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API rosbag logging mode plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalRoutePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API route plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalServicePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API service plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalStartPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API start plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalSystemMonitorPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API system monitor plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalVehicleStatusPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API vehicle status plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalVelocityPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API velocity plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExternalVersionPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>External API version plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::InternalIVMsgsPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Internal API IV messages plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::InternalOperatorPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Internal API operator plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::InternalVelocityPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Internal API velocity plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExtensionPlanningFactorPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Extension planning factor plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExtensionTrafficLightPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Extension traffic light plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExtensionRouteDistancePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Extension route distance plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::ExtensionVelocityLimitPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Extension velocity limit plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::DeprecatedEngagePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Deprecated API autoware engage plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::DeprecatedManualStatusPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Deprecated API manual status plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::DeprecatedManualControlPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Deprecated API manual control plugin (local/remote)</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::DeprecatedHazardStatusPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Deprecated API hazard status plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::DeprecatedInitialPosePlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>Deprecated API initial pose plugin</description>
+  </class>
+  <class type="tier4_autoware_api_host::plugin::RTCControllerPlugin"
+         base_class_type="tier4_autoware_api_host::plugin::Tier4ApiAdaptorPluginBase">
+    <description>RTC controller plugin (all 20 modules)</description>
+  </class>
+</library>
