@@ -22,6 +22,9 @@ from launch_ros.actions import LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
 
 
+# Usage: If the current namespace is /ros/ns:
+#  - Namespace("/", "foo/bar") -> "ros/ns/foo/bar"
+#  - Namespace(".", "foo.bar") -> "ros.ns.foo.bar"
 class Namespace(Substitution):
     def __init__(self, separator, suffix):
         super().__init__()
