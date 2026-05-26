@@ -71,10 +71,14 @@ def generate_launch_description():
         target_container=Namespace("/", "external/autoware_iv_adaptor"),
         condition=IfCondition(LaunchConfiguration("launch_api_0_4_3")),
         composable_node_descriptions=[
+            _create_api_node("diagnostics", "Diagnostics"),
+            _create_api_node("door", "Door"),
+            _create_api_node("fail_safe_state", "FailSafeState"),
             _create_api_node("initial_pose", "InitialPose"),
             _create_api_node("operator", "Operator"),
             _create_api_node("route", "Route"),
             _create_api_node("start", "Start"),
+            _create_api_node("vehicle_status", "VehicleStatus"),
             _create_api_node("velocity", "Velocity"),
         ],
     )
@@ -82,11 +86,7 @@ def generate_launch_description():
         target_container=Namespace("/", "external/autoware_iv_adaptor"),
         condition=IfCondition(LaunchConfiguration("launch_api_0_4_4")),
         composable_node_descriptions=[
-            _create_api_node("diagnostics", "Diagnostics"),
-            _create_api_node("door", "Door"),
             _create_api_node("emergency", "Emergency"),
-            _create_api_node("fail_safe_state", "FailSafeState"),
-            _create_api_node("vehicle_status", "VehicleStatus"),
         ],
     )
 
