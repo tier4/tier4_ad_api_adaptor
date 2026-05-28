@@ -17,7 +17,6 @@
 #include "notification.hpp"
 
 #include <string>
-#include <vector>
 
 namespace autoware::failure_notification
 {

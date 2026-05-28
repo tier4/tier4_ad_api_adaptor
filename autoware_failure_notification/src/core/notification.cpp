@@ -16,7 +16,6 @@
 
 #include <rclcpp/logging.hpp>
 
-#include <algorithm>
 #include <memory>
 #include <string>
 

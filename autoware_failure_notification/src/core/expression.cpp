@@ -19,9 +19,6 @@
 #include <utility>
 #include <vector>
 
-//
-#include <iostream>
-
 namespace autoware::failure_notification
 {
 
