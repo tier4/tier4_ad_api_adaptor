@@ -1,66 +1,15 @@
 notifications:
   /autoware/localization/state:
-    error_code: LOC-001
-    priority: 50
-    notification_level: 1
-    messages:
+    situations:
       - condition: Always
-        audiences:
-          mot:
-            en:
-              situation: waiting for the pose initialization
-              solution: please initialize the pose
-            ja:
-              situation: 姿勢の初期化待ち
-              solution: 姿勢を初期化してください
-          remote:
-            en:
-              situation: waiting for the pose initialization
-              solution: please initialize the pose
-            ja:
-              situation: 姿勢の初期化待ち
-              solution: 姿勢を初期化してください
+        code: LOC-001
 
   /autoware/planning/routing/state:
-    error_code: PLN-001
-    priority: 0
-    notification_level: 2
-    messages:
+    situations:
       - condition: LocalizationState(Initialized)
-        audiences:
-          mot:
-            en:
-              situation: waiting for the route
-              solution: please set the route
-            ja:
-              situation: ルート待ち
-              solution: ルートを設定してください
-          remote:
-            en:
-              situation: waiting for the route
-              solution: please set the route
-            ja:
-              situation: ルート待ち
-              solution: ルートを設定してください
+        code: PLN-001-A
 
   /autoware/control:
-    error_code: CTL-001
-    priority: 100
-    notification_level: 3
-    messages:
+    situations:
       - condition: RouteState(Set)
-        audiences:
-          mot:
-            en:
-              situation: control module error
-              solution: please tell the developer the error code
-            ja:
-              situation: 制御モジュールエラー
-              solution: 開発者エラーコードを伝えてください
-          remote:
-            en:
-              situation: control module error
-              solution: please tell the developer the error code
-            ja:
-              situation: 制御モジュールエラー
-              solution: 開発者エラーコードを伝えてください
+        code: CTL-001

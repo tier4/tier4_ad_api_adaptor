@@ -45,15 +45,14 @@ private:
   void on_update(DiagGraph::ConstSharedPtr graph);
   autoware::diagnostic_graph_utils::DiagGraphSubscription sub_graph_;
 
-  Settings settings_;
   Context context_;
   std::unique_ptr<Notifications> notifications_;
   std::unordered_map<const DiagNode *, Notification *> mapping_;
-  std::vector<const Message *> previous_messages_;
+  std::vector<const Failure *> previous_failures_;
 
   rclcpp::Subscription<Context::RouteState>::SharedPtr sub_route_state_;
   rclcpp::Subscription<Context::LocalizationState>::SharedPtr sub_localization_state_;
-  std::vector<rclcpp::Publisher<FailureNotificationArray>::SharedPtr> pub_failure_notification_;
+  rclcpp::Publisher<FailureNotificationArray>::SharedPtr pub_failure_notification_;
 };
 
 }  // namespace autoware::failure_notification

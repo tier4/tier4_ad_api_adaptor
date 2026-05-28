@@ -15,7 +15,7 @@
 #ifndef CORE__NOTIFICATION_HPP_
 #define CORE__NOTIFICATION_HPP_
 
-#include "message.hpp"
+#include "failure.hpp"
 
 #include <diagnostic_msgs/msg/diagnostic_status.hpp>
 
@@ -31,13 +31,9 @@ namespace autoware::failure_notification
 class Notification
 {
 public:
-  Notification(const std::string & path, YAML::Node yaml, const Settings & settings);
+  Notification(const std::string & path, YAML::Node yaml);
   const auto & path() const { return path_; }
-  const auto & error_code() const { return error_code_; }
-  const auto & priority() const { return priority_; }
-  const auto & notification_level() const { return notification_level_; }
-  const auto & current_message() const { return current_message_; }
-  const auto & current_level() const { return current_level_; }
+  const auto & current_failure() const { return current_failure_; }
 
   using DiagStatus = diagnostic_msgs::msg::DiagnosticStatus;
   using DiagLevel = DiagStatus::_level_type;
@@ -45,19 +41,16 @@ public:
 
 private:
   const std::string path_;
-  int priority_;
-  int notification_level_;
-  std::string error_code_;
-  std::unique_ptr<Messages> messages_;
+  std::unique_ptr<Failures> failures_;
 
-  const Message * current_message_ = nullptr;
+  const Failure * current_failure_ = nullptr;
   DiagLevel current_level_ = DiagStatus::OK;
 };
 
 class Notifications
 {
 public:
-  Notifications(YAML::Node yaml, const Settings & settings);
+  explicit Notifications(YAML::Node yaml);
   const auto & list() const { return pointers_; }
 
 private:

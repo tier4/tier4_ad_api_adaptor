@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CORE__MESSAGE_HPP_
-#define CORE__MESSAGE_HPP_
+#ifndef CORE__FAILURE_HPP_
+#define CORE__FAILURE_HPP_
 
 #include "condition.hpp"
-#include "settings.hpp"
 
 #include <yaml-cpp/yaml.h>
 
@@ -29,33 +28,31 @@ namespace autoware::failure_notification
 
 class Notification;
 
-class Message
+class Failure
 {
 public:
-  Message(const Notification * parent, const YAML::Node yaml, const Settings & settings);
+  Failure(const Notification * parent, const YAML::Node yaml);
   const auto & parent() const { return parent_; }
   const auto & condition() const { return condition_; }
-  const auto & situations(const size_t audience) const { return situations_.at(audience); }
-  const auto & solutions(const size_t audience) const { return solutions_.at(audience); }
+  const auto & code() const { return code_; }
 
 private:
   const Notification * parent_;
   std::unique_ptr<Condition> condition_;
-  std::vector<std::vector<std::string>> situations_;
-  std::vector<std::vector<std::string>> solutions_;
+  std::string code_;
 };
 
-class Messages
+class Failures
 {
 public:
-  Messages(const Notification * parent, const YAML::Node yaml, const Settings & settings);
+  Failures(const Notification * parent, const YAML::Node yaml);
   const auto & list() const { return pointers_; }
 
 private:
-  std::vector<std::unique_ptr<Message>> entities_;
-  std::vector<Message *> pointers_;
+  std::vector<std::unique_ptr<Failure>> entities_;
+  std::vector<Failure *> pointers_;
 };
 
 }  // namespace autoware::failure_notification
 
-#endif  // CORE__MESSAGE_HPP_
+#endif  // CORE__FAILURE_HPP_

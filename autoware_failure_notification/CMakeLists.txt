@@ -7,7 +7,7 @@ autoware_package()
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/failure_notification.cpp
   src/core/notification.cpp
-  src/core/message.cpp
+  src/core/failure.cpp
   src/core/condition.cpp
   src/core/context.cpp
   src/core/expression.cpp

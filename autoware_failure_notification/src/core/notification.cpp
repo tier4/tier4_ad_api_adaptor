@@ -23,67 +23,43 @@
 namespace autoware::failure_notification
 {
 
-Notification::Notification(const std::string & path, YAML::Node yaml, const Settings & settings)
-: path_(path)
+Notification::Notification(const std::string & path, YAML::Node yaml) : path_(path)
 {
-  if (const auto node = yaml["error_code"]) {
-    error_code_ = node.as<std::string>();
+  if (const auto node = yaml["failures"]) {
+    failures_ = std::make_unique<Failures>(this, node);
   } else {
-    throw std::runtime_error("error_code field is required in " + path);
-  }
-
-  if (const auto node = yaml["priority"]) {
-    priority_ = node.as<int>();
-  } else {
-    throw std::runtime_error("priority field is required in " + path);
-  }
-
-  if (const auto node = yaml["notification_level"]) {
-    notification_level_ = node.as<int>();
-  } else {
-    throw std::runtime_error("notification_level field is required in " + path);
-  }
-
-  if (const auto node = yaml["messages"]) {
-    messages_ = std::make_unique<Messages>(this, node, settings);
-  } else {
-    throw std::runtime_error("messages field is required in " + path);
+    throw std::runtime_error("failures field is required in " + path);
   }
 }
 
 void Notification::update(const Context & context, DiagLevel level)
 {
   current_level_ = level;
-  current_message_ = nullptr;
+  current_failure_ = nullptr;
 
   if (level == DiagStatus::OK) return;
 
-  for (const auto & message : messages_->list()) {
-    if (message->condition()->evaluate(context)) {
-      current_message_ = message;
+  for (const auto & failure : failures_->list()) {
+    if (failure->condition()->evaluate(context)) {
+      current_failure_ = failure;
       return;
     }
   }
 }
 
-Notifications::Notifications(YAML::Node yaml, const Settings & settings)
+Notifications::Notifications(YAML::Node yaml)
 {
   const auto notifications = yaml["notifications"];
 
   for (const auto & iter : notifications) {
     const auto path = iter.first.as<std::string>();
     const auto node = iter.second;
-    entities_.emplace_back(std::make_unique<Notification>(path, node, settings));
+    entities_.emplace_back(std::make_unique<Notification>(path, node));
   }
 
   for (const auto & entity : entities_) {
     pointers_.push_back(entity.get());
   }
-
-  const auto compare = [](const Notification * lhs, const Notification * rhs) {
-    return lhs->priority() > rhs->priority();
-  };
-  std::sort(pointers_.begin(), pointers_.end(), compare);
 }
 
 }  // namespace autoware::failure_notification

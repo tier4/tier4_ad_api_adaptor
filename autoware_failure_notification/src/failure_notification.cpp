@@ -25,14 +25,11 @@ namespace autoware::failure_notification
 FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 : Node("failure_notification", options)
 {
-  settings_.audiences = declare_parameter<std::vector<std::string>>("audiences");
-  settings_.languages = declare_parameter<std::vector<std::string>>("languages");
-
   const auto path = declare_parameter<std::string>("message_file");
-  notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path), settings_);
+  notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path));
 
   // Set a non-existent pattern to ensure the first message is published.
-  previous_messages_.push_back(nullptr);
+  previous_failures_.push_back(nullptr);
 
   // Create context and related interfaces.
   context_.route_state.stamp = now();
@@ -47,11 +44,8 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
     [this](const Context::LocalizationState & msg) { context_.localization_state = msg; });
 
   // Create publishers for each audience.
-  for (const auto & audience : settings_.audiences) {
-    pub_failure_notification_.push_back(
-      create_publisher<FailureNotificationArray>(
-        "/api/external/get/failure_notification/" + audience, rclcpp::QoS(1).transient_local()));
-  }
+  pub_failure_notification_ = create_publisher<FailureNotificationArray>(
+    "/api/external/get/failure_notification", rclcpp::QoS(1).transient_local());
 
   using std::placeholders::_1;
   sub_graph_.register_create_callback(std::bind(&FailureNotification::on_create, this, _1));
@@ -79,34 +73,24 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
     }
   }
 
-  std::vector<const Message *> messages;
+  std::vector<const Failure *> failures;
   for (const auto & notification : notifications_->list()) {
-    const auto message = notification->current_message();
-    if (message) {
-      messages.push_back(message);
+    const auto failure = notification->current_failure();
+    if (failure) {
+      failures.push_back(failure);
     }
   }
 
-  if (previous_messages_ != messages) {
-    for (size_t audiences = 0; audiences < settings_.audiences.size(); ++audiences) {
-      FailureNotificationArray msg;
-      for (const auto & message : messages) {
-        const auto & notification = message->parent();
-        FailureNotificationMsg item;
-        item.diag_path = notification->path();
-        item.diag_level = notification->current_level();
-        item.error_code = notification->error_code();
-        item.priority = notification->priority();
-        item.notification_level = notification->notification_level();
-        item.language_codes = settings_.languages;
-        item.situations = message->situations(audiences);
-        item.solutions = message->solutions(audiences);
-        msg.notifications.push_back(item);
-      }
-      msg.stamp = now();
-      pub_failure_notification_.at(audiences)->publish(msg);
+  if (previous_failures_ != failures) {
+    FailureNotificationArray msg;
+    for (const auto & failure : failures) {
+      FailureNotificationMsg item;
+      item.code = failure->code();
+      msg.notifications.push_back(item);
     }
-    previous_messages_ = messages;
+    msg.stamp = now();
+    pub_failure_notification_->publish(msg);
+    previous_failures_ = failures;
   }
 }
 
