@@ -1,15 +1,15 @@
 notifications:
   /autoware/localization/state:
-    situations:
+    failures:
       - condition: Always
         code: LOC-001
 
   /autoware/planning/routing/state:
-    situations:
+    failures:
       - condition: LocalizationState(Initialized)
-        code: PLN-001-A
+        code: PLN-001
 
   /autoware/control:
-    situations:
+    failures:
       - condition: RouteState(Set)
         code: CTL-001

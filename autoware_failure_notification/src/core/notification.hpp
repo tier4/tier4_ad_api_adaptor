@@ -41,10 +41,8 @@ public:
 
 private:
   const std::string path_;
-  std::unique_ptr<Failures> failures_;
-
   const Failure * current_failure_ = nullptr;
-  DiagLevel current_level_ = DiagStatus::OK;
+  std::unique_ptr<Failures> failures_;
 };
 
 class Notifications

@@ -34,9 +34,7 @@ Notification::Notification(const std::string & path, YAML::Node yaml) : path_(pa
 
 void Notification::update(const Context & context, DiagLevel level)
 {
-  current_level_ = level;
   current_failure_ = nullptr;
-
   if (level == DiagStatus::OK) return;
 
   for (const auto & failure : failures_->list()) {
