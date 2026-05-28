@@ -29,5 +29,5 @@
 
    ```bash
    source install/setup.bash
-   ros2 launch tier4_autoware_api_extension_launch tier4_autoware_api_extension.launch.xml api_mode:=1
+   ros2 launch tier4_autoware_api_extension_launch tier4_autoware_api_extension.launch.xml
    ```
