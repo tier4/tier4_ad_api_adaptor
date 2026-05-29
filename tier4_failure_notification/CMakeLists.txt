@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(autoware_failure_notification)
+project(tier4_failure_notification)
 
 find_package(autoware_cmake REQUIRED)
 autoware_package()

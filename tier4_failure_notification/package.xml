@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>autoware_failure_notification</name>
+  <name>tier4_failure_notification</name>
   <version>0.0.0</version>
-  <description>The autoware_failure_notification package</description>
+  <description>The tier4_failure_notification package</description>
   <maintainer email="isamu.takagi@tier4.jp">Takagi, Isamu</maintainer>
   <license>Apache License 2.0</license>
 

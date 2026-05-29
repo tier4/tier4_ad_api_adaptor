@@ -1,4 +1,4 @@
-# autoware_failure_notification
+# tier4_failure_notification
 
 ## Condition
 
