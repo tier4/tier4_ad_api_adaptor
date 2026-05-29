@@ -14,13 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import yaml
-
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSDurabilityPolicy
 from rclpy.qos import QoSProfile
 from tier4_external_api_msgs.msg import FailureNotificationArray
+import yaml
+
 
 class Message:
     def __init__(self, data):
@@ -32,7 +32,12 @@ class DisplayFailureNotification(Node):
     def __init__(self):
         super().__init__("display_failure_notification")
         qos_profile = QoSProfile(depth=1, durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
-        self.sub = self.create_subscription(FailureNotificationArray, "/api/external/get/failure_notification", self.callback, qos_profile)
+        self.sub = self.create_subscription(
+            FailureNotificationArray,
+            "/api/external/get/failure_notification",
+            self.callback,
+            qos_profile,
+        )
         self.messages = self.load_message_file()
 
     def callback(self, msg):
