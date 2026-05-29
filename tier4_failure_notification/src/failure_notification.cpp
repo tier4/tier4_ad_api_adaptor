@@ -25,7 +25,7 @@ namespace autoware::failure_notification
 FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 : Node("failure_notification", options)
 {
-  const auto path = declare_parameter<std::string>("message_file");
+  const auto path = declare_parameter<std::string>("error_file");
   notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path));
 
   // Set a non-existent pattern to ensure the first message is published.
