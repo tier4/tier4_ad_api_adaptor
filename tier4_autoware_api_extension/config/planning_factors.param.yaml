@@ -41,3 +41,5 @@
       - /planning/planning_factors/intersection_occlusion
       - /planning/planning_factors/rear_collision_checker
       - /planning/planning_factors/diffusion_planner
+      - /planning/planning_factors/modifier_obstacle_stop
+      - /planning/planning_factors/modifier_traffic_light_stop
