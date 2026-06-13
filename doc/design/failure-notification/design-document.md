@@ -29,14 +29,14 @@ ADK 側から、故障時に表示すべき文書（situation / solution）を�
 
 ### 2.1 機能要件
 
-| &nbsp;#&nbsp; | 要件 | 詳細 |
-|:---:|------|------|
-| F-1 | audience 別文書対応 | 対象システム（audience）に応じて異なる situation / solution を配信する |
-| F-2 | audience 拡張性 | audience は任意個に追加可能な設計とする。初期 audience: `mot`（車内運行者向け）/ `remote`（遠隔監視者向け）/ `developer`（開発者向け） |
-| F-3 | 多言語対応 | 最低限、日本語（ja）と英語（en）を初期サポートする。言語の追加は設定ファイルの拡張で対応可能とする |
-| F-4 | 状態条件による文言切り替え | 車両の状態に応じて、同じ diag パスでも異なる situation / solution を出力する。主に `/autoware/state`（AutowareState）を参照する。汎用的な条件指定（`state_topic` / `field` / `values`）により将来的に他のトピックも条件に追加可能 |
-| F-5 | 優先度（priority） | 対応アクションの重要度に基づく `priority`（uint32）を設定し、数値が大きいほど高優先度とする。API はこの値でソート済みの通知リストを配信する。例: 「再起動してください」側の数値を「復帰操作をしてください」より大きく設定する |
-| F-6 | 通知レベル（notification_level） | 通知の表示方式を ADK 側で `uint8` の数値として指定する（値と UI の対応は消費側との合意で定める）。消費側は数値に応じて全画面通知・スナックバー等にマッピングする |
+| &nbsp;#&nbsp; | 要件                             | 詳細                                                                                                                                                                                                                              |
+| :-----------: | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|      F-1      | audience 別文書対応              | 対象システム（audience）に応じて異なる situation / solution を配信する                                                                                                                                                            |
+|      F-2      | audience 拡張性                  | audience は任意個に追加可能な設計とする。初期 audience: `mot`（車内運行者向け）/ `remote`（遠隔監視者向け）/ `developer`（開発者向け）                                                                                            |
+|      F-3      | 多言語対応                       | 最低限、日本語（ja）と英語（en）を初期サポートする。言語の追加は設定ファイルの拡張で対応可能とする                                                                                                                                |
+|      F-4      | 状態条件による文言切り替え       | 車両の状態に応じて、同じ diag パスでも異なる situation / solution を出力する。主に `/autoware/state`（AutowareState）を参照する。汎用的な条件指定（`state_topic` / `field` / `values`）により将来的に他のトピックも条件に追加可能 |
+|      F-5      | 優先度（priority）               | 対応アクションの重要度に基づく `priority`（uint32）を設定し、数値が大きいほど高優先度とする。API はこの値でソート済みの通知リストを配信する。例: 「再起動してください」側の数値を「復帰操作をしてください」より大きく設定する     |
+|      F-6      | 通知レベル（notification_level） | 通知の表示方式を ADK 側で `uint8` の数値として指定する（値と UI の対応は消費側との合意で定める）。消費側は数値に応じて全画面通知・スナックバー等にマッピングする                                                                  |
 
 ## 3. アプローチ比較
 
@@ -89,14 +89,14 @@ ADK 内部で diag 状態 + 車両状態を突合し、解決済みの通知リ�
 
 ### 比較まとめ
 
-| 評価軸 | 案 1: JSON 配信型 | 案 2: 通知リスト型 | 案 3: 拡張診断グラフ型 |
-|--------|:-:|:-:|:-:|
-| バージョン不整合の解決 | △ | ◎ | △ |
-| 消費側の実装負荷 | × | ◎ | × |
-| 多言語・audience 拡張性 | △ | ◎ | △ |
-| 既存 API への影響 | ○ | ◎ | × |
-| 開発コスト | ◎ | ○ | ○ |
-| 帯域効率 | × | ◎ | × |
+| 評価軸                  | 案 1: JSON 配信型 | 案 2: 通知リスト型 | 案 3: 拡張診断グラフ型 |
+| ----------------------- | :---------------: | :----------------: | :--------------------: |
+| バージョン不整合の解決  |         △         |         ◎          |           △            |
+| 消費側の実装負荷        |         ×         |         ◎          |           ×            |
+| 多言語・audience 拡張性 |         △         |         ◎          |           △            |
+| 既存 API への影響       |         ○         |         ◎          |           ×            |
+| 開発コスト              |         ◎         |         ○          |           ○            |
+| 帯域効率                |         ×         |         ◎          |           ×            |
 
 **結論: 案 2（通知リスト型 API）を推奨案として採用する。**
 
@@ -110,21 +110,21 @@ ADK 内部で diag 状態 + 車両状態を突合し、解決済みの通知リ�
 
 **Subscribe するトピック:**
 
-| トピック | メッセージ型 | 用途 |
-|---------|-------------|------|
-| `/api/system/diagnostics/struct` | `DiagGraphStruct` | diag パスの取得（静的構造） |
-| `/api/system/diagnostics/status` | `DiagGraphStatus` | 各 diag ユニットの現在の状態 |
-| `/autoware/state` | `AutowareState` | 車両の統合状態（状態条件の評価に使用） |
+| トピック                         | メッセージ型      | 用途                                   |
+| -------------------------------- | ----------------- | -------------------------------------- |
+| `/api/system/diagnostics/struct` | `DiagGraphStruct` | diag パスの取得（静的構造）            |
+| `/api/system/diagnostics/status` | `DiagGraphStatus` | 各 diag ユニットの現在の状態           |
+| `/autoware/state`                | `AutowareState`   | 車両の統合状態（状態条件の評価に使用） |
 
 設定ファイルの `state_topic` / `field` / `values` による汎用条件指定を採用しているため、将来的に `/autoware/state` 以外のトピックも条件に追加可能。
 
 **Publish するトピック:**
 
-| トピック | メッセージ型 | QoS | 用途 |
-|---------|-------------|-----|------|
-| `/system/failure_notifications/mot` | `FailureNotificationArray` | best_effort | MOT 向け通知リスト |
-| `/system/failure_notifications/remote` | `FailureNotificationArray` | best_effort | 遠隔監視向け通知リスト |
-| `/system/failure_notifications/developer` | `FailureNotificationArray` | best_effort | 開発者向け通知リスト |
+| トピック                                  | メッセージ型               | QoS         | 用途                   |
+| ----------------------------------------- | -------------------------- | ----------- | ---------------------- |
+| `/system/failure_notifications/mot`       | `FailureNotificationArray` | best_effort | MOT 向け通知リスト     |
+| `/system/failure_notifications/remote`    | `FailureNotificationArray` | best_effort | 遠隔監視向け通知リスト |
+| `/system/failure_notifications/developer` | `FailureNotificationArray` | best_effort | 開発者向け通知リスト   |
 
 ノードパラメータで、実際に publish する audience を選択する（初期値は上記 3 本すべて、など運用で定める）。
 
@@ -168,7 +168,7 @@ notifications:
   "/localization/001-topic_status/initialpose":
     error_code: "LOC-00-E00-001"
     priority: 100
-    notification_level: 2  # ERROR
+    notification_level: 2 # ERROR
     conditions:
       # AutowareState = WAITING_FOR_ROUTE のとき: ルート未設定用のメッセージ
       - state_topic: "/autoware/state"
@@ -256,10 +256,10 @@ notifications:
 
 ### 4.5 配信方式
 
-| 方式 | Pros | Cons |
-|------|------|------|
-| **audience ごとに 1 トピック**（本設計） | 消費側は自 audience のトピックだけ subscribe すればよい。言語はメッセージ内の配列でまとめて受け取れる | 1 メッセージのサイズが audience 内の全言語分を含む |
-| **単一トピックに audience フィールド** | トピック本数が最少 | 全消費者が同一ストリームを受け、不要な audience をフィルタする必要がある |
+| 方式                                     | Pros                                                                                                  | Cons                                                                     |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **audience ごとに 1 トピック**（本設計） | 消費側は自 audience のトピックだけ subscribe すればよい。言語はメッセージ内の配列でまとめて受け取れる | 1 メッセージのサイズが audience 内の全言語分を含む                       |
+| **単一トピックに audience フィールド**   | トピック本数が最少                                                                                    | 全消費者が同一ストリームを受け、不要な audience をフィルタする必要がある |
 
 **採用:** **audience ごとに 1 トピック**（[4.1](#41-アーキテクチャ) の表）。言語はトピックで分けない。
 
@@ -271,11 +271,11 @@ notifications:
 
 具体例:
 
-| トピック | 用途 |
-|---------|------|
-| `/system/failure_notifications/mot` | MOT 向け（`language_codes` 等に ja / en を載せる） |
-| `/system/failure_notifications/remote` | 遠隔監視向け |
-| `/system/failure_notifications/developer` | 開発者向け |
+| トピック                                  | 用途                                               |
+| ----------------------------------------- | -------------------------------------------------- |
+| `/system/failure_notifications/mot`       | MOT 向け（`language_codes` 等に ja / en を載せる） |
+| `/system/failure_notifications/remote`    | 遠隔監視向け                                       |
+| `/system/failure_notifications/developer` | 開発者向け                                         |
 
 `FailureNotificationArray` に audience フィールドは持たない（トピック名で区別する）。ノードパラメータで publish する audience と、YAML に含める言語集合を指定する。
 
@@ -287,18 +287,18 @@ notifications:
 
 ### 5.1 現行フォーマットとの対応
 
-| 現行 mrm_messages.json | 新設定ファイル |
-|------------------------|---------------|
-| キー（diag パス） | `notifications` の第一階層キー |
-| `ERROR` / `default` ブロック | `diag_level` に応じた条件として設定可能（将来拡張） |
-| `situation` | `messages.<audience>.<lang>.situation` |
-| `solution` | `messages.<audience>.<lang>.solution` |
-| `error_code` | `error_code` |
+| 現行 mrm_messages.json           | 新設定ファイル                                          |
+| -------------------------------- | ------------------------------------------------------- |
+| キー（diag パス）                | `notifications` の第一階層キー                          |
+| `ERROR` / `default` ブロック     | `diag_level` に応じた条件として設定可能（将来拡張）     |
+| `situation`                      | `messages.<audience>.<lang>.situation`                  |
+| `solution`                       | `messages.<audience>.<lang>.solution`                   |
+| `error_code`                     | `error_code`                                            |
 | `initialization_state_condition` | `conditions` の `state_topic: "/autoware/state"` で表現 |
-| `routing_state_condition` | `conditions` の `state_topic: "/autoware/state"` で表現 |
+| `routing_state_condition`        | `conditions` の `state_topic: "/autoware/state"` で表現 |
 
 ## 変更履歴
 
-| 日付 | 概要 |
-|------|------|
+| 日付       | 概要                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 2026-05-11 | 通知リスト型 API の詳細を更新。配信は audience ごと 1 トピック（言語はトピックで分離しない）、`FailureNotification` は `language_codes` / `situations` / `solutions` の平行配列（B'）、`priority` は大きいほど高優先・配列は降順ソート、F-5 / F-6 および 4.1〜4.2・4.5 の整合、`proposed_architecture` 図の更新。根拠議事録: [2026-04-01 MRM message.json API meeting](https://tier4.atlassian.net/wiki/spaces/AIP/pages/5080352231/2026-04-01+MRM_message.json+API+meeting)（Atlassian Confluence。アクセスにはログインが必要な場合あり） |
