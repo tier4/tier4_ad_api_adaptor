@@ -89,6 +89,9 @@ std::pair<size_t, Expression> parse_token(const std::vector<std::string> & token
 Expression Expression::parse(const std::string & str)
 {
   const auto tokens = tokenize(str);
+  if (tokens.empty()) {
+    throw std::runtime_error("empty expression");
+  }
   const auto result = parse_token(tokens, 0);
   if (tokens.size() != result.first) {
     throw std::runtime_error("extra tokens");
