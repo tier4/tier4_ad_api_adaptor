@@ -17,6 +17,7 @@
 #include <rclcpp/logging.hpp>
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 namespace autoware::failure_notification

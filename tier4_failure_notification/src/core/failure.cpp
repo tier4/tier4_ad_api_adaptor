@@ -16,6 +16,7 @@
 
 #include "notification.hpp"
 
+#include <stdexcept>
 #include <string>
 
 namespace autoware::failure_notification
@@ -25,6 +26,8 @@ Failure::Failure(const Notification * parent, const YAML::Node yaml) : parent_(p
 {
   if (const auto node = yaml["condition"]) {
     condition_ = Condition::parse(node.as<std::string>());
+  } else {
+    throw std::runtime_error("condition field is required in " + parent->path());
   }
 
   if (const auto node = yaml["code"]) {

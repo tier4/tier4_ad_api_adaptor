@@ -14,6 +14,7 @@
 
 #include "expression.hpp"
 
+#include <cctype>
 #include <stdexcept>
 #include <string>
 #include <utility>
