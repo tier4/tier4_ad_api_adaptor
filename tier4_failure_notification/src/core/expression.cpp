@@ -35,8 +35,8 @@ std::vector<std::string> tokenize(const std::string & str)
     }
   };
 
-  for (const char ch : str) {
-    if (std::isalnum(ch)) {
+  for (const auto ch : str) {
+    if (std::isalnum(static_cast<unsigned char>(ch))) {
       token += ch;
     } else if (ch == ' ') {
       flush_token();
