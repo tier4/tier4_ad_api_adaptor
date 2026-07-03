@@ -105,14 +105,38 @@
 
 ## インターフェース
 
+### /api/external/set/operation/mode
+
+```txt
+# SetOperationMode.srv
+
+uint8 STOP=1
+uint8 LV2=2
+uint8 LV4=3
+
+uint8 mode
+---
+ResponseStatus status
+```
+
+### /api/external/set/operation/available
+
+```txt
+# OperationAvailable.msg
+
+builtin_interfaces/Time stamp
+bool lv2
+bool lv4
+```
+
 ### /api/external/set/monitoring/supervisor/heartbeat
 
 ```txt
 # SupervisorHeartbeat.msg
 
 uint8 UNAVAILABLE
-uint8 INTERVENING
-uint8 MONITORING
+uint8 AVAILABLE
+uint8 EXCLUSIVE
 
 builtin_interfaces/Time stamp
 uint8 id
