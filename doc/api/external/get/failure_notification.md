@@ -1,4 +1,4 @@
-# /api/external/get/failure_notification/audience
+# /api/external/get/failure_notification
 
 ## Classification
 
