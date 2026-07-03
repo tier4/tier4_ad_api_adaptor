@@ -110,21 +110,33 @@
 ```txt
 # SetOperationMode.srv
 
-uint8 STOP=1
-uint8 LV2=2
-uint8 LV4=3
-
-uint8 mode
+OperationLevel level
 ---
 ResponseStatus status
 ```
 
-### /api/external/set/operation/available
+```txt
+# OperationLevel.msg
+
+uint8 STOP=1
+uint8 LV2=2
+uint8 LV4=3
+
+uint8 id
+```
+
+### /api/external/set/operation/status
+
+```txt
+# OperationStatus.msg
+
+builtin_interfaces/Time stamp
+OperationLevel level
+OperationAvailable available
+```
 
 ```txt
 # OperationAvailable.msg
-
-builtin_interfaces/Time stamp
 bool lv2
 bool lv4
 ```
