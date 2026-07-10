@@ -1,56 +1,33 @@
 # tier4_failure_notification
 
-## Condition
+このパッケージは autoware_diagnostic_graph_aggregator が出力する診断グラフを監視し、
+各診断ユニットのエラーレベルがOKではない場合に関連付けられたエラーコードを出力します。
 
-### Always
+## エラーコード定義
 
-常にTrueとなります。
+以下のようなYAMLファイルを用意し、Launch fileの `error_file` 引数にファイルのパスを指定します。
+該当する診断ユニットのエラーレベルがOKではない場合、`failures` に指定したリストを順に確認し、
+最初に `condition` で指定した条件の成立したエラーコードを採用します。
+[条件の記法についてはこちらを確認してください。](./doc/conditions.md)
 
-使用例
+```yaml
+notifications:
+  /autoware/control:
+    failures:
+      - condition: Always
+        code: CTL-001
 
-```txt
-Always
-```
+  /autoware/localization:
+    failures:
+      - condition: LocalizationState(Initialized)
+        code: LOC-001
 
-### Not
-
-指定した式の真偽を反転させます。引数にはconditionとして解釈できる単一の式を指定してください。
-
-使用例
-
-```txt
-Not(LocalizationState(Initialized))
-Not(RouteState(Set, Arrived))
-```
-
-### LocalizationState
-
-APIの`/api/localization/initialization_state`が指定した値のいずれかになった場合にTrueとなります。指定できる値は以下の通りです。ステートが未受信の場合はUnknownとして扱われます。
-
-- Unknown
-- Uninitialized
-- Initializing
-- Initialized
-
-使用例
-
-```txt
-LocalizationState(Uninitialized, Initializing)
-LocalizationState(Initialized)
-```
-
-### RouteState
-
-APIの`/api/routing/state`が指定した値のいずれかになった場合にTrueとなります。指定できる値は以下の通りです。ステートが未受信の場合はUnknownとして扱われます。
-
-- Unknown
-- Unset
-- Set
-- Arrived
-
-使用例
-
-```txt
-RouteState(Unset)
-RouteState(Set, Arrived)
+  /autoware/planning:
+    failures:
+      - condition: RouteState(Set)
+        code: PLN-001
+      - condition: RouteState(Unset)
+        code: PLN-002
+      - condition: Always
+        code: PLN-003
 ```

@@ -1,10 +1,8 @@
 <launch>
-  <arg name="error_file" default="$(find-pkg-share tier4_failure_notification)/example/error.yaml"/>
-  <arg name="param_file" default="$(find-pkg-share tier4_failure_notification)/config/failure_notification.param.yaml"/>
+  <arg name="error_file"/>
 
   <node pkg="tier4_failure_notification" exec="failure_notification_node" name="failure_notification">
     <param name="error_file" value="$(var error_file)"/>
-    <param from="$(var param_file)"/>
     <remap from="~/diagnostics_graph" to="/diagnostics_graph"/>
   </node>
 </launch>

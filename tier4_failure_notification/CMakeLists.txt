@@ -18,9 +18,4 @@ rclcpp_components_register_node(${PROJECT_NAME}
   EXECUTABLE failure_notification_node
 )
 
-install(PROGRAMS
-  script/display_failure_notification.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-ament_auto_package(INSTALL_TO_SHARE config launch example)
+ament_auto_package(INSTALL_TO_SHARE launch)
