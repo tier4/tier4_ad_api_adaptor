@@ -1,0 +1,8 @@
+<launch>
+  <arg name="error_file"/>
+
+  <node pkg="tier4_failure_notification" exec="failure_notification_node" name="failure_notification">
+    <param name="error_file" value="$(var error_file)"/>
+    <remap from="~/diagnostics_graph" to="/diagnostics_graph"/>
+  </node>
+</launch>
