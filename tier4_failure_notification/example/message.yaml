@@ -1,17 +1,17 @@
 LOC-001:
   priority: 30
   text:
-    ja: "自己位置を初期化中です。初期化処理が終わるまでお待ちください。"
-    en: "Initializing the vehicle pose. Please wait until the initialization process is complete."
+    ja: 自己位置を初期化中です。初期化処理が終わるまでお待ちください。
+    en: Initializing the vehicle pose. Please wait until the initialization process is complete.
 
 PLN-001:
   priority: 20
   text:
-    ja: "ルートが設定されていません。新しいルートを設定してください。"
-    en: "No route is set. Please set a new route."
+    ja: ルートが設定されていません。新しいルートを設定してください。
+    en: No route is set. Please set a new route.
 
 CTL-001:
   priority: 10
   text:
-    ja: "コントロールモジュールに異常があります。サポートに連絡してください。"
-    en: "There is an abnormality in the control module. Please contact support."
+    ja: コントロールモジュールに異常があります。サポートに連絡してください。
+    en: There is an abnormality in the control module. Please contact support.
