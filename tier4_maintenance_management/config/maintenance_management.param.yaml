@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    path: maintenance_state_store.json
+    operation_mode_check_duration: 3.0
