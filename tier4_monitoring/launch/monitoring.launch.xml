@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="tier4_monitoring" exec="monitoring_node"/>
+</launch>
