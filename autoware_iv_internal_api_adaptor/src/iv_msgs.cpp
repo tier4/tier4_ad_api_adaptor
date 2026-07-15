@@ -22,11 +22,14 @@ IVMsgs::IVMsgs(const rclcpp::NodeOptions & options) : Node("external_api_iv_msgs
 {
   using std::placeholders::_1;
 
-  pub_state_ = create_publisher<AutowareStateOutput>("/api/iv_msgs/autoware/state", rclcpp::QoS(1));
-  sub_state_ = create_subscription<AutowareStateInput>(
-    "/autoware/state", rclcpp::QoS(1), std::bind(&IVMsgs::onState, this, _1));
-  sub_emergency_ = create_subscription<EmergencyStateInput>(
-    "/system/fail_safe/mrm_state", rclcpp::QoS(1), std::bind(&IVMsgs::onEmergency, this, _1));
+  if (declare_parameter<bool>("launch_api_0_4_3")) {
+    pub_state_ =
+      create_publisher<AutowareStateOutput>("/api/iv_msgs/autoware/state", rclcpp::QoS(1));
+    sub_state_ = create_subscription<AutowareStateInput>(
+      "/autoware/state", rclcpp::QoS(1), std::bind(&IVMsgs::onState, this, _1));
+    sub_emergency_ = create_subscription<EmergencyStateInput>(
+      "/system/fail_safe/mrm_state", rclcpp::QoS(1), std::bind(&IVMsgs::onEmergency, this, _1));
+  }
 
   pub_trajectory_ = create_publisher<TrajectoryOutput>(
     "/api/iv_msgs/planning/scenario_planning/trajectory", rclcpp::QoS(1));

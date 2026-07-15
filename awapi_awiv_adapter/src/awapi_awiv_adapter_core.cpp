@@ -37,7 +37,6 @@ AutowareIvAdapter::AutowareIvAdapter()
       declare_parameter("param/emergency_stop", ""));
     emergencyParamCheck(em_stop_param);
   }
-  const auto api_mode = declare_parameter<int>("api_mode");
 
   // setup instance
   vehicle_state_publisher_ = std::make_unique<AutowareIvVehicleStatePublisher>(*this);
@@ -49,12 +48,9 @@ AutowareIvAdapter::AutowareIvAdapter()
   v2x_aggregator_ = std::make_unique<AutowareIvV2XAggregator>(*this);
   max_velocity_publisher_ =
     std::make_unique<AutowareIvMaxVelocityPublisher>(*this, default_max_velocity);
-
-  if (api_mode < 1) {
-    lane_change_state_publisher_ = std::make_unique<AutowareIvLaneChangeStatePublisher>(*this);
-    obstacle_avoidance_state_publisher_ =
-      std::make_unique<AutowareIvObstacleAvoidanceStatePublisher>(*this);
-  }
+  lane_change_state_publisher_ = std::make_unique<AutowareIvLaneChangeStatePublisher>(*this);
+  obstacle_avoidance_state_publisher_ =
+    std::make_unique<AutowareIvObstacleAvoidanceStatePublisher>(*this);
 
   // publisher
   pub_v2x_command_ = this->create_publisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>(
@@ -127,13 +123,10 @@ AutowareIvAdapter::AutowareIvAdapter()
   sub_autoware_traj_ = this->create_subscription<autoware_planning_msgs::msg::Trajectory>(
     "input/autoware_trajectory", 1,
     std::bind(&AutowareIvAdapter::callbackAutowareTrajectory, this, _1));
-
-  if (api_mode < 1) {
-    sub_temporary_stop_ = this->create_subscription<tier4_api_msgs::msg::StopCommand>(
-      "input/temporary_stop", 1, std::bind(&AutowareIvAdapter::callbackTemporaryStop, this, _1));
-    sub_max_velocity_ = this->create_subscription<tier4_api_msgs::msg::VelocityLimit>(
-      "input/max_velocity", 1, std::bind(&AutowareIvAdapter::callbackMaxVelocity, this, _1));
-  }
+  sub_temporary_stop_ = this->create_subscription<tier4_api_msgs::msg::StopCommand>(
+    "input/temporary_stop", 1, std::bind(&AutowareIvAdapter::callbackTemporaryStop, this, _1));
+  sub_max_velocity_ = this->create_subscription<tier4_api_msgs::msg::VelocityLimit>(
+    "input/max_velocity", 1, std::bind(&AutowareIvAdapter::callbackMaxVelocity, this, _1));
 
   // timer
   auto timer_callback = std::bind(&AutowareIvAdapter::timerCallback, this);
