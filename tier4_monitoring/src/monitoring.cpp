@@ -26,7 +26,7 @@ Monitoring::Monitoring(const rclcpp::NodeOptions & options) : Node("monitoring",
   sub_heartbeat_ = create_subscription<MonitoringHeartbeat>(
     "~/heartbeat", rclcpp::QoS(1), std::bind(&Monitoring::on_heartbeat, this, _1));
   srv_change_monitoring_mode_ = create_service<ChangeMonitoringMode>(
-    "~/change_monitoring_mode", std::bind(&Monitoring::on_change_monitoring_mode, this, _1, _2));
+    "~/change", std::bind(&Monitoring::on_change_monitoring_mode, this, _1, _2));
 }
 
 void Monitoring::on_heartbeat(const MonitoringHeartbeat::SharedPtr msg)
