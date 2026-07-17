@@ -14,32 +14,18 @@
 
 #include "monitoring.hpp"
 
+#include <memory>
+
 namespace tier4_monitoring
 {
 
 Monitoring::Monitoring(const rclcpp::NodeOptions & options) : Node("monitoring", options)
 {
-  using std::placeholders::_1;
-  using std::placeholders::_2;
-
-  pub_status_ = create_publisher<MonitoringStatus>("~/status", rclcpp::QoS(1));
-  sub_heartbeat_ = create_subscription<MonitoringHeartbeat>(
-    "~/heartbeat", rclcpp::QoS(1), std::bind(&Monitoring::on_heartbeat, this, _1));
-  srv_change_monitoring_mode_ = create_service<ChangeMonitoringMode>(
-    "~/change", std::bind(&Monitoring::on_change_monitoring_mode, this, _1, _2));
-}
-
-void Monitoring::on_heartbeat(const MonitoringHeartbeat::SharedPtr msg)
-{
-  (void)msg;
-}
-
-void Monitoring::on_change_monitoring_mode(
-  const ChangeMonitoringMode::Request::SharedPtr req,
-  const ChangeMonitoringMode::Response::SharedPtr res)
-{
-  (void)req;
-  res->status.code = ResponseStatus::SUCCESS;
+  supervisors_.push_back(std::make_unique<Operator>(*this, "supervisor/driver"));
+  supervisors_.push_back(std::make_unique<Operator>(*this, "supervisor/mot"));
+  supervisors_.push_back(std::make_unique<Operator>(*this, "supervisor/fms"));
+  advisors_.push_back(std::make_unique<Operator>(*this, "advisor/mot"));
+  advisors_.push_back(std::make_unique<Operator>(*this, "advisor/fms"));
 }
 
 }  // namespace tier4_monitoring
