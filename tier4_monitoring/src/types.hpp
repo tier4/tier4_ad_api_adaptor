@@ -12,32 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef MONITORING_HPP_
-#define MONITORING_HPP_
-
-#include "operator.hpp"
-
-#include <rclcpp/rclcpp.hpp>
-
-#include <memory>
-#include <vector>
+#ifndef TYPES_HPP_
+#define TYPES_HPP_
 
 namespace tier4_monitoring
 {
 
-class Monitoring : public rclcpp::Node
-{
-public:
-  explicit Monitoring(const rclcpp::NodeOptions & options);
-
-private:
-  void on_timer();
-
-  rclcpp::TimerBase::SharedPtr timer_;
-  std::vector<std::unique_ptr<Operator>> supervisors_;
-  std::vector<std::unique_ptr<Operator>> advisors_;
+enum class OperatorState {
+  kUnknown,
+  kTimeout,
+  kUnavailable,
+  kAvailable,
+  kOperating,
 };
 
 }  // namespace tier4_monitoring
 
-#endif  // MONITORING_HPP_
+#endif  // TYPES_HPP_

@@ -26,6 +26,22 @@ Monitoring::Monitoring(const rclcpp::NodeOptions & options) : Node("monitoring",
   supervisors_.push_back(std::make_unique<Operator>(*this, "supervisor/fms"));
   advisors_.push_back(std::make_unique<Operator>(*this, "advisor/mot"));
   advisors_.push_back(std::make_unique<Operator>(*this, "advisor/fms"));
+
+  const auto period = rclcpp::Rate(10.0).period();
+  timer_ = rclcpp::create_timer(this, get_clock(), period, [this]() { on_timer(); });
+}
+
+void Monitoring::on_timer()
+{
+  const auto stamp = now();
+  for (const auto & supervisor : supervisors_) {
+    supervisor->update(stamp);
+    supervisor->publish(stamp, false);
+  }
+  for (const auto & advisor : advisors_) {
+    advisor->update(stamp);
+    advisor->publish(stamp, false);
+  }
 }
 
 }  // namespace tier4_monitoring

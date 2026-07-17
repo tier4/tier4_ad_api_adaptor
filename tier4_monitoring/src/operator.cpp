@@ -14,6 +14,8 @@
 
 #include "operator.hpp"
 
+#include "message.hpp"
+
 #include <string>
 
 namespace tier4_monitoring
@@ -29,11 +31,34 @@ Operator::Operator(rclcpp::Node & node, const std::string & ns)
     ns + "/heartbeat", rclcpp::QoS(1), std::bind(&Operator::on_heartbeat, this, _1));
   srv_change_ = node.create_service<ChangeMonitoringMode>(
     ns + "/change", std::bind(&Operator::on_change, this, _1, _2));
+
+  stamp_ = std::nullopt;
+  state_ = OperatorState::kUnknown;
+}
+
+void Operator::update(rclcpp::Time now)
+{
+  constexpr double timeout = 1.0;
+  if (stamp_) {
+    if ((now - stamp_.value()).seconds() > timeout) {
+      stamp_ = std::nullopt;
+      state_ = OperatorState::kTimeout;
+    }
+  }
+}
+
+void Operator::publish(rclcpp::Time now, bool operating)
+{
+  MonitoringStatus msg;
+  msg.stamp = now;
+  msg.operating = operating;
+  msg.mode = to_msg(state_);
+  pub_status_->publish(msg);
 }
 
 void Operator::on_heartbeat(const MonitoringHeartbeat::SharedPtr msg)
 {
-  (void)msg;
+  stamp_ = msg->stamp;
 }
 
 void Operator::on_change(

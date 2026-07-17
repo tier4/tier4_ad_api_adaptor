@@ -15,12 +15,15 @@
 #ifndef OPERATOR_HPP_
 #define OPERATOR_HPP_
 
+#include "types.hpp"
+
 #include <rclcpp/rclcpp.hpp>
 
 #include <tier4_external_api_msgs/msg/monitoring_heartbeat.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_status.hpp>
 #include <tier4_external_api_msgs/srv/change_monitoring_mode.hpp>
 
+#include <optional>
 #include <string>
 
 namespace tier4_monitoring
@@ -30,6 +33,8 @@ class Operator
 {
 public:
   Operator(rclcpp::Node & node, const std::string & ns);
+  void update(rclcpp::Time now);
+  void publish(rclcpp::Time now, bool operating);
 
 private:
   using MonitoringStatus = tier4_external_api_msgs::msg::MonitoringStatus;
@@ -45,6 +50,9 @@ private:
   void on_change(
     const ChangeMonitoringMode::Request::SharedPtr req,
     const ChangeMonitoringMode::Response::SharedPtr res);
+
+  OperatorState state_;
+  std::optional<rclcpp::Time> stamp_;
 };
 
 }  // namespace tier4_monitoring

@@ -12,32 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef MONITORING_HPP_
-#define MONITORING_HPP_
+#ifndef MESSAGE_HPP_
+#define MESSAGE_HPP_
 
-#include "operator.hpp"
+#include "types.hpp"
 
-#include <rclcpp/rclcpp.hpp>
-
-#include <memory>
-#include <vector>
+#include <tier4_external_api_msgs/msg/monitoring_mode.hpp>
 
 namespace tier4_monitoring
 {
 
-class Monitoring : public rclcpp::Node
-{
-public:
-  explicit Monitoring(const rclcpp::NodeOptions & options);
+using tier4_external_api_msgs::msg::MonitoringMode;
 
-private:
-  void on_timer();
-
-  rclcpp::TimerBase::SharedPtr timer_;
-  std::vector<std::unique_ptr<Operator>> supervisors_;
-  std::vector<std::unique_ptr<Operator>> advisors_;
-};
+MonitoringMode to_msg(const OperatorState & state);
+OperatorState from_msg(const MonitoringMode & msg);
 
 }  // namespace tier4_monitoring
 
-#endif  // MONITORING_HPP_
+#endif  // MESSAGE_HPP_
