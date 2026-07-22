@@ -38,12 +38,14 @@ Operator::Operator(rclcpp::Node & node, const std::string & ns)
 
 void Operator::update(rclcpp::Time now)
 {
-  constexpr double timeout = 1.0;
-  if (stamp_) {
-    if ((now - stamp_.value()).seconds() > timeout) {
-      stamp_ = std::nullopt;
-      mode_ = OperatorMode::kTimeout;
-    }
+  const auto is_timeout = [this, now]() {
+    constexpr double timeout = 1.0;
+    if (!stamp_) return true;
+    return timeout < (now - stamp_.value()).seconds();
+  };
+  if (is_timeout()) {
+    stamp_ = std::nullopt;
+    mode_ = OperatorMode::kTimeout;
   }
 }
 
