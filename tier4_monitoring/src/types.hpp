@@ -18,7 +18,7 @@
 namespace tier4_monitoring
 {
 
-enum class OperatorState {
+enum class OperatorMode {
   kUnknown,
   kTimeout,
   kUnavailable,

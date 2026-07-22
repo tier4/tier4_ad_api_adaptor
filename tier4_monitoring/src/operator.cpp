@@ -33,7 +33,7 @@ Operator::Operator(rclcpp::Node & node, const std::string & ns)
     ns + "/change", std::bind(&Operator::on_change, this, _1, _2));
 
   stamp_ = std::nullopt;
-  state_ = OperatorState::kUnknown;
+  mode_ = OperatorMode::kUnknown;
 }
 
 void Operator::update(rclcpp::Time now)
@@ -42,7 +42,7 @@ void Operator::update(rclcpp::Time now)
   if (stamp_) {
     if ((now - stamp_.value()).seconds() > timeout) {
       stamp_ = std::nullopt;
-      state_ = OperatorState::kTimeout;
+      mode_ = OperatorMode::kTimeout;
     }
   }
 }
@@ -52,7 +52,7 @@ void Operator::publish(rclcpp::Time now, bool operating)
   MonitoringStatus msg;
   msg.stamp = now;
   msg.operating = operating;
-  msg.mode = to_msg(state_);
+  msg.mode = to_msg(mode_);
   pub_status_->publish(msg);
 }
 
@@ -65,7 +65,13 @@ void Operator::on_change(
   const ChangeMonitoringMode::Request::SharedPtr req,
   const ChangeMonitoringMode::Response::SharedPtr res)
 {
-  (void)req;
+  const auto mode = from_msg(req->mode);
+  if (mode == OperatorMode::kUnknown) {
+    res->status.code = ResponseStatus::ERROR;
+    res->status.message = "unknown mode";
+    return;
+  }
+  mode_ = mode;
   res->status.code = ResponseStatus::SUCCESS;
 }
 

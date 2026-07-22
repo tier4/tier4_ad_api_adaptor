@@ -51,7 +51,7 @@ private:
     const ChangeMonitoringMode::Request::SharedPtr req,
     const ChangeMonitoringMode::Response::SharedPtr res);
 
-  OperatorState state_;
+  OperatorMode mode_;
   std::optional<rclcpp::Time> stamp_;
 };
 

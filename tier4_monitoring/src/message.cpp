@@ -17,40 +17,34 @@
 namespace tier4_monitoring
 {
 
-MonitoringMode to_msg(const OperatorState & state)
+using tier4_external_api_msgs::msg::MonitoringMode;
+
+uint8_t to_msg(const OperatorMode & mode)
 {
-  const auto convert = [](const OperatorState & state) {
-    // clang-format off
-    switch (state) {
-      case OperatorState::kUnknown:     return MonitoringMode::UNKNOWN;
-      case OperatorState::kTimeout:     return MonitoringMode::TIMEOUT;
-      case OperatorState::kUnavailable: return MonitoringMode::UNAVAILABLE;
-      case OperatorState::kAvailable:   return MonitoringMode::AVAILABLE;
-      case OperatorState::kOperating:   return MonitoringMode::OPERATING;
-      default:                          return MonitoringMode::UNKNOWN;
-    }
-    // clang-format on
-  };
-  MonitoringMode msg;
-  msg.mode = convert(state);
-  return msg;
+  // clang-format off
+  switch (mode) {
+    case OperatorMode::kUnknown:     return MonitoringMode::UNKNOWN;
+    case OperatorMode::kTimeout:     return MonitoringMode::TIMEOUT;
+    case OperatorMode::kUnavailable: return MonitoringMode::UNAVAILABLE;
+    case OperatorMode::kAvailable:   return MonitoringMode::AVAILABLE;
+    case OperatorMode::kOperating:   return MonitoringMode::OPERATING;
+    default:                         return MonitoringMode::UNKNOWN;
+  }
+  // clang-format on
 }
 
-OperatorState from_msg(const MonitoringMode & msg)
+OperatorMode from_msg(const uint8_t & mode)
 {
-  const auto convert = [](const MonitoringMode & msg) {
-    // clang-format off
-    switch (msg.mode) {
-      case MonitoringMode::UNKNOWN:     return OperatorState::kUnknown;
-      case MonitoringMode::TIMEOUT:     return OperatorState::kTimeout;
-      case MonitoringMode::UNAVAILABLE: return OperatorState::kUnavailable;
-      case MonitoringMode::AVAILABLE:   return OperatorState::kAvailable;
-      case MonitoringMode::OPERATING:   return OperatorState::kOperating;
-      default:                          return OperatorState::kUnknown;
-    }
-    // clang-format on
-  };
-  return convert(msg);
+  // clang-format off
+  switch (mode) {
+    case MonitoringMode::UNKNOWN:     return OperatorMode::kUnknown;
+    case MonitoringMode::TIMEOUT:     return OperatorMode::kTimeout;
+    case MonitoringMode::UNAVAILABLE: return OperatorMode::kUnavailable;
+    case MonitoringMode::AVAILABLE:   return OperatorMode::kAvailable;
+    case MonitoringMode::OPERATING:   return OperatorMode::kOperating;
+    default:                          return OperatorMode::kUnknown;
+  }
+  // clang-format on
 }
 
 }  // namespace tier4_monitoring

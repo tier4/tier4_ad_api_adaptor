@@ -22,10 +22,8 @@
 namespace tier4_monitoring
 {
 
-using tier4_external_api_msgs::msg::MonitoringMode;
-
-MonitoringMode to_msg(const OperatorState & state);
-OperatorState from_msg(const MonitoringMode & msg);
+uint8_t to_msg(const OperatorMode & mode);
+OperatorMode from_msg(const uint8_t & mode);
 
 }  // namespace tier4_monitoring
 
