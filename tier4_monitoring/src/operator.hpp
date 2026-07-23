@@ -25,6 +25,7 @@
 
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace tier4_monitoring
 {
@@ -35,6 +36,7 @@ public:
   Operator(rclcpp::Node & node, const std::string & ns);
   void update(rclcpp::Time now);
   void publish(rclcpp::Time now, bool operating);
+  OperatorMode mode() const;
 
 private:
   using MonitoringStatus = tier4_external_api_msgs::msg::MonitoringStatus;
@@ -53,6 +55,20 @@ private:
 
   OperatorMode mode_;
   std::optional<rclcpp::Time> stamp_;
+};
+
+class OperatorGroup
+{
+public:
+  explicit OperatorGroup(const std::string & ns);
+  void create(rclcpp::Node & node, const std::string & name);
+  void update(rclcpp::Time now);
+  void publish(rclcpp::Time now);
+
+private:
+  const std::string ns_;
+  Operator * operating;
+  std::vector<std::unique_ptr<Operator>> operators_;
 };
 
 }  // namespace tier4_monitoring

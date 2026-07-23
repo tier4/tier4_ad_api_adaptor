@@ -34,8 +34,8 @@ private:
   void on_timer();
 
   rclcpp::TimerBase::SharedPtr timer_;
-  std::vector<std::unique_ptr<Operator>> supervisors_;
-  std::vector<std::unique_ptr<Operator>> advisors_;
+  OperatorGroup supervisors_;
+  OperatorGroup advisors_;
 };
 
 }  // namespace tier4_monitoring

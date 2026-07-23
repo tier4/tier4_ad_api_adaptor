@@ -15,17 +15,19 @@
 #include "monitoring.hpp"
 
 #include <memory>
+#include <vector>
 
 namespace tier4_monitoring
 {
 
-Monitoring::Monitoring(const rclcpp::NodeOptions & options) : Node("monitoring", options)
+Monitoring::Monitoring(const rclcpp::NodeOptions & options)
+: Node("monitoring", options), supervisors_("supervisor"), advisors_("advisor")
 {
-  supervisors_.push_back(std::make_unique<Operator>(*this, "supervisor/driver"));
-  supervisors_.push_back(std::make_unique<Operator>(*this, "supervisor/mot"));
-  supervisors_.push_back(std::make_unique<Operator>(*this, "supervisor/fms"));
-  advisors_.push_back(std::make_unique<Operator>(*this, "advisor/mot"));
-  advisors_.push_back(std::make_unique<Operator>(*this, "advisor/fms"));
+  supervisors_.create(*this, "driver");
+  supervisors_.create(*this, "mot");
+  supervisors_.create(*this, "fms");
+  advisors_.create(*this, "mot");
+  advisors_.create(*this, "fms");
 
   const auto period = rclcpp::Rate(10.0).period();
   timer_ = rclcpp::create_timer(this, get_clock(), period, [this]() { on_timer(); });
@@ -34,14 +36,12 @@ Monitoring::Monitoring(const rclcpp::NodeOptions & options) : Node("monitoring",
 void Monitoring::on_timer()
 {
   const auto stamp = now();
-  for (const auto & supervisor : supervisors_) {
-    supervisor->update(stamp);
-    supervisor->publish(stamp, false);
-  }
-  for (const auto & advisor : advisors_) {
-    advisor->update(stamp);
-    advisor->publish(stamp, false);
-  }
+
+  supervisors_.update(stamp);
+  advisors_.update(stamp);
+
+  supervisors_.publish(stamp);
+  advisors_.publish(stamp);
 }
 
 }  // namespace tier4_monitoring

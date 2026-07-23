@@ -58,6 +58,11 @@ void Operator::publish(rclcpp::Time now, bool operating)
   pub_status_->publish(msg);
 }
 
+OperatorMode Operator::mode() const
+{
+  return mode_;
+}
+
 void Operator::on_heartbeat(const MonitoringHeartbeat::SharedPtr msg)
 {
   stamp_ = msg->stamp;
@@ -75,6 +80,39 @@ void Operator::on_change(
   }
   mode_ = mode;
   res->status.code = ResponseStatus::SUCCESS;
+}
+
+OperatorGroup::OperatorGroup(const std::string & ns) : ns_(ns)
+{
+  operating = nullptr;
+}
+
+void OperatorGroup::create(rclcpp::Node & node, const std::string & name)
+{
+  operators_.push_back(std::make_unique<Operator>(node, ns_ + "/" + name));
+}
+
+void OperatorGroup::update(rclcpp::Time now)
+{
+  operating = nullptr;
+
+  for (const auto & operator_ : operators_) {
+    operator_->update(now);
+  }
+
+  for (const auto & operator_ : operators_) {
+    if (operator_->mode() == OperatorMode::kOperating) {
+      operating = operator_.get();
+      break;
+    }
+  }
+}
+
+void OperatorGroup::publish(rclcpp::Time now)
+{
+  for (const auto & operator_ : operators_) {
+    operator_->publish(now, operating == operator_.get());
+  }
 }
 
 }  // namespace tier4_monitoring

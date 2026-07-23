@@ -15,4 +15,9 @@ rclcpp_components_register_node(${PROJECT_NAME}
   EXECUTABLE monitoring_node
 )
 
+install(PROGRAMS
+  script/debug.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_auto_package(INSTALL_TO_SHARE config launch)
