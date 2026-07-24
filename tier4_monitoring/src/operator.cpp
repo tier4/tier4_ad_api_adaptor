@@ -25,12 +25,14 @@ Operator::Operator(rclcpp::Node & node, const std::string & ns)
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
+  const auto ns_set = "/api/external/set/monitoring/" + ns;
+  const auto ns_get = "/api/external/get/monitoring/" + ns;
 
-  pub_status_ = node.create_publisher<MonitoringStatus>(ns + "/status", rclcpp::QoS(1));
+  pub_status_ = node.create_publisher<MonitoringStatus>(ns_get + "/status", rclcpp::QoS(1));
   sub_heartbeat_ = node.create_subscription<MonitoringHeartbeat>(
-    ns + "/heartbeat", rclcpp::QoS(1), std::bind(&Operator::on_heartbeat, this, _1));
+    ns_set + "/heartbeat", rclcpp::QoS(1), std::bind(&Operator::on_heartbeat, this, _1));
   srv_change_ = node.create_service<ChangeMonitoringStatus>(
-    ns + "/change", std::bind(&Operator::on_change, this, _1, _2));
+    ns_set + "/change", std::bind(&Operator::on_change, this, _1, _2));
 
   stamp_ = std::nullopt;
   mode_ = OperatorStatus::kUnknown;
@@ -69,7 +71,7 @@ void Operator::on_change(
   const auto mode = from_monitoring_status(req->status);
   if (mode == OperatorStatus::kUnknown) {
     res->status.code = ResponseStatus::ERROR;
-    res->status.message = "unknown mode";
+    res->status.message = "unknown status";
     return;
   }
   mode_ = mode;

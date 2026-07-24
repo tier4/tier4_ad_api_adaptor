@@ -1,5 +1,16 @@
 # Monitoring API
 
+## インターフェース
+
+- [走行状態通知](../api/driving-status.md)
+- [走行状態変更](../api/driving-enable.md)
+- [監視オペレーター状態通知](../api/supervisor-status.md)
+- [監視オペレーター状態変更](../api/supervisor-change.md)
+- [監視オペレーター途絶検知](../api/supervisor-heartbeat.md)
+- [助言オペレーター状態通知](../api/advisor-status.md)
+- [助言オペレーター状態変更](../api/advisor-change.md)
+- [助言オペレーター途絶検知](../api/advisor-heartbeat.md)
+
 ## オペレーター種別
 
 ### 介入オペレーター
@@ -95,93 +106,6 @@
 - 介入責任者に選ばれていない場合、介入実施状態になってはいけない。
 - 対応責任者に選ばれていない場合、対応実施状態になってはいけない。
 
-## 全体図(3層)
+## 全体図
 
-![3-layer](./3-layer.drawio.svg)
-
-## 全体図(2層)
-
-![2-layer](./2-layer.drawio.svg)
-
-## インターフェース
-
-### /api/external/set/operation/mode
-
-```txt
-# SetOperationMode.srv
-
-OperationLevel level
----
-ResponseStatus status
-```
-
-```txt
-# OperationLevel.msg
-
-uint8 STOP=1
-uint8 LV2=2
-uint8 LV4=3
-
-uint8 id
-```
-
-### /api/external/set/operation/status
-
-```txt
-# OperationStatus.msg
-
-builtin_interfaces/Time stamp
-OperationLevel level
-OperationAvailable available
-```
-
-```txt
-# OperationAvailable.msg
-bool lv2
-bool lv4
-```
-
-### /api/external/set/monitoring/supervisor/heartbeat
-
-```txt
-# SupervisorHeartbeat.msg
-
-uint8 UNAVAILABLE
-uint8 AVAILABLE
-uint8 EXCLUSIVE
-
-builtin_interfaces/Time stamp
-uint8 id
-uint8 status
-```
-
-### /api/external/get/monitoring/supervisor/status
-
-```txt
-# SupervisorStatus.msg
-
-builtin_interfaces/Time stamp
-uint8 responsible
-SupervisorStatus[] list
-    uint8 id
-    uint8 status
-    bool timeout
-```
-
-### /api/external/set/monitoring/supervisor/timeout/reset
-
-```txt
-# ResetSupervisorTimeout.msg
-
-uint8 id
----
-ResponseStatus status
-```
-
-### その他
-
-定数など一部が異なるだけで基本的に構造は同じ
-
-- /api/external/set/monitoring/advisor/heartbeat
-- /api/external/get/monitoring/advisor/status
-- /api/external/set/monitoring/advisor/timeout/reset
+![architecture](./architecture.drawio.svg)
