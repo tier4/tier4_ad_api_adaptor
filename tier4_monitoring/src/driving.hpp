@@ -20,6 +20,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/operation_mode_state.hpp>
+#include <autoware_adapi_v1_msgs/srv/change_operation_mode.hpp>
 #include <tier4_external_api_msgs/msg/driving_status.hpp>
 #include <tier4_external_api_msgs/srv/enable_driving.hpp>
 
@@ -35,11 +36,14 @@ public:
 
 private:
   using OperationModeState = autoware_adapi_v1_msgs::msg::OperationModeState;
+  using ChangeOperationMode = autoware_adapi_v1_msgs::srv::ChangeOperationMode;
   using EnableDriving = tier4_external_api_msgs::srv::EnableDriving;
   using DrivingStatus = tier4_external_api_msgs::msg::DrivingStatus;
   using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
 
   rclcpp::Subscription<OperationModeState>::SharedPtr sub_operation_mode_;
+  rclcpp::Client<ChangeOperationMode>::SharedPtr cli_change_stop_mode;
+  rclcpp::Client<ChangeOperationMode>::SharedPtr cli_change_autonomous_mode;
 
   rclcpp::Publisher<DrivingStatus>::SharedPtr pub_status_;
   rclcpp::Service<EnableDriving>::SharedPtr srv_enable_;
