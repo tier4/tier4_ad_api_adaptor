@@ -35,8 +35,15 @@ Driving::Driving(rclcpp::Node & node)
     "/monitoring/driving/enable",
     std::bind(&Driving::on_enable, this, std::placeholders::_1, std::placeholders::_2));
 
+  pub_velocity_limit_set_ = node.create_publisher<VelocityLimitSet>(
+    "/planning/scenario_planning/max_velocity_candidates", rclcpp::QoS{1}.transient_local());
+  pub_velocity_limit_clear_ = node.create_publisher<VelocityLimitClear>(
+    "/planning/scenario_planning/clear_velocity_limit", rclcpp::QoS{1}.transient_local());
+
+  current_level_ = DrivingLevel::kUnknown;
   is_level2_available = false;
   is_level4_available = false;
+  velocity_limit_requested_ = false;
 }
 
 void Driving::update_available_levels(bool level2, bool level4)
@@ -82,20 +89,33 @@ void Driving::on_enable(
     res->status.message = "level4 is not available";
     return;
   }
-  request_level_ = level;
+  current_level_ = level;
   cli_change_autonomous_mode->async_send_request(std::make_shared<ChangeOperationMode::Request>());
   res->status.code = ResponseStatus::SUCCESS;
 }
 
-void Driving::publish(rclcpp::Time now)
+void Driving::update(const rclcpp::Time & now)
+{
+  bool error = false;
+  if (current_level_ == DrivingLevel::kLevel2 && !is_level2_available) error = true;
+  if (current_level_ == DrivingLevel::kLevel4 && !is_level4_available) error = true;
+
+  if (error) {
+    set_velocity_limit(now);
+  } else {
+    clear_velocity_limit(now);
+  }
+}
+
+void Driving::publish(const rclcpp::Time & now)
 {
   const auto get_level = [this]() {
     if (operation_mode_.mode == OperationModeState::STOP) {
       return DrivingLevel::kStop;
     }
     if (operation_mode_.mode == OperationModeState::AUTONOMOUS) {
-      if (request_level_ == DrivingLevel::kLevel2) return DrivingLevel::kLevel2;
-      if (request_level_ == DrivingLevel::kLevel4) return DrivingLevel::kLevel4;
+      if (current_level_ == DrivingLevel::kLevel2) return DrivingLevel::kLevel2;
+      if (current_level_ == DrivingLevel::kLevel4) return DrivingLevel::kLevel4;
     }
     return DrivingLevel::kUnknown;
   };
@@ -106,6 +126,31 @@ void Driving::publish(rclcpp::Time now)
   msg.is_level2_available = is_level2_available && operation_mode_.is_autonomous_mode_available;
   msg.is_level4_available = is_level4_available && operation_mode_.is_autonomous_mode_available;
   pub_status_->publish(msg);
+}
+
+void Driving::set_velocity_limit(const rclcpp::Time & now)
+{
+  if (velocity_limit_requested_) return;
+  velocity_limit_requested_ = true;
+
+  VelocityLimitSet msg;
+  msg.stamp = now;
+  msg.max_velocity = 0;
+  msg.use_constraints = false;
+  msg.sender = "monitoring_api";
+  pub_velocity_limit_set_->publish(msg);
+}
+
+void Driving::clear_velocity_limit(const rclcpp::Time & now)
+{
+  if (!velocity_limit_requested_) return;
+  velocity_limit_requested_ = false;
+
+  VelocityLimitClear msg;
+  msg.stamp = now;
+  msg.command = true;
+  msg.sender = "monitoring_api";
+  pub_velocity_limit_clear_->publish(msg);
 }
 
 }  // namespace tier4_monitoring

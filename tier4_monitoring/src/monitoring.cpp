@@ -41,9 +41,10 @@ void Monitoring::on_timer()
   advisors_.update(stamp);
   advisors_.publish(stamp);
 
-  const bool level2 = supervisors_.is_operating();
-  const bool level4 = advisors_.is_available();
+  const bool level2 = supervisors_.has_responsible();
+  const bool level4 = advisors_.has_available();
   driving_.update_available_levels(level2, level4);
+  driving_.update(stamp);
   driving_.publish(stamp);
 }
 

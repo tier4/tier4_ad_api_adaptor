@@ -35,7 +35,7 @@ class Operator
 public:
   Operator(rclcpp::Node & node, const std::string & ns);
   void update(rclcpp::Time now);
-  void publish(rclcpp::Time now, bool operating);
+  void publish(rclcpp::Time now, bool responsible);
   OperatorMode mode() const;
 
 private:
@@ -64,12 +64,12 @@ public:
   void create(rclcpp::Node & node, const std::string & name);
   void update(rclcpp::Time now);
   void publish(rclcpp::Time now);
-  bool is_operating() const;
-  bool is_available() const;
+  bool has_responsible() const;
+  bool has_available() const;
 
 private:
   const std::string ns_;
-  Operator * operating_;
+  Operator * responsible_;
   std::vector<std::unique_ptr<Operator>> operators_;
 };
 

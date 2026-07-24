@@ -21,6 +21,8 @@
 
 #include <autoware_adapi_v1_msgs/msg/operation_mode_state.hpp>
 #include <autoware_adapi_v1_msgs/srv/change_operation_mode.hpp>
+#include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
+#include <autoware_internal_planning_msgs/msg/velocity_limit_clear_command.hpp>
 #include <tier4_external_api_msgs/msg/driving_status.hpp>
 #include <tier4_external_api_msgs/srv/enable_driving.hpp>
 
@@ -32,7 +34,8 @@ class Driving
 public:
   explicit Driving(rclcpp::Node & node);
   void update_available_levels(bool level2, bool level4);
-  void publish(rclcpp::Time now);
+  void update(const rclcpp::Time & now);
+  void publish(const rclcpp::Time & now);
 
 private:
   using OperationModeState = autoware_adapi_v1_msgs::msg::OperationModeState;
@@ -40,22 +43,29 @@ private:
   using EnableDriving = tier4_external_api_msgs::srv::EnableDriving;
   using DrivingStatus = tier4_external_api_msgs::msg::DrivingStatus;
   using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
+  using VelocityLimitSet = autoware_internal_planning_msgs::msg::VelocityLimit;
+  using VelocityLimitClear = autoware_internal_planning_msgs::msg::VelocityLimitClearCommand;
 
   rclcpp::Subscription<OperationModeState>::SharedPtr sub_operation_mode_;
   rclcpp::Client<ChangeOperationMode>::SharedPtr cli_change_stop_mode;
   rclcpp::Client<ChangeOperationMode>::SharedPtr cli_change_autonomous_mode;
-
   rclcpp::Publisher<DrivingStatus>::SharedPtr pub_status_;
   rclcpp::Service<EnableDriving>::SharedPtr srv_enable_;
+  rclcpp::Publisher<VelocityLimitSet>::SharedPtr pub_velocity_limit_set_;
+  rclcpp::Publisher<VelocityLimitClear>::SharedPtr pub_velocity_limit_clear_;
 
   void on_operation_mode(const OperationModeState & msg);
   void on_enable(
     const EnableDriving::Request::SharedPtr req, const EnableDriving::Response::SharedPtr res);
 
-  DrivingLevel request_level_;
+  void set_velocity_limit(const rclcpp::Time & now);
+  void clear_velocity_limit(const rclcpp::Time & now);
+
+  DrivingLevel current_level_;
   OperationModeState operation_mode_;
   bool is_level2_available;
   bool is_level4_available;
+  bool velocity_limit_requested_;
 };
 
 }  // namespace tier4_monitoring

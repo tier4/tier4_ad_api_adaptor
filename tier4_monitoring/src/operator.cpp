@@ -49,12 +49,12 @@ void Operator::update(rclcpp::Time now)
   }
 }
 
-void Operator::publish(rclcpp::Time now, bool operating)
+void Operator::publish(rclcpp::Time now, bool responsible)
 {
   MonitoringStatus msg;
   msg.stamp = now;
-  msg.operating = operating;
   msg.mode = to_monitoring_mode(mode_);
+  msg.responsible = responsible;
   pub_status_->publish(msg);
 }
 
@@ -84,7 +84,7 @@ void Operator::on_change(
 
 OperatorGroup::OperatorGroup(const std::string & ns) : ns_(ns)
 {
-  operating_ = nullptr;
+  responsible_ = nullptr;
 }
 
 void OperatorGroup::create(rclcpp::Node & node, const std::string & name)
@@ -94,7 +94,7 @@ void OperatorGroup::create(rclcpp::Node & node, const std::string & name)
 
 void OperatorGroup::update(rclcpp::Time now)
 {
-  operating_ = nullptr;
+  responsible_ = nullptr;
 
   for (const auto & operator_ : operators_) {
     operator_->update(now);
@@ -102,7 +102,7 @@ void OperatorGroup::update(rclcpp::Time now)
 
   for (const auto & operator_ : operators_) {
     if (operator_->mode() == OperatorMode::kOperating) {
-      operating_ = operator_.get();
+      responsible_ = operator_.get();
       break;
     }
   }
@@ -111,16 +111,16 @@ void OperatorGroup::update(rclcpp::Time now)
 void OperatorGroup::publish(rclcpp::Time now)
 {
   for (const auto & operator_ : operators_) {
-    operator_->publish(now, operating_ == operator_.get());
+    operator_->publish(now, responsible_ == operator_.get());
   }
 }
 
-bool OperatorGroup::is_operating() const
+bool OperatorGroup::has_responsible() const
 {
-  return operating_;
+  return responsible_ != nullptr;
 }
 
-bool OperatorGroup::is_available() const
+bool OperatorGroup::has_available() const
 {
   for (const auto & operator_ : operators_) {
     if (operator_->mode() == OperatorMode::kAvailable) return true;
