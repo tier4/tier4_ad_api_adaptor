@@ -1,3 +1,6 @@
 <launch>
-  <node pkg="tier4_monitoring" exec="monitoring_node"/>
+  <arg name="config" default="$(find-pkg-share tier4_monitoring)/config/monitoring.param.yaml"/>
+  <node pkg="tier4_monitoring" exec="monitoring_node">
+    <param from="$(var config)"/>
+  </node>
 </launch>

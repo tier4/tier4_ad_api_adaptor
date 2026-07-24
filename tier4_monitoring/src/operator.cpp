@@ -39,7 +39,6 @@ Operator::Operator(rclcpp::Node & node, const std::string & ns)
 void Operator::update(rclcpp::Time now)
 {
   const auto is_timeout = [this, now]() {
-    constexpr double timeout = 1.0;
     if (!stamp_) return true;
     return timeout < (now - stamp_.value()).seconds();
   };
@@ -56,11 +55,6 @@ void Operator::publish(rclcpp::Time now, bool responsible)
   msg.mode = to_monitoring_mode(mode_);
   msg.responsible = responsible;
   pub_status_->publish(msg);
-}
-
-OperatorMode Operator::mode() const
-{
-  return mode_;
 }
 
 void Operator::on_heartbeat(const MonitoringHeartbeat::SharedPtr msg)

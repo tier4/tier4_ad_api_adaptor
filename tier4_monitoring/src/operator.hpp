@@ -33,10 +33,12 @@ namespace tier4_monitoring
 class Operator
 {
 public:
+  static inline double timeout = 1.0;
+
   Operator(rclcpp::Node & node, const std::string & ns);
+  OperatorMode mode() const { return mode_; }
   void update(rclcpp::Time now);
   void publish(rclcpp::Time now, bool responsible);
-  OperatorMode mode() const;
 
 private:
   using MonitoringStatus = tier4_external_api_msgs::msg::MonitoringStatus;

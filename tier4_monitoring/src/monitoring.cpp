@@ -23,6 +23,8 @@ namespace tier4_monitoring
 Monitoring::Monitoring(const rclcpp::NodeOptions & options)
 : Node("monitoring", options), driving_(*this), supervisors_("supervisor"), advisors_("advisor")
 {
+  Operator::timeout = declare_parameter<double>("timeout");
+
   supervisors_.create(*this, "driver");
   supervisors_.create(*this, "mot");
   supervisors_.create(*this, "fms");
