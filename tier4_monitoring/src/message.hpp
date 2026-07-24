@@ -22,8 +22,8 @@
 namespace tier4_monitoring
 {
 
-uint8_t to_monitoring_mode(const OperatorMode & mode);
-OperatorMode from_monitoring_mode(const uint8_t & mode);
+uint8_t to_monitoring_status(const OperatorStatus & mode);
+OperatorStatus from_monitoring_status(const uint8_t & mode);
 
 uint8_t to_driving_status(const DrivingLevel & level);
 DrivingLevel from_driving_status(const uint8_t & level);

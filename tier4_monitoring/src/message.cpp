@@ -15,38 +15,38 @@
 #include "message.hpp"
 
 #include <tier4_external_api_msgs/msg/driving_status.hpp>
-#include <tier4_external_api_msgs/msg/monitoring_mode.hpp>
+#include <tier4_external_api_msgs/msg/monitoring_status.hpp>
 
 namespace tier4_monitoring
 {
 
 using tier4_external_api_msgs::msg::DrivingStatus;
-using tier4_external_api_msgs::msg::MonitoringMode;
+using tier4_external_api_msgs::msg::MonitoringStatus;
 
-uint8_t to_monitoring_mode(const OperatorMode & mode)
+uint8_t to_monitoring_status(const OperatorStatus & mode)
 {
   // clang-format off
   switch (mode) {
-    case OperatorMode::kUnknown:     return MonitoringMode::UNKNOWN;
-    case OperatorMode::kTimeout:     return MonitoringMode::TIMEOUT;
-    case OperatorMode::kUnavailable: return MonitoringMode::UNAVAILABLE;
-    case OperatorMode::kAvailable:   return MonitoringMode::AVAILABLE;
-    case OperatorMode::kOperating:   return MonitoringMode::OPERATING;
-    default:                         return MonitoringMode::UNKNOWN;
+    case OperatorStatus::kUnknown:     return MonitoringStatus::UNKNOWN;
+    case OperatorStatus::kTimeout:     return MonitoringStatus::TIMEOUT;
+    case OperatorStatus::kUnavailable: return MonitoringStatus::UNAVAILABLE;
+    case OperatorStatus::kAvailable:   return MonitoringStatus::AVAILABLE;
+    case OperatorStatus::kOperating:   return MonitoringStatus::OPERATING;
+    default:                         return MonitoringStatus::UNKNOWN;
   }
   // clang-format on
 }
 
-OperatorMode from_monitoring_mode(const uint8_t & mode)
+OperatorStatus from_monitoring_status(const uint8_t & mode)
 {
   // clang-format off
   switch (mode) {
-    case MonitoringMode::UNKNOWN:     return OperatorMode::kUnknown;
-    case MonitoringMode::TIMEOUT:     return OperatorMode::kTimeout;
-    case MonitoringMode::UNAVAILABLE: return OperatorMode::kUnavailable;
-    case MonitoringMode::AVAILABLE:   return OperatorMode::kAvailable;
-    case MonitoringMode::OPERATING:   return OperatorMode::kOperating;
-    default:                          return OperatorMode::kUnknown;
+    case MonitoringStatus::UNKNOWN:     return OperatorStatus::kUnknown;
+    case MonitoringStatus::TIMEOUT:     return OperatorStatus::kTimeout;
+    case MonitoringStatus::UNAVAILABLE: return OperatorStatus::kUnavailable;
+    case MonitoringStatus::AVAILABLE:   return OperatorStatus::kAvailable;
+    case MonitoringStatus::OPERATING:   return OperatorStatus::kOperating;
+    default:                            return OperatorStatus::kUnknown;
   }
   // clang-format on
 }

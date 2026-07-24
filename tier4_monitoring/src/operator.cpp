@@ -29,11 +29,11 @@ Operator::Operator(rclcpp::Node & node, const std::string & ns)
   pub_status_ = node.create_publisher<MonitoringStatus>(ns + "/status", rclcpp::QoS(1));
   sub_heartbeat_ = node.create_subscription<MonitoringHeartbeat>(
     ns + "/heartbeat", rclcpp::QoS(1), std::bind(&Operator::on_heartbeat, this, _1));
-  srv_change_ = node.create_service<ChangeMonitoringMode>(
+  srv_change_ = node.create_service<ChangeMonitoringStatus>(
     ns + "/change", std::bind(&Operator::on_change, this, _1, _2));
 
   stamp_ = std::nullopt;
-  mode_ = OperatorMode::kUnknown;
+  mode_ = OperatorStatus::kUnknown;
 }
 
 void Operator::update(rclcpp::Time now)
@@ -44,7 +44,7 @@ void Operator::update(rclcpp::Time now)
   };
   if (is_timeout()) {
     stamp_ = std::nullopt;
-    mode_ = OperatorMode::kTimeout;
+    mode_ = OperatorStatus::kTimeout;
   }
 }
 
@@ -52,7 +52,7 @@ void Operator::publish(rclcpp::Time now, bool responsible)
 {
   MonitoringStatus msg;
   msg.stamp = now;
-  msg.mode = to_monitoring_mode(mode_);
+  msg.status = to_monitoring_status(mode_);
   msg.responsible = responsible;
   pub_status_->publish(msg);
 }
@@ -63,11 +63,11 @@ void Operator::on_heartbeat(const MonitoringHeartbeat::SharedPtr msg)
 }
 
 void Operator::on_change(
-  const ChangeMonitoringMode::Request::SharedPtr req,
-  const ChangeMonitoringMode::Response::SharedPtr res)
+  const ChangeMonitoringStatus::Request::SharedPtr req,
+  const ChangeMonitoringStatus::Response::SharedPtr res)
 {
-  const auto mode = from_monitoring_mode(req->mode);
-  if (mode == OperatorMode::kUnknown) {
+  const auto mode = from_monitoring_status(req->status);
+  if (mode == OperatorStatus::kUnknown) {
     res->status.code = ResponseStatus::ERROR;
     res->status.message = "unknown mode";
     return;
@@ -95,7 +95,7 @@ void OperatorGroup::update(rclcpp::Time now)
   }
 
   for (const auto & operator_ : operators_) {
-    if (operator_->mode() == OperatorMode::kOperating) {
+    if (operator_->mode() == OperatorStatus::kOperating) {
       responsible_ = operator_.get();
       break;
     }
@@ -117,8 +117,8 @@ bool OperatorGroup::has_responsible() const
 bool OperatorGroup::has_available() const
 {
   for (const auto & operator_ : operators_) {
-    if (operator_->mode() == OperatorMode::kAvailable) return true;
-    if (operator_->mode() == OperatorMode::kOperating) return true;
+    if (operator_->mode() == OperatorStatus::kAvailable) return true;
+    if (operator_->mode() == OperatorStatus::kOperating) return true;
   }
   return false;
 }

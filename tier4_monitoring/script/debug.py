@@ -25,9 +25,8 @@ import rclpy.executors
 import rclpy.node
 from tier4_external_api_msgs.msg import DrivingStatus
 from tier4_external_api_msgs.msg import MonitoringHeartbeat
-from tier4_external_api_msgs.msg import MonitoringMode
 from tier4_external_api_msgs.msg import MonitoringStatus
-from tier4_external_api_msgs.srv import ChangeMonitoringMode
+from tier4_external_api_msgs.srv import ChangeMonitoringStatus
 from tier4_external_api_msgs.srv import EnableDriving
 
 
@@ -100,17 +99,17 @@ class HeartbeatButton:
 class ChangeButtons:
     def __init__(self, node: rclpy.node.Node, service: str):
         self.node = node
-        self.cli = node.create_client(ChangeMonitoringMode, service)
+        self.cli = node.create_client(ChangeMonitoringStatus, service)
         self.button1 = QtWidgets.QPushButton("Unavailable")
         self.button2 = QtWidgets.QPushButton("Available")
         self.button3 = QtWidgets.QPushButton("Operating")
-        self.button1.clicked.connect(lambda: self.request(MonitoringMode.UNAVAILABLE))
-        self.button2.clicked.connect(lambda: self.request(MonitoringMode.AVAILABLE))
-        self.button3.clicked.connect(lambda: self.request(MonitoringMode.OPERATING))
+        self.button1.clicked.connect(lambda: self.request(MonitoringStatus.UNAVAILABLE))
+        self.button2.clicked.connect(lambda: self.request(MonitoringStatus.AVAILABLE))
+        self.button3.clicked.connect(lambda: self.request(MonitoringStatus.OPERATING))
 
     def request(self, mode):
-        req = ChangeMonitoringMode.Request()
-        req.mode = mode
+        req = ChangeMonitoringStatus.Request()
+        req.status = mode
         self.cli.call_async(req)
 
 
@@ -122,14 +121,14 @@ class StatusDisplay:
         self.label2 = QtWidgets.QLabel()
 
     def on_status(self, msg: MonitoringStatus):
-        self.label1.setText(self.mode_text.get(msg.mode, "Unknown"))
+        self.label1.setText(self.mode_text.get(msg.status, "Unknown"))
         self.label2.setText("Responsible" if msg.responsible else "")
 
     mode_text = {
-        MonitoringMode.TIMEOUT: "Timeout",
-        MonitoringMode.UNAVAILABLE: "Unavailable",
-        MonitoringMode.AVAILABLE: "Available",
-        MonitoringMode.OPERATING: "Operating",
+        MonitoringStatus.TIMEOUT: "Timeout",
+        MonitoringStatus.UNAVAILABLE: "Unavailable",
+        MonitoringStatus.AVAILABLE: "Available",
+        MonitoringStatus.OPERATING: "Operating",
     }
 
 

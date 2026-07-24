@@ -21,7 +21,7 @@
 
 #include <tier4_external_api_msgs/msg/monitoring_heartbeat.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_status.hpp>
-#include <tier4_external_api_msgs/srv/change_monitoring_mode.hpp>
+#include <tier4_external_api_msgs/srv/change_monitoring_status.hpp>
 
 #include <optional>
 #include <string>
@@ -36,26 +36,26 @@ public:
   static inline double timeout = 1.0;
 
   Operator(rclcpp::Node & node, const std::string & ns);
-  OperatorMode mode() const { return mode_; }
+  OperatorStatus mode() const { return mode_; }
   void update(rclcpp::Time now);
   void publish(rclcpp::Time now, bool responsible);
 
 private:
   using MonitoringStatus = tier4_external_api_msgs::msg::MonitoringStatus;
   using MonitoringHeartbeat = tier4_external_api_msgs::msg::MonitoringHeartbeat;
-  using ChangeMonitoringMode = tier4_external_api_msgs::srv::ChangeMonitoringMode;
+  using ChangeMonitoringStatus = tier4_external_api_msgs::srv::ChangeMonitoringStatus;
   using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
 
   rclcpp::Publisher<MonitoringStatus>::SharedPtr pub_status_;
   rclcpp::Subscription<MonitoringHeartbeat>::SharedPtr sub_heartbeat_;
-  rclcpp::Service<ChangeMonitoringMode>::SharedPtr srv_change_;
+  rclcpp::Service<ChangeMonitoringStatus>::SharedPtr srv_change_;
 
   void on_heartbeat(const MonitoringHeartbeat::SharedPtr msg);
   void on_change(
-    const ChangeMonitoringMode::Request::SharedPtr req,
-    const ChangeMonitoringMode::Response::SharedPtr res);
+    const ChangeMonitoringStatus::Request::SharedPtr req,
+    const ChangeMonitoringStatus::Response::SharedPtr res);
 
-  OperatorMode mode_;
+  OperatorStatus mode_;
   std::optional<rclcpp::Time> stamp_;
 };
 
