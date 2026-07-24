@@ -23,10 +23,12 @@ from python_qt_binding.QtWidgets import QMainWindow
 import rclpy
 import rclpy.executors
 import rclpy.node
+from tier4_external_api_msgs.msg import DrivingStatus
 from tier4_external_api_msgs.msg import MonitoringHeartbeat
 from tier4_external_api_msgs.msg import MonitoringMode
 from tier4_external_api_msgs.msg import MonitoringStatus
 from tier4_external_api_msgs.srv import ChangeMonitoringMode
+from tier4_external_api_msgs.srv import EnableDriving
 
 
 class RclpyWorker(QtCore.QObject):
@@ -121,7 +123,7 @@ class StatusDisplay:
 
     def on_status(self, msg: MonitoringStatus):
         self.label1.setText(self.mode_text.get(msg.mode, "Unknown"))
-        self.label2.setText("Operating" if msg.operating else "")
+        self.label2.setText("Responsible" if msg.responsible else "")
 
     mode_text = {
         MonitoringMode.TIMEOUT: "Timeout",
@@ -147,6 +149,65 @@ class Operator:
         layout.addWidget(self.status.label2, row, 6)
 
 
+class Driving:
+    def __init__(self, node: rclpy.node.Node):
+        qos = rclpy.qos.QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
+        self.node = node
+        self.cli = node.create_client(EnableDriving, "/monitoring/driving/enable")
+        self.sub = node.create_subscription(
+            DrivingStatus, "/monitoring/driving/status", self.on_status, qos
+        )
+
+        self.button_stop = QtWidgets.QPushButton("Stop")
+        self.butttn_lv2 = QtWidgets.QPushButton("Level2")
+        self.butttn_lv4 = QtWidgets.QPushButton("Level4")
+        self.button_stop.clicked.connect(lambda: self.request(DrivingStatus.STOP))
+        self.butttn_lv2.clicked.connect(lambda: self.request(DrivingStatus.LEVEL2))
+        self.butttn_lv4.clicked.connect(lambda: self.request(DrivingStatus.LEVEL4))
+
+        self.status_mode = QtWidgets.QLabel("Unknown")
+        self.status_res = QtWidgets.QLabel("Response")
+        self.status_lv2 = QtWidgets.QLabel("Unknown")
+        self.status_lv4 = QtWidgets.QLabel("Unknown")
+
+    def request(self, mode):
+        req = EnableDriving.Request()
+        req.mode = mode
+        self.cli.call_async(req).add_done_callback(self.on_response)
+
+    def on_response(self, future):
+        res = future.result()
+        self.status_res.setText(f"Code={res.status.code}, Message={res.status.message}")
+
+    def on_status(self, msg: DrivingStatus):
+        self.status_mode.setText(self.mode_text.get(msg.mode, "Unknown"))
+        self.status_lv2.setText(str(msg.is_level2_available))
+        self.status_lv4.setText(str(msg.is_level4_available))
+
+    def set_layout(self, layout, row, label):
+        layout.addWidget(QtWidgets.QLabel("Driving"), row, 0)
+        layout.addWidget(self.status_mode, row, 1)
+        layout.addWidget(self.status_res, row, 2, 1, 5)
+        row += 1
+        layout.addWidget(QtWidgets.QLabel("Stop"), row, 0)
+        layout.addWidget(self.button_stop, row, 1)
+        row += 1
+        layout.addWidget(QtWidgets.QLabel("Level2"), row, 0)
+        layout.addWidget(self.butttn_lv2, row, 1)
+        layout.addWidget(self.status_lv2, row, 2)
+        row += 1
+        layout.addWidget(QtWidgets.QLabel("Level4"), row, 0)
+        layout.addWidget(self.butttn_lv4, row, 1)
+        layout.addWidget(self.status_lv4, row, 2)
+
+    mode_text = {
+        DrivingStatus.UNKNOWN: "Unknown",
+        DrivingStatus.STOP: "Stop",
+        DrivingStatus.LEVEL2: "Level2",
+        DrivingStatus.LEVEL4: "Level4",
+    }
+
+
 class MainWidget(QtWidgets.QWidget):
     def __init__(self, node):
         super().__init__()
@@ -155,6 +216,7 @@ class MainWidget(QtWidgets.QWidget):
         self.supervisor_fms = Operator(node, "/supervisor/fms")
         self.advisor_mot = Operator(node, "/advisor/mot")
         self.advisor_fms = Operator(node, "/advisor/fms")
+        self.driving = Driving(node)
 
         layout = QtWidgets.QGridLayout()
         self.setLayout(layout)
@@ -163,10 +225,11 @@ class MainWidget(QtWidgets.QWidget):
         self.supervisor_fms.set_layout(layout, 3, "Supervisor FMS")
         self.advisor_mot.set_layout(layout, 4, "Advisor MOT")
         self.advisor_fms.set_layout(layout, 5, "Advisor FMS")
+        self.driving.set_layout(layout, 6, "Driving")
 
         layout.addWidget(QtWidgets.QLabel("Operator"), 0, 0)
         layout.addWidget(QtWidgets.QLabel("Current Mode"), 0, 5)
-        layout.addWidget(QtWidgets.QLabel("Operating Flag"), 0, 6)
+        layout.addWidget(QtWidgets.QLabel("Responsible Flag"), 0, 6)
 
 
 if __name__ == "__main__":
