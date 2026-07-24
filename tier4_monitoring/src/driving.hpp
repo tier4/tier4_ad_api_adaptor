@@ -30,6 +30,7 @@ class Driving
 {
 public:
   explicit Driving(rclcpp::Node & node);
+  void update_available_levels(bool level2, bool level4);
   void publish(rclcpp::Time now);
 
 private:

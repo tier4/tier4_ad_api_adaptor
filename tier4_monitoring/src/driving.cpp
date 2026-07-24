@@ -35,6 +35,12 @@ Driving::Driving(rclcpp::Node & node)
   is_level4_available = false;
 }
 
+void Driving::update_available_levels(bool level2, bool level4)
+{
+  is_level2_available = level2;
+  is_level4_available = level4;
+}
+
 void Driving::on_operation_mode(const OperationModeState & msg)
 {
   operation_mode_ = msg;
@@ -66,8 +72,8 @@ void Driving::publish(rclcpp::Time now)
   DrivingStatus msg;
   msg.stamp = now;
   msg.mode = get_mode();
-  msg.is_level2_available = is_level2_available;
-  msg.is_level4_available = is_level4_available;
+  msg.is_level2_available = is_level2_available && operation_mode_.is_autonomous_mode_available;
+  msg.is_level4_available = is_level4_available && operation_mode_.is_autonomous_mode_available;
   pub_status_->publish(msg);
 }
 

@@ -36,9 +36,12 @@ Monitoring::Monitoring(const rclcpp::NodeOptions & options)
 void Monitoring::on_timer()
 {
   const auto stamp = now();
-
   supervisors_.update(stamp);
   advisors_.update(stamp);
+
+  const bool level2 = supervisors_.is_operating();
+  const bool level4 = advisors_.is_available();
+  driving_.update_available_levels(level2, level4);
 
   supervisors_.publish(stamp);
   advisors_.publish(stamp);

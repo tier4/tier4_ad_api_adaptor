@@ -64,10 +64,12 @@ public:
   void create(rclcpp::Node & node, const std::string & name);
   void update(rclcpp::Time now);
   void publish(rclcpp::Time now);
+  bool is_operating() const;
+  bool is_available() const;
 
 private:
   const std::string ns_;
-  Operator * operating;
+  Operator * operating_;
   std::vector<std::unique_ptr<Operator>> operators_;
 };
 

@@ -84,7 +84,7 @@ void Operator::on_change(
 
 OperatorGroup::OperatorGroup(const std::string & ns) : ns_(ns)
 {
-  operating = nullptr;
+  operating_ = nullptr;
 }
 
 void OperatorGroup::create(rclcpp::Node & node, const std::string & name)
@@ -94,7 +94,7 @@ void OperatorGroup::create(rclcpp::Node & node, const std::string & name)
 
 void OperatorGroup::update(rclcpp::Time now)
 {
-  operating = nullptr;
+  operating_ = nullptr;
 
   for (const auto & operator_ : operators_) {
     operator_->update(now);
@@ -102,7 +102,7 @@ void OperatorGroup::update(rclcpp::Time now)
 
   for (const auto & operator_ : operators_) {
     if (operator_->mode() == OperatorMode::kOperating) {
-      operating = operator_.get();
+      operating_ = operator_.get();
       break;
     }
   }
@@ -111,8 +111,22 @@ void OperatorGroup::update(rclcpp::Time now)
 void OperatorGroup::publish(rclcpp::Time now)
 {
   for (const auto & operator_ : operators_) {
-    operator_->publish(now, operating == operator_.get());
+    operator_->publish(now, operating_ == operator_.get());
   }
+}
+
+bool OperatorGroup::is_operating() const
+{
+  return operating_;
+}
+
+bool OperatorGroup::is_available() const
+{
+  for (const auto & operator_ : operators_) {
+    if (operator_->mode() == OperatorMode::kAvailable) return true;
+    if (operator_->mode() == OperatorMode::kOperating) return true;
+  }
+  return false;
 }
 
 }  // namespace tier4_monitoring
