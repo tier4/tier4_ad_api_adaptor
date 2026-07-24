@@ -26,6 +26,8 @@
 #include <tier4_external_api_msgs/msg/driving_status.hpp>
 #include <tier4_external_api_msgs/srv/enable_driving.hpp>
 
+#include <optional>
+
 namespace tier4_monitoring
 {
 
@@ -66,6 +68,8 @@ private:
   bool is_level2_available;
   bool is_level4_available;
   bool velocity_limit_requested_;
+
+  std::optional<DrivingStatus> prev_status_;
 };
 
 }  // namespace tier4_monitoring

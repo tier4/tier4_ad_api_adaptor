@@ -121,11 +121,14 @@ void Driving::publish(const rclcpp::Time & now)
   };
 
   DrivingStatus msg;
-  msg.stamp = now;
   msg.mode = to_driving_status(get_level());
   msg.is_level2_available = is_level2_available && operation_mode_.is_autonomous_mode_available;
   msg.is_level4_available = is_level4_available && operation_mode_.is_autonomous_mode_available;
-  pub_status_->publish(msg);
+  if (prev_status_ != msg) {
+    prev_status_ = msg;
+    msg.stamp = now;
+    pub_status_->publish(msg);
+  }
 }
 
 void Driving::set_velocity_limit(const rclcpp::Time & now)
