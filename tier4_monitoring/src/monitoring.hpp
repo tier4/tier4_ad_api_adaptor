@@ -15,6 +15,7 @@
 #ifndef MONITORING_HPP_
 #define MONITORING_HPP_
 
+#include "driving.hpp"
 #include "operator.hpp"
 
 #include <rclcpp/rclcpp.hpp>
@@ -34,6 +35,7 @@ private:
   void on_timer();
 
   rclcpp::TimerBase::SharedPtr timer_;
+  Driving driving_;
   OperatorGroup supervisors_;
   OperatorGroup advisors_;
 };

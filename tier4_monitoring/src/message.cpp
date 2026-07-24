@@ -14,12 +14,16 @@
 
 #include "message.hpp"
 
+#include <tier4_external_api_msgs/msg/driving_status.hpp>
+#include <tier4_external_api_msgs/msg/monitoring_mode.hpp>
+
 namespace tier4_monitoring
 {
 
+using tier4_external_api_msgs::msg::DrivingStatus;
 using tier4_external_api_msgs::msg::MonitoringMode;
 
-uint8_t to_msg(const OperatorMode & mode)
+uint8_t to_monitoring_mode(const OperatorMode & mode)
 {
   // clang-format off
   switch (mode) {
@@ -33,7 +37,7 @@ uint8_t to_msg(const OperatorMode & mode)
   // clang-format on
 }
 
-OperatorMode from_msg(const uint8_t & mode)
+OperatorMode from_monitoring_mode(const uint8_t & mode)
 {
   // clang-format off
   switch (mode) {
@@ -43,6 +47,32 @@ OperatorMode from_msg(const uint8_t & mode)
     case MonitoringMode::AVAILABLE:   return OperatorMode::kAvailable;
     case MonitoringMode::OPERATING:   return OperatorMode::kOperating;
     default:                          return OperatorMode::kUnknown;
+  }
+  // clang-format on
+}
+
+uint8_t to_driving_status(const DrivingLevel & level)
+{
+  // clang-format off
+  switch (level) {
+    case DrivingLevel::kUnknown: return DrivingStatus::UNKNOWN;
+    case DrivingLevel::kStop:    return DrivingStatus::STOP;
+    case DrivingLevel::kLevel2:  return DrivingStatus::LEVEL2;
+    case DrivingLevel::kLevel4:  return DrivingStatus::LEVEL4;
+    default:                     return DrivingStatus::UNKNOWN;
+  }
+  // clang-format on
+}
+
+DrivingLevel from_driving_status(const uint8_t & level)
+{
+  // clang-format off
+  switch (level) {
+    case DrivingStatus::UNKNOWN: return DrivingLevel::kUnknown;
+    case DrivingStatus::STOP:    return DrivingLevel::kStop;
+    case DrivingStatus::LEVEL2:  return DrivingLevel::kLevel2;
+    case DrivingStatus::LEVEL4:  return DrivingLevel::kLevel4;
+    default:                     return DrivingLevel::kUnknown;
   }
   // clang-format on
 }

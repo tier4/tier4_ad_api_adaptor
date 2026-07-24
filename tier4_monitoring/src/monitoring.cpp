@@ -21,7 +21,7 @@ namespace tier4_monitoring
 {
 
 Monitoring::Monitoring(const rclcpp::NodeOptions & options)
-: Node("monitoring", options), supervisors_("supervisor"), advisors_("advisor")
+: Node("monitoring", options), driving_(*this), supervisors_("supervisor"), advisors_("advisor")
 {
   supervisors_.create(*this, "driver");
   supervisors_.create(*this, "mot");
@@ -42,6 +42,7 @@ void Monitoring::on_timer()
 
   supervisors_.publish(stamp);
   advisors_.publish(stamp);
+  driving_.publish(stamp);
 }
 
 }  // namespace tier4_monitoring

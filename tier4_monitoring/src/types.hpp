@@ -26,6 +26,13 @@ enum class OperatorMode {
   kOperating,
 };
 
+enum class DrivingLevel {
+  kUnknown,
+  kStop,
+  kLevel2,
+  kLevel4,
+};
+
 }  // namespace tier4_monitoring
 
 #endif  // TYPES_HPP_

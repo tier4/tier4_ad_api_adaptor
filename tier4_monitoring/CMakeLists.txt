@@ -6,8 +6,9 @@ autoware_package()
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/monitoring.cpp
-  src/operator.cpp
+  src/driving.cpp
   src/message.cpp
+  src/operator.cpp
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}

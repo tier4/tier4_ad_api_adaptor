@@ -17,13 +17,16 @@
 
 #include "types.hpp"
 
-#include <tier4_external_api_msgs/msg/monitoring_mode.hpp>
+#include <cstdint>
 
 namespace tier4_monitoring
 {
 
-uint8_t to_msg(const OperatorMode & mode);
-OperatorMode from_msg(const uint8_t & mode);
+uint8_t to_monitoring_mode(const OperatorMode & mode);
+OperatorMode from_monitoring_mode(const uint8_t & mode);
+
+uint8_t to_driving_status(const DrivingLevel & level);
+DrivingLevel from_driving_status(const uint8_t & level);
 
 }  // namespace tier4_monitoring
 

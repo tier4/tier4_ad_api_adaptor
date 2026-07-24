@@ -54,7 +54,7 @@ void Operator::publish(rclcpp::Time now, bool operating)
   MonitoringStatus msg;
   msg.stamp = now;
   msg.operating = operating;
-  msg.mode = to_msg(mode_);
+  msg.mode = to_monitoring_mode(mode_);
   pub_status_->publish(msg);
 }
 
@@ -72,7 +72,7 @@ void Operator::on_change(
   const ChangeMonitoringMode::Request::SharedPtr req,
   const ChangeMonitoringMode::Response::SharedPtr res)
 {
-  const auto mode = from_msg(req->mode);
+  const auto mode = from_monitoring_mode(req->mode);
   if (mode == OperatorMode::kUnknown) {
     res->status.code = ResponseStatus::ERROR;
     res->status.message = "unknown mode";

@@ -41,8 +41,8 @@ public:
 private:
   using MonitoringStatus = tier4_external_api_msgs::msg::MonitoringStatus;
   using MonitoringHeartbeat = tier4_external_api_msgs::msg::MonitoringHeartbeat;
-  using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
   using ChangeMonitoringMode = tier4_external_api_msgs::srv::ChangeMonitoringMode;
+  using ResponseStatus = tier4_external_api_msgs::msg::ResponseStatus;
 
   rclcpp::Publisher<MonitoringStatus>::SharedPtr pub_status_;
   rclcpp::Subscription<MonitoringHeartbeat>::SharedPtr sub_heartbeat_;
