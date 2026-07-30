@@ -16,6 +16,7 @@
 #define MONITORING_HPP_
 
 #include "driving.hpp"
+#include "lanelet.hpp"
 #include "operator.hpp"
 
 #include <rclcpp/rclcpp.hpp>
@@ -36,6 +37,7 @@ private:
 
   rclcpp::TimerBase::SharedPtr timer_;
   Driving driving_;
+  Lanelet lanelet_;
   OperatorGroup supervisors_;
   OperatorGroup advisors_;
 };

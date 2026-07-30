@@ -22,9 +22,9 @@
 #include <lanelet2_core/geometry/Polygon.h>
 
 #include <optional>
-#include <set>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 
 namespace tier4_monitoring
 {
@@ -39,8 +39,9 @@ Lanelet::Lanelet(rclcpp::Node & node) : logger_(node.get_logger())
     "/api/routing/route", rclcpp::QoS(1).transient_local(),
     std::bind(&Lanelet::on_route, this, _1));
 
-  map_ = nullptr;
   is_level4_available_ = false;
+  map_ = nullptr;
+  route_ = std::nullopt;
 }
 
 void Lanelet::on_map(const LaneletMapBin & msg)
@@ -51,109 +52,115 @@ void Lanelet::on_map(const LaneletMapBin & msg)
 
 void Lanelet::on_route(const Route & msg)
 {
-  route_ = msg;
+  if (msg.data.empty()) {
+    route_ = std::nullopt;
+  } else {
+    route_ = msg.data.front();
+  }
   update_level4_availability();
 }
 
 void Lanelet::update_level4_availability()
 {
   if (!map_) {
-    RCLCPP_DEBUG(logger_, "vector map is not received yet");
     is_level4_available_ = false;
     return;
   }
-  if (!route_ || route_->data.empty()) {
-    RCLCPP_DEBUG(logger_, "route is not set");
+  if (!route_) {
     is_level4_available_ = false;
     return;
   }
-  is_level4_available_ = check_level4_availability(route_.value());
+  is_level4_available_ = check_level4_availability();
 }
 
-bool Lanelet::check_level4_availability(const Route & route) const
+bool Lanelet::check_level4_availability() const
 {
-  // Find the lanelet that has the tag specifying the end of the level4 section.
-  const auto start_id = route.data.front().segments.front().preferred.id;
-  if (!map_->laneletLayer.exists(start_id)) {
-    RCLCPP_ERROR(logger_, "the start lanelet is not found in the map");
+  const auto & route = route_.value();
+  if (route.segments.empty()) {
+    RCLCPP_ERROR(logger_, "the route has no segments");
     return false;
   }
 
-  auto start_lanelet = map_->laneletLayer.get(start_id);
-  if (!start_lanelet.hasAttribute(level4_tag)) {
-    // The start lanelet may be a road shoulder, so search the lanelets near the start pose.
-    const auto candidates = get_tagged_lanelets(route.data.front().start);
-    if (candidates.empty()) {
-      RCLCPP_DEBUG(logger_, "the level4 tag is not found near the start pose");
+  const auto start_id = route.segments.front().preferred.id;
+  const auto goal_id = route.segments.back().preferred.id;
+  std::unordered_set<lanelet::Id> level4_goal_candidates;
+
+  // Find the start lanelet including the adjacent road_shoulder.
+  const auto start_lanelets = get_lanelets_with_adjacent_road_shoulder(map_, start_id);
+  for (const auto & lanelet : start_lanelets) {
+    RCLCPP_INFO_STREAM(logger_, "start lanelet id: " << lanelet.id());
+    const auto ids = get_goal_ids_from_level4_tag(lanelet);
+    if (!ids) {
+      RCLCPP_ERROR(logger_, "the level4 tag has an invalid value");
       return false;
     }
-    if (candidates.size() > 1) {
-      RCLCPP_INFO(logger_, "there are multiple lanelets that have the level4 tag");
-      return false;
-    }
-    start_lanelet = candidates.front();
-  }
-
-  // Check that the goal pose is on one of the lanelets specified by the tag.
-  const auto goal_ids = parse_level4_tag(start_lanelet.attribute(level4_tag).value());
-  if (!goal_ids) {
-    RCLCPP_ERROR(logger_, "the level4 tag has an invalid value");
-    return false;
-  }
-
-  for (const auto goal_id : *goal_ids) {
-    if (!map_->laneletLayer.exists(goal_id)) {
-      continue;
-    }
-    const auto goal_lanelet = map_->laneletLayer.get(goal_id);
-    const auto & goal_pose = route.data.front().goal;
-    if (autoware::experimental::lanelet2_utils::is_in_lanelet(goal_pose, goal_lanelet, 0.0)) {
-      return true;
+    for (const auto & id : ids.value()) {
+      level4_goal_candidates.insert(id);  // Use merge function when C++17 is available.
     }
   }
 
-  RCLCPP_ERROR(logger_, "the goal pose is not on the lanelet specified by the level4 tag");
+  for (const auto & id : level4_goal_candidates) {
+    RCLCPP_INFO_STREAM(logger_, "level4 goal candidate: " << id);
+  }
+
+  const auto goal_lanelets = get_lanelets_with_adjacent_road_shoulder(map_, goal_id);
+  for (const auto & lanelet : goal_lanelets) {
+    RCLCPP_INFO_STREAM(logger_, "goal lanelet id: " << lanelet.id());
+    if (level4_goal_candidates.count(lanelet.id())) {
+      RCLCPP_INFO(logger_, "found candidate");
+    }
+  }
   return false;
 }
 
-lanelet::ConstLanelets Lanelet::get_tagged_lanelets(const geometry_msgs::msg::Pose & pose) const
+lanelet::ConstLanelets Lanelet::get_lanelets_with_adjacent_road_shoulder(
+  const lanelet::LaneletMapConstPtr & map, const lanelet::Id & id)
 {
-  constexpr double search_radius = 5.0;  // meters
-  const lanelet::BasicPoint2d point(pose.position.x, pose.position.y);
-
   lanelet::ConstLanelets result;
-  const auto func = [&result, &point](
-                      const lanelet::BoundingBox2d & box, const lanelet::ConstLanelet & lane) {
-    if (
-      lane.hasAttribute(level4_tag) &&
-      boost::geometry::covered_by(point, lane.polygon2d().basicPolygon())) {
-      result.push_back(lane);
+  if (!map->laneletLayer.exists(id)) {
+    return result;
+  }
+
+  const auto target = map->laneletLayer.get(id);
+  result.push_back(target);
+
+  const auto bounds = {target.leftBound(), target.rightBound()};
+  for (const auto & bound : bounds) {
+    lanelet::ConstLanelets lanelets = map->laneletLayer.findUsages(bound);
+    for (const auto & lanelet : lanelets) {
+      const std::string subtype = lanelet.attributeOr(lanelet::AttributeNamesString::Subtype, "");
+      if (subtype == "road_shoulder") {
+        result.push_back(lanelet);
+      }
     }
-    if (result.size() > 1) return true;  // Having multiple candidates is an error.
-    return search_radius < boost::geometry::distance(box, point);
-  };
-  map_->laneletLayer.nearestUntil(point, func);
+  }
   return result;
 }
 
-std::optional<std::set<int64_t>> Lanelet::parse_level4_tag(const std::string & text)
+std::optional<std::unordered_set<lanelet::Id>> Lanelet::get_goal_ids_from_level4_tag(
+  const lanelet::ConstLanelet & lanelet)
 {
-  std::set<int64_t> result;
-  std::istringstream stream(text);
-  std::string token;
-
-  while (std::getline(stream, token, ',')) {
-    if (token.empty()) {
-      return std::nullopt;
-    }
-    for (const auto c : token) {
+  const auto strict_stoll = [](const std::string & str) -> std::optional<lanelet::Id> {
+    for (const auto & c : str) {
       if (!std::isdigit(c)) return std::nullopt;
     }
     try {
-      result.insert(std::stoll(token));
+      return std::stoll(str);
     } catch (const std::exception &) {
       return std::nullopt;
     }
+  };
+
+  std::unordered_set<lanelet::Id> result;
+  if (!lanelet.hasAttribute(level4_tag)) {
+    return result;  // It is not an error if the tag is not found.
+  }
+  std::istringstream stream(lanelet.attribute(level4_tag).value());
+  std::string token;
+  while (std::getline(stream, token, ',')) {
+    const auto id = strict_stoll(token);
+    if (!id) return std::nullopt;
+    result.insert(id.value());
   }
   return result;
 }

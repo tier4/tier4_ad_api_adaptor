@@ -24,8 +24,8 @@
 #include <lanelet2_core/LaneletMap.h>
 
 #include <optional>
-#include <set>
 #include <string>
+#include <unordered_set>
 
 namespace tier4_monitoring
 {
@@ -39,7 +39,9 @@ public:
 private:
   using LaneletMapBin = autoware_map_msgs::msg::LaneletMapBin;
   using Route = autoware_adapi_v1_msgs::msg::Route;
+  using RouteData = autoware_adapi_v1_msgs::msg::RouteData;
 
+  rclcpp::Logger logger_;
   rclcpp::Subscription<LaneletMapBin>::SharedPtr sub_map_;
   rclcpp::Subscription<Route>::SharedPtr sub_route_;
 
@@ -47,14 +49,16 @@ private:
   void on_route(const Route & msg);
 
   void update_level4_availability();
-  bool check_level4_availability(const Route & route) const;
-  lanelet::ConstLanelets get_tagged_lanelets(const geometry_msgs::msg::Pose & pose) const;
-  static std::optional<std::set<int64_t>> parse_level4_tag(const std::string & text);
+  bool check_level4_availability() const;
 
-  rclcpp::Logger logger_;
-  lanelet::LaneletMapConstPtr map_;
-  std::optional<Route> route_;
+  static lanelet::ConstLanelets get_lanelets_with_adjacent_road_shoulder(
+    const lanelet::LaneletMapConstPtr & map, const lanelet::Id & id);
+  static std::optional<std::unordered_set<lanelet::Id>> get_goal_ids_from_level4_tag(
+    const lanelet::ConstLanelet & lanelet);
+
   bool is_level4_available_;
+  lanelet::LaneletMapConstPtr map_;
+  std::optional<RouteData> route_;
 
   static constexpr char level4_tag[] = "level4_operation_end_lanelet";
 };
