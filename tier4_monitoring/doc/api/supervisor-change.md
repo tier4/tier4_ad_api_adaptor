@@ -1,4 +1,4 @@
-# /api/external/get/monitoring/supervisor/&lt;operator&gt;/change
+# /api/external/set/monitoring/supervisor/&lt;operator&gt;/change
 
 ## Classification
 

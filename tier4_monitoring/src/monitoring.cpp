@@ -29,7 +29,6 @@ Monitoring::Monitoring(const rclcpp::NodeOptions & options)
 {
   Operator::timeout = declare_parameter<double>("timeout");
 
-  supervisors_.create(*this, "driver");
   supervisors_.create(*this, "mot");
   supervisors_.create(*this, "fms");
   advisors_.create(*this, "mot");
@@ -47,8 +46,8 @@ void Monitoring::on_timer()
   advisors_.update(stamp);
   advisors_.publish(stamp);
 
-  const bool level2 = supervisors_.has_responsible();
-  const bool level4 = advisors_.has_available();
+  const bool level2 = supervisors_.has_responsible() && lanelet_.is_level2_available();
+  const bool level4 = advisors_.has_available() && lanelet_.is_level4_available();
   driving_.update_available_levels(level2, level4);
   driving_.update(stamp);
   driving_.publish(stamp);

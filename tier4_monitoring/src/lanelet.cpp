@@ -85,29 +85,22 @@ bool Lanelet::check_level4_availability() const
   const auto goal_id = route.segments.back().preferred.id;
   std::unordered_set<lanelet::Id> level4_goal_candidates;
 
-  // Find the start lanelet including the adjacent road_shoulder.
   const auto start_lanelets = get_lanelets_with_adjacent_road_shoulder(map_, start_id);
   for (const auto & lanelet : start_lanelets) {
-    RCLCPP_INFO_STREAM(logger_, "start lanelet id: " << lanelet.id());
     const auto ids = get_goal_ids_from_level4_tag(lanelet);
     if (!ids) {
-      RCLCPP_ERROR(logger_, "the level4 tag has an invalid value");
+      RCLCPP_ERROR_STREAM(logger_, "invalid level4 attr value in lanelet: " << lanelet.id());
       return false;
     }
     for (const auto & id : ids.value()) {
-      level4_goal_candidates.insert(id);  // Use merge function when C++17 is available.
+      level4_goal_candidates.insert(id);
     }
-  }
-
-  for (const auto & id : level4_goal_candidates) {
-    RCLCPP_INFO_STREAM(logger_, "level4 goal candidate: " << id);
   }
 
   const auto goal_lanelets = get_lanelets_with_adjacent_road_shoulder(map_, goal_id);
   for (const auto & lanelet : goal_lanelets) {
-    RCLCPP_INFO_STREAM(logger_, "goal lanelet id: " << lanelet.id());
     if (level4_goal_candidates.count(lanelet.id())) {
-      RCLCPP_INFO(logger_, "found candidate");
+      return true;
     }
   }
   return false;
@@ -150,6 +143,8 @@ std::optional<std::unordered_set<lanelet::Id>> Lanelet::get_goal_ids_from_level4
       return std::nullopt;
     }
   };
+
+  static constexpr char level4_tag[] = "level4_operation_end_lanelet";
 
   std::unordered_set<lanelet::Id> result;
   if (!lanelet.hasAttribute(level4_tag)) {

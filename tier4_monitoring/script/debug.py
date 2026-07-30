@@ -134,9 +134,9 @@ class StatusDisplay:
 
 class Operator:
     def __init__(self, node: rclpy.node.Node, ns: str):
-        self.heartbeat = HeartbeatButton(node, ns + "/heartbeat")
-        self.change = ChangeButtons(node, ns + "/change")
-        self.status = StatusDisplay(node, ns + "/status")
+        self.heartbeat = HeartbeatButton(node, "/api/external/set/monitoring/" + ns + "/heartbeat")
+        self.change = ChangeButtons(node, "/api/external/set/monitoring/" + ns + "/change")
+        self.status = StatusDisplay(node, "/api/external/get/monitoring/" + ns + "/status")
 
     def set_layout(self, layout, row, label):
         layout.addWidget(QtWidgets.QLabel(label), row, 0)
@@ -210,21 +210,19 @@ class Driving:
 class MainWidget(QtWidgets.QWidget):
     def __init__(self, node):
         super().__init__()
-        self.supervisor_driver = Operator(node, "/supervisor/driver")
-        self.supervisor_mot = Operator(node, "/supervisor/mot")
-        self.supervisor_fms = Operator(node, "/supervisor/fms")
-        self.advisor_mot = Operator(node, "/advisor/mot")
-        self.advisor_fms = Operator(node, "/advisor/fms")
+        self.supervisor_mot = Operator(node, "supervisor/mot")
+        self.supervisor_fms = Operator(node, "supervisor/fms")
+        self.advisor_mot = Operator(node, "advisor/mot")
+        self.advisor_fms = Operator(node, "advisor/fms")
         self.driving = Driving(node)
 
         layout = QtWidgets.QGridLayout()
         self.setLayout(layout)
-        self.supervisor_driver.set_layout(layout, 1, "Supervisor Driver")
-        self.supervisor_mot.set_layout(layout, 2, "Supervisor MOT")
-        self.supervisor_fms.set_layout(layout, 3, "Supervisor FMS")
-        self.advisor_mot.set_layout(layout, 4, "Advisor MOT")
-        self.advisor_fms.set_layout(layout, 5, "Advisor FMS")
-        self.driving.set_layout(layout, 6, "Driving")
+        self.supervisor_mot.set_layout(layout, 1, "Supervisor MOT")
+        self.supervisor_fms.set_layout(layout, 2, "Supervisor FMS")
+        self.advisor_mot.set_layout(layout, 3, "Advisor MOT")
+        self.advisor_fms.set_layout(layout, 4, "Advisor FMS")
+        self.driving.set_layout(layout, 5, "Driving")
 
         layout.addWidget(QtWidgets.QLabel("Operator"), 0, 0)
         layout.addWidget(QtWidgets.QLabel("Current Mode"), 0, 5)

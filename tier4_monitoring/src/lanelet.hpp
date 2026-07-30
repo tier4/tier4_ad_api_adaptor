@@ -34,6 +34,7 @@ class Lanelet
 {
 public:
   explicit Lanelet(rclcpp::Node & node);
+  bool is_level2_available() const { return true; }
   bool is_level4_available() const { return is_level4_available_; }
 
 private:
@@ -59,8 +60,6 @@ private:
   bool is_level4_available_;
   lanelet::LaneletMapConstPtr map_;
   std::optional<RouteData> route_;
-
-  static constexpr char level4_tag[] = "level4_operation_end_lanelet";
 };
 
 }  // namespace tier4_monitoring
