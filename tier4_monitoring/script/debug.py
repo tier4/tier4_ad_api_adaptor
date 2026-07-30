@@ -158,11 +158,11 @@ class Driving:
         )
 
         self.button_stop = QtWidgets.QPushButton("Stop")
-        self.butttn_lv2 = QtWidgets.QPushButton("Level2")
-        self.butttn_lv4 = QtWidgets.QPushButton("Level4")
+        self.button_lv2 = QtWidgets.QPushButton("Level2")
+        self.button_lv4 = QtWidgets.QPushButton("Level4")
         self.button_stop.clicked.connect(lambda: self.request(DrivingStatus.STOP))
-        self.butttn_lv2.clicked.connect(lambda: self.request(DrivingStatus.LEVEL2))
-        self.butttn_lv4.clicked.connect(lambda: self.request(DrivingStatus.LEVEL4))
+        self.button_lv2.clicked.connect(lambda: self.request(DrivingStatus.LEVEL2))
+        self.button_lv4.clicked.connect(lambda: self.request(DrivingStatus.LEVEL4))
 
         self.status_mode = QtWidgets.QLabel("Unknown")
         self.status_res = QtWidgets.QLabel("Response")
@@ -192,11 +192,11 @@ class Driving:
         layout.addWidget(self.button_stop, row, 1)
         row += 1
         layout.addWidget(QtWidgets.QLabel("Level2"), row, 0)
-        layout.addWidget(self.butttn_lv2, row, 1)
+        layout.addWidget(self.button_lv2, row, 1)
         layout.addWidget(self.status_lv2, row, 2)
         row += 1
         layout.addWidget(QtWidgets.QLabel("Level4"), row, 0)
-        layout.addWidget(self.butttn_lv4, row, 1)
+        layout.addWidget(self.button_lv4, row, 1)
         layout.addWidget(self.status_lv4, row, 2)
 
     mode_text = {
