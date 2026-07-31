@@ -23,77 +23,120 @@
 namespace autoware::failure_notification
 {
 
-std::vector<std::string> tokenize(const std::string & str)
+enum class TokenType { kText, kOpen, kClose, kComma, kEnd, kBegin };
+
+struct Token
 {
-  std::vector<std::string> tokens;
-  std::string token;
+  TokenType type;
+  std::string text;
+};
 
-  const auto flush_token = [&]() {
-    if (!token.empty()) {
-      tokens.push_back(token);
-      token.clear();
-    }
-  };
+std::pair<size_t, Expression> parse_expr(const std::vector<Token> & tokens, size_t index);
+std::pair<size_t, std::vector<Expression>> parse_args(
+  const std::vector<Token> & tokens, size_t index);
 
-  for (const auto ch : str) {
-    if (std::isalnum(static_cast<unsigned char>(ch))) {
-      token += ch;
-    } else if (ch == ' ') {
-      flush_token();
-    } else if (ch == '(' || ch == ')' || ch == ',') {
-      flush_token();
-      tokens.push_back(std::string(1, ch));
-    } else {
-      throw std::runtime_error("Invalid token character: " + std::string(1, ch));
-    }
+std::pair<size_t, Token> next_token(const std::string & str, size_t index)
+{
+  // Skip whitespace.
+  while (index < str.size() && std::isspace(str.at(index))) {
+    ++index;
   }
-  flush_token();
+  if (index >= str.size()) {
+    return {index, Token{TokenType::kEnd, "EOF"}};
+  }
+
+  // Handle identifier.
+  const auto is_character = [](char ch) {
+    return std::isalnum(static_cast<unsigned char>(ch)) || ch == '_';
+  };
+  if (is_character(str.at(index))) {
+    size_t start = index;
+    while (index < str.size() && is_character(str.at(index))) {
+      ++index;
+    }
+    return {index, Token{TokenType::kText, str.substr(start, index - start)}};
+  }
+
+  // Handle delimiters.
+  switch (str.at(index)) {
+    case '(':
+      return {index + 1, Token{TokenType::kOpen, "("}};
+    case ')':
+      return {index + 1, Token{TokenType::kClose, ")"}};
+    case ',':
+      return {index + 1, Token{TokenType::kComma, ","}};
+    default:
+      throw std::runtime_error("unexpected character: " + str.substr(index));
+  }
+}
+
+std::vector<Token> tokenize(const std::string & str)
+{
+  std::vector<Token> tokens;
+  size_t index = 0;
+  TokenType type = TokenType::kBegin;
+
+  while (type != TokenType::kEnd) {
+    const auto [next, token] = next_token(str, index);
+    index = next;
+    tokens.push_back(token);
+    type = token.type;
+  }
   return tokens;
 }
 
-bool check_index(const std::vector<std::string> & tokens, size_t index, const std::string & str)
+// args ::= expr ( ',' expr )*
+std::pair<size_t, std::vector<Expression>> parse_args(
+  const std::vector<Token> & tokens, size_t index)
 {
-  return index < tokens.size() && tokens.at(index) == str;
+  std::vector<Expression> args;
+  {
+    const auto result = parse_expr(tokens, index);
+    index = result.first;
+    args.push_back(result.second);
+  }
+  while (tokens.at(index).type == TokenType::kComma) {
+    ++index;  // Skip comma token.
+    const auto result = parse_expr(tokens, index);
+    index = result.first;
+    args.push_back(result.second);
+  }
+  return {index, args};
 }
 
-std::pair<size_t, Expression> parse_token(const std::vector<std::string> & tokens, size_t index)
+// expr = NAME | NAME() | NAME(args)
+std::pair<size_t, Expression> parse_expr(const std::vector<Token> & tokens, size_t index)
 {
-  Expression expression;
-  expression.data = tokens.at(index);
-  index += 1;
-
-  if (!check_index(tokens, index, "(")) {
-    return {index, expression};
+  const auto & curr = tokens.at(index);
+  if (curr.type != TokenType::kText) {
+    throw std::runtime_error("expected text token: " + curr.text);
   }
-  index += 1;
+  ++index;  // Skip text token.
 
-  expression.args = std::vector<Expression>();
-  while (index < tokens.size()) {
-    const auto result = parse_token(tokens, index);
+  if (tokens.at(index).type != TokenType::kOpen) {
+    return {index, Expression{curr.text, std::nullopt}};
+  }
+  ++index;  // Skip open token.
+
+  std::vector<Expression> args;
+  if (tokens.at(index).type != TokenType::kClose) {
+    const auto result = parse_args(tokens, index);
     index = result.first;
-    expression.args->push_back(result.second);
-
-    if (check_index(tokens, index, ")")) {
-      index += 1;
-      break;
-    }
-    if (check_index(tokens, index, ",")) {
-      index += 1;
-      continue;
-    }
-    throw std::runtime_error("expect delimiter or arguments after " + tokens.at(index));
+    args = result.second;
   }
-  return {index, expression};
+  if (tokens.at(index).type != TokenType::kClose) {
+    throw std::runtime_error("expected close token: " + tokens.at(index).text);
+  }
+  ++index;  // Skip close token.
+
+  return {index, Expression{curr.text, args}};
 }
 
 Expression Expression::parse(const std::string & str)
 {
   const auto tokens = tokenize(str);
-  if (tokens.empty()) {
-    throw std::runtime_error("empty expression");
-  }
-  const auto result = parse_token(tokens, 0);
-  if (tokens.size() != result.first) {
+  const auto result = parse_expr(tokens, 0);
+  if (tokens.at(result.first).type != TokenType::kEnd) {
     throw std::runtime_error("extra tokens");
   }
   return result.second;

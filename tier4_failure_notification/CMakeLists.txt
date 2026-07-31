@@ -18,4 +18,11 @@ rclcpp_components_register_node(${PROJECT_NAME}
   EXECUTABLE failure_notification_node
 )
 
+if(BUILD_TESTING)
+  ament_auto_add_gmock(gtest_${PROJECT_NAME}
+    "test/src/test_expression.cpp"
+  )
+  target_include_directories(gtest_${PROJECT_NAME} PRIVATE "src")
+endif()
+
 ament_auto_package(INSTALL_TO_SHARE launch)
