@@ -23,4 +23,6 @@ builtin_interfaces/Time stamp
 uint8 mode
 bool is_level2_available
 bool is_level4_available
+bool is_level2_route
+bool is_level4_route
 ```
