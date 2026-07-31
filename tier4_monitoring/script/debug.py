@@ -175,6 +175,8 @@ class Driving:
         self.status_res = QtWidgets.QLabel("Response")
         self.status_lv2 = QtWidgets.QLabel("Unknown")
         self.status_lv4 = QtWidgets.QLabel("Unknown")
+        self.route_lv2 = QtWidgets.QLabel("Unknown")
+        self.route_lv4 = QtWidgets.QLabel("Unknown")
 
     def request(self, mode):
         req = EnableDriving.Request()
@@ -183,28 +185,37 @@ class Driving:
 
     def on_response(self, future):
         res = future.result()
-        self.status_res.setText(f"Code={res.status.code}, Message={res.status.message}")
+        self.status_res.setText(f"Code={res.status.code}, Msg={res.status.message}")
 
     def on_status(self, msg: DrivingStatus):
         self.status_mode.setText(self.mode_text.get(msg.mode, "Unknown"))
         self.status_lv2.setText(str(msg.is_level2_available))
         self.status_lv4.setText(str(msg.is_level4_available))
+        self.route_lv2.setText(str(msg.is_level2_route))
+        self.route_lv4.setText(str(msg.is_level4_route))
 
     def set_layout(self, layout, row, label):
-        layout.addWidget(QtWidgets.QLabel("Driving"), row, 0)
-        layout.addWidget(self.status_mode, row, 1)
-        layout.addWidget(self.status_res, row, 2, 1, 5)
+        layout.addWidget(create_center_label("Driving"), row, 0)
+        layout.addWidget(create_center_label("Enable"), row, 1)
+        layout.addWidget(create_center_label("Available"), row, 2)
+        layout.addWidget(create_center_label("Route"), row, 3)
+        layout.addWidget(create_center_label("Current Mode"), row, 4, 1, 3)
         row += 1
         layout.addWidget(QtWidgets.QLabel("Stop"), row, 0)
         layout.addWidget(self.button_stop, row, 1)
+        layout.addWidget(self.status_mode, row, 4, 1, 3)
         row += 1
         layout.addWidget(QtWidgets.QLabel("Level2"), row, 0)
         layout.addWidget(self.button_lv2, row, 1)
         layout.addWidget(self.status_lv2, row, 2)
+        layout.addWidget(self.route_lv2, row, 3)
+        layout.addWidget(create_center_label("Response"), row, 4, 1, 3)
         row += 1
         layout.addWidget(QtWidgets.QLabel("Level4"), row, 0)
         layout.addWidget(self.button_lv4, row, 1)
         layout.addWidget(self.status_lv4, row, 2)
+        layout.addWidget(self.route_lv4, row, 3)
+        layout.addWidget(self.status_res, row, 4, 1, 3)
 
     mode_text = {
         DrivingStatus.UNKNOWN: "Unknown",

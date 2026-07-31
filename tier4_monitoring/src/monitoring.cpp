@@ -49,9 +49,8 @@ void Monitoring::on_timer()
   advisors_.update(stamp);
   advisors_.publish(stamp);
 
-  const bool level2 = supervisors_.has_responsible() && lanelet_.is_level2_available();
-  const bool level4 = advisors_.has_available() && lanelet_.is_level4_available();
-  driving_.update_available_levels(level2, level4);
+  driving_.update_level2_available(lanelet_.is_level2_available(), supervisors_.has_responsible());
+  driving_.update_level4_available(lanelet_.is_level4_available(), advisors_.has_available());
   driving_.update(stamp);
   driving_.publish(stamp);
 }

@@ -41,15 +41,21 @@ Driving::Driving(rclcpp::Node & node)
     "/planning/scenario_planning/clear_velocity_limit", rclcpp::QoS{1}.transient_local());
 
   current_level_ = DrivingLevel::kUnknown;
-  is_level2_available = false;
-  is_level4_available = false;
+  level2_available = {false, false};
+  level4_available = {false, false};
   velocity_limit_requested_ = false;
 }
 
-void Driving::update_available_levels(bool level2, bool level4)
+void Driving::update_level2_available(bool route, bool operators)
 {
-  is_level2_available = level2;
-  is_level4_available = level4;
+  level2_available.route = route;
+  level2_available.operators = operators;
+}
+
+void Driving::update_level4_available(bool route, bool operators)
+{
+  level4_available.route = route;
+  level4_available.operators = operators;
 }
 
 void Driving::on_operation_mode(const OperationModeState & msg)
@@ -79,12 +85,12 @@ void Driving::on_enable(
     res->status.message = "autonomous mode is not available";
     return;
   }
-  if (level == DrivingLevel::kLevel2 && !is_level2_available) {
+  if (level == DrivingLevel::kLevel2 && !level2_available.available()) {
     res->status.code = ResponseStatus::ERROR;
     res->status.message = "level2 is not available";
     return;
   }
-  if (level == DrivingLevel::kLevel4 && !is_level4_available) {
+  if (level == DrivingLevel::kLevel4 && !level4_available.available()) {
     res->status.code = ResponseStatus::ERROR;
     res->status.message = "level4 is not available";
     return;
@@ -97,8 +103,8 @@ void Driving::on_enable(
 void Driving::update(const rclcpp::Time & now)
 {
   bool error = false;
-  if (current_level_ == DrivingLevel::kLevel2 && !is_level2_available) error = true;
-  if (current_level_ == DrivingLevel::kLevel4 && !is_level4_available) error = true;
+  if (current_level_ == DrivingLevel::kLevel2 && !level2_available.available()) error = true;
+  if (current_level_ == DrivingLevel::kLevel4 && !level4_available.available()) error = true;
 
   if (error) {
     set_velocity_limit(now);
@@ -120,10 +126,13 @@ void Driving::publish(const rclcpp::Time & now)
     return DrivingLevel::kUnknown;
   };
 
+  const auto & autonomous_available = operation_mode_.is_autonomous_mode_available;
   DrivingStatus msg;
   msg.mode = to_driving_status(get_level());
-  msg.is_level2_available = is_level2_available && operation_mode_.is_autonomous_mode_available;
-  msg.is_level4_available = is_level4_available && operation_mode_.is_autonomous_mode_available;
+  msg.is_level2_available = level2_available.available() && autonomous_available;
+  msg.is_level4_available = level4_available.available() && autonomous_available;
+  msg.is_level2_route = level2_available.route;
+  msg.is_level4_route = level4_available.route;
   if (prev_status_ != msg) {
     prev_status_ = msg;
     msg.stamp = now;

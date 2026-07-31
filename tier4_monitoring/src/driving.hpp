@@ -31,11 +31,19 @@
 namespace tier4_monitoring
 {
 
+struct LevelAvailable
+{
+  bool available() const { return route && operators; }
+  bool route;
+  bool operators;
+};
+
 class Driving
 {
 public:
   explicit Driving(rclcpp::Node & node);
-  void update_available_levels(bool level2, bool level4);
+  void update_level2_available(bool route, bool operators);
+  void update_level4_available(bool route, bool operators);
   void update(const rclcpp::Time & now);
   void publish(const rclcpp::Time & now);
 
@@ -65,8 +73,8 @@ private:
 
   DrivingLevel current_level_;
   OperationModeState operation_mode_;
-  bool is_level2_available;
-  bool is_level4_available;
+  LevelAvailable level2_available;
+  LevelAvailable level4_available;
   bool velocity_limit_requested_;
 
   std::optional<DrivingStatus> prev_status_;
