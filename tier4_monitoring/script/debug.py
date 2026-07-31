@@ -30,6 +30,13 @@ from tier4_external_api_msgs.srv import ChangeMonitoringStatus
 from tier4_external_api_msgs.srv import EnableDriving
 
 
+def create_center_label(text):
+    label = QtWidgets.QLabel(text)
+    label.setStyleSheet("background: black; color: white;")
+    label.setAlignment(QtCore.Qt.AlignCenter)
+    return label
+
+
 class RclpyWorker(QtCore.QObject):
     def __init__(self):
         super().__init__()
@@ -122,7 +129,7 @@ class StatusDisplay:
 
     def on_status(self, msg: MonitoringStatus):
         self.label1.setText(self.mode_text.get(msg.status, "Unknown"))
-        self.label2.setText("Responsible" if msg.responsible else "")
+        self.label2.setText("True" if msg.responsible else "")
 
     mode_text = {
         MonitoringStatus.TIMEOUT: "Timeout",
@@ -152,9 +159,9 @@ class Driving:
     def __init__(self, node: rclpy.node.Node):
         qos = rclpy.qos.QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
         self.node = node
-        self.cli = node.create_client(EnableDriving, "/monitoring/driving/enable")
+        self.cli = node.create_client(EnableDriving, "/api/external/set/monitoring/driving/enable")
         self.sub = node.create_subscription(
-            DrivingStatus, "/monitoring/driving/status", self.on_status, qos
+            DrivingStatus, "/api/external/get/monitoring/driving/status", self.on_status, qos
         )
 
         self.button_stop = QtWidgets.QPushButton("Stop")
@@ -211,22 +218,24 @@ class MainWidget(QtWidgets.QWidget):
     def __init__(self, node):
         super().__init__()
         self.supervisor_mot = Operator(node, "supervisor/mot")
-        self.supervisor_fms = Operator(node, "supervisor/fms")
+        self.supervisor_remote = Operator(node, "supervisor/remote")
         self.advisor_mot = Operator(node, "advisor/mot")
-        self.advisor_fms = Operator(node, "advisor/fms")
+        self.advisor_remote = Operator(node, "advisor/remote")
         self.driving = Driving(node)
 
         layout = QtWidgets.QGridLayout()
         self.setLayout(layout)
         self.supervisor_mot.set_layout(layout, 1, "Supervisor MOT")
-        self.supervisor_fms.set_layout(layout, 2, "Supervisor FMS")
+        self.supervisor_remote.set_layout(layout, 2, "Supervisor Remote")
         self.advisor_mot.set_layout(layout, 3, "Advisor MOT")
-        self.advisor_fms.set_layout(layout, 4, "Advisor FMS")
+        self.advisor_remote.set_layout(layout, 4, "Advisor Remote")
         self.driving.set_layout(layout, 5, "Driving")
 
-        layout.addWidget(QtWidgets.QLabel("Operator"), 0, 0)
-        layout.addWidget(QtWidgets.QLabel("Current Mode"), 0, 5)
-        layout.addWidget(QtWidgets.QLabel("Responsible Flag"), 0, 6)
+        layout.addWidget(create_center_label("Operator"), 0, 0)
+        layout.addWidget(create_center_label("Heartbeat"), 0, 1)
+        layout.addWidget(create_center_label("Change"), 0, 2, 1, 3)
+        layout.addWidget(create_center_label("Current Mode"), 0, 5)
+        layout.addWidget(create_center_label("Responsible"), 0, 6)
 
 
 if __name__ == "__main__":

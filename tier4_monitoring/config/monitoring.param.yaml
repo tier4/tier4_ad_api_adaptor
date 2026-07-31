@@ -1,3 +1,9 @@
 /**:
   ros__parameters:
     timeout: 1.0
+    supervisors:
+      - mot
+      - remote
+    advisors:
+      - mot
+      - remote

@@ -15,6 +15,7 @@
 #include "monitoring.hpp"
 
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace tier4_monitoring
@@ -29,10 +30,12 @@ Monitoring::Monitoring(const rclcpp::NodeOptions & options)
 {
   Operator::timeout = declare_parameter<double>("timeout");
 
-  supervisors_.create(*this, "mot");
-  supervisors_.create(*this, "fms");
-  advisors_.create(*this, "mot");
-  advisors_.create(*this, "fms");
+  for (const auto & name : declare_parameter<std::vector<std::string>>("supervisors")) {
+    supervisors_.create(*this, name);
+  }
+  for (const auto & name : declare_parameter<std::vector<std::string>>("advisors")) {
+    advisors_.create(*this, name);
+  }
 
   const auto period = rclcpp::Rate(10.0).period();
   timer_ = rclcpp::create_timer(this, get_clock(), period, [this]() { on_timer(); });
