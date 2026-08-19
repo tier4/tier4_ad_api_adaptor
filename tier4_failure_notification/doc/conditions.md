@@ -1,13 +1,23 @@
 # Conditions
 
-## Always
+## True
 
 常にTrueとなります。
 
 使用例
 
 ```txt
-Always
+True
+```
+
+## False
+
+常にFalseとなります。
+
+使用例
+
+```txt
+False
 ```
 
 ## Not
@@ -19,6 +29,30 @@ Always
 ```txt
 Not(LocalizationState(Initialized))
 Not(RouteState(Set, Arrived))
+```
+
+## And
+
+指定した式の論理積を計算します。引数にはconditionとして解釈できる一つ以上の式を指定してください。
+
+使用例
+
+```txt
+And(LocalizationState(Initialized), RouteState(Set))
+And(True, True, True)
+And(True, True, True, True)
+```
+
+## Or
+
+指定した式の論理和を計算します。引数にはconditionとして解釈できる一つ以上の式を指定してください。
+
+使用例
+
+```txt
+Or(LocalizationState(Initialized), RouteState(Set))
+Or(True, True, True)
+Or(True, True, True, True)
 ```
 
 ## LocalizationState

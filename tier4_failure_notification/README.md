@@ -12,22 +12,22 @@
 
 ```yaml
 notifications:
-  /autoware/control:
-    failures:
-      - condition: Always
-        code: CTL-001
-
   /autoware/localization:
     failures:
-      - condition: LocalizationState(Initialized)
+      - condition: LocalizationState(Uninitialized)
         code: LOC-001
+      - condition: LocalizationState(Initializing)
+        code: LOC-002
 
   /autoware/planning:
     failures:
-      - condition: RouteState(Set)
+      - condition: RouteState(Set, Arrived)
         code: PLN-001
-      - condition: RouteState(Unset)
+      - condition: True
         code: PLN-002
-      - condition: Always
-        code: PLN-003
+
+  /autoware/control:
+    failures:
+      - condition: And(LocalizationState(Initialized), RouteState(Set))
+        code: CTL-001
 ```
