@@ -20,6 +20,7 @@ rclcpp_components_register_node(${PROJECT_NAME}
 
 if(BUILD_TESTING)
   ament_auto_add_gmock(gtest_${PROJECT_NAME}
+    "test/src/test_condition.cpp"
     "test/src/test_expression.cpp"
   )
   target_include_directories(gtest_${PROJECT_NAME} PRIVATE "src")

@@ -21,6 +21,7 @@
 #include <memory>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 namespace autoware::failure_notification
 {
@@ -36,7 +37,13 @@ public:
 class TrueCondition : public Condition
 {
 public:
-  bool evaluate(const Context & context) const override;
+  bool evaluate(const Context &) const override { return true; }
+};
+
+class FalseCondition : public Condition
+{
+public:
+  bool evaluate(const Context &) const override { return false; }
 };
 
 class NotCondition : public Condition
@@ -47,6 +54,16 @@ public:
 
 private:
   std::unique_ptr<Condition> condition_;
+};
+
+class AndCondition : public Condition
+{
+public:
+  explicit AndCondition(const Expression & expr);
+  bool evaluate(const Context & context) const override;
+
+private:
+  std::vector<std::unique_ptr<Condition>> conditions_;
 };
 
 class LocalizationStateCondition : public Condition

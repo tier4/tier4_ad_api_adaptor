@@ -26,8 +26,17 @@ std::unique_ptr<Condition> parse_expr(const Expression & expr)
   if (expr.data == "Always") {
     return std::make_unique<TrueCondition>();
   }
+  if (expr.data == "True") {
+    return std::make_unique<TrueCondition>();
+  }
+  if (expr.data == "False") {
+    return std::make_unique<FalseCondition>();
+  }
   if (expr.data == "Not") {
     return std::make_unique<NotCondition>(expr);
+  }
+  if (expr.data == "And") {
+    return std::make_unique<AndCondition>(expr);
   }
   if (expr.data == "LocalizationState") {
     return std::make_unique<LocalizationStateCondition>(expr);
@@ -43,11 +52,6 @@ std::unique_ptr<Condition> Condition::parse(const std::string & str)
   return parse_expr(Expression::parse(str));
 }
 
-bool TrueCondition::evaluate(const Context &) const
-{
-  return true;
-}
-
 NotCondition::NotCondition(const Expression & expr)
 {
   if (!expr.args || expr.args->size() != 1) {
@@ -59,6 +63,24 @@ NotCondition::NotCondition(const Expression & expr)
 bool NotCondition::evaluate(const Context & context) const
 {
   return !condition_->evaluate(context);
+}
+
+AndCondition::AndCondition(const Expression & expr)
+{
+  if (!expr.args || expr.args->empty()) {
+    throw std::runtime_error("And condition requires at least one argument");
+  }
+  for (const auto & arg : *expr.args) {
+    conditions_.push_back(parse_expr(arg));
+  }
+}
+
+bool AndCondition::evaluate(const Context & context) const
+{
+  for (const auto & condition : conditions_) {
+    if (!condition->evaluate(context)) return false;
+  }
+  return true;
 }
 
 LocalizationStateCondition::LocalizationStateCondition(const Expression & expr)
