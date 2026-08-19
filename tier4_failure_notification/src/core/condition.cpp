@@ -23,9 +23,6 @@ namespace autoware::failure_notification
 
 std::unique_ptr<Condition> parse_expr(const Expression & expr)
 {
-  if (expr.data == "Always") {
-    return std::make_unique<TrueCondition>();
-  }
   if (expr.data == "True") {
     return std::make_unique<TrueCondition>();
   }

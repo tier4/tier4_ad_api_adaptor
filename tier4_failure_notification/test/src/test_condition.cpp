@@ -39,11 +39,6 @@ bool evaluate(const std::string & expr, const Context & context = default_contex
   return Condition::parse(expr)->evaluate(context);
 }
 
-TEST(Condition, Always)
-{
-  EXPECT_TRUE(evaluate("Always"));
-}
-
 TEST(Condition, True)
 {
   EXPECT_TRUE(evaluate("True"));
