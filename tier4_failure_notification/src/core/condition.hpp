@@ -66,6 +66,16 @@ private:
   std::vector<std::unique_ptr<Condition>> conditions_;
 };
 
+class OrCondition : public Condition
+{
+public:
+  explicit OrCondition(const Expression & expr);
+  bool evaluate(const Context & context) const override;
+
+private:
+  std::vector<std::unique_ptr<Condition>> conditions_;
+};
+
 class LocalizationStateCondition : public Condition
 {
 public:

@@ -38,6 +38,9 @@ std::unique_ptr<Condition> parse_expr(const Expression & expr)
   if (expr.data == "And") {
     return std::make_unique<AndCondition>(expr);
   }
+  if (expr.data == "Or") {
+    return std::make_unique<OrCondition>(expr);
+  }
   if (expr.data == "LocalizationState") {
     return std::make_unique<LocalizationStateCondition>(expr);
   }
@@ -81,6 +84,24 @@ bool AndCondition::evaluate(const Context & context) const
     if (!condition->evaluate(context)) return false;
   }
   return true;
+}
+
+OrCondition::OrCondition(const Expression & expr)
+{
+  if (!expr.args || expr.args->empty()) {
+    throw std::runtime_error("Or condition requires at least one argument");
+  }
+  for (const auto & arg : *expr.args) {
+    conditions_.push_back(parse_expr(arg));
+  }
+}
+
+bool OrCondition::evaluate(const Context & context) const
+{
+  for (const auto & condition : conditions_) {
+    if (condition->evaluate(context)) return true;
+  }
+  return false;
 }
 
 LocalizationStateCondition::LocalizationStateCondition(const Expression & expr)

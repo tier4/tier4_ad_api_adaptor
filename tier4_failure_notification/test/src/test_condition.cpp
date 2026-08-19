@@ -54,13 +54,33 @@ TEST(Condition, False)
   EXPECT_FALSE(evaluate("False"));
 }
 
-TEST(Condition, Not)
+TEST(Condition, NotArg0)
 {
-  EXPECT_FALSE(evaluate("Not(True)"));
-  EXPECT_TRUE(evaluate("Not(False)"));
+  EXPECT_THROW(evaluate("Not()"), std::runtime_error);
 }
 
-TEST(Condition, And2)
+TEST(Condition, NotArg1)
+{
+  // clang-format off
+  EXPECT_TRUE (evaluate("Not(False)"));
+  EXPECT_FALSE(evaluate("Not(True )"));
+  // clang-format on
+}
+
+TEST(Condition, AndArg0)
+{
+  EXPECT_THROW(evaluate("And()"), std::runtime_error);
+}
+
+TEST(Condition, AndArg1)
+{
+  // clang-format off
+  EXPECT_FALSE(evaluate("And(False)"));
+  EXPECT_TRUE (evaluate("And(True )"));
+  // clang-format on
+}
+
+TEST(Condition, AndArg2)
 {
   // clang-format off
   EXPECT_FALSE(evaluate("And(False, False)"));
@@ -70,7 +90,7 @@ TEST(Condition, And2)
   // clang-format on
 }
 
-TEST(Condition, And3)
+TEST(Condition, AndArg3)
 {
   // clang-format off
   EXPECT_FALSE(evaluate("And(False, False, False)"));
@@ -81,5 +101,42 @@ TEST(Condition, And3)
   EXPECT_FALSE(evaluate("And(True , False, True )"));
   EXPECT_FALSE(evaluate("And(False, True , True )"));
   EXPECT_TRUE (evaluate("And(True , True , True )"));
+  // clang-format on
+}
+
+TEST(Condition, OrArg0)
+{
+  EXPECT_THROW(evaluate("Or()"), std::runtime_error);
+}
+
+TEST(Condition, OrArg1)
+{
+  // clang-format off
+  EXPECT_FALSE(evaluate("Or(False)"));
+  EXPECT_TRUE (evaluate("Or(True )"));
+  // clang-format on
+}
+
+TEST(Condition, OrArg2)
+{
+  // clang-format off
+  EXPECT_FALSE(evaluate("Or(False, False)"));
+  EXPECT_TRUE (evaluate("Or(True , False)"));
+  EXPECT_TRUE (evaluate("Or(False, True )"));
+  EXPECT_TRUE (evaluate("Or(True , True )"));
+  // clang-format on
+}
+
+TEST(Condition, OrArg3)
+{
+  // clang-format off
+  EXPECT_FALSE(evaluate("Or(False, False, False)"));
+  EXPECT_TRUE (evaluate("Or(True , False, False)"));
+  EXPECT_TRUE (evaluate("Or(False, True , False)"));
+  EXPECT_TRUE (evaluate("Or(True , True , False)"));
+  EXPECT_TRUE (evaluate("Or(False, False, True )"));
+  EXPECT_TRUE (evaluate("Or(True , False, True )"));
+  EXPECT_TRUE (evaluate("Or(False, True , True )"));
+  EXPECT_TRUE (evaluate("Or(True , True , True )"));
   // clang-format on
 }
