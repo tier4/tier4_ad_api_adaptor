@@ -14,6 +14,7 @@
 
 #include "failure_notification.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -81,17 +82,25 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
     }
   }
 
-  if (previous_failures_ != failures) {
-    FailureNotificationArray msg;
-    for (const auto & failure : failures) {
-      FailureNotificationMsg item;
-      item.code = failure->code();
-      msg.notifications.push_back(item);
-    }
-    msg.stamp = now();
-    pub_failure_notification_->publish(msg);
-    previous_failures_ = failures;
+  if (previous_failures_ == failures) return;
+  previous_failures_ = failures;
+
+  // Remove duplicate codes. Sort is required for std::unique to work correctly.
+  std::vector<std::string> codes;
+  for (const auto & failure : failures) {
+    codes.push_back(failure->code());
   }
+  std::sort(codes.begin(), codes.end());
+  codes.erase(std::unique(codes.begin(), codes.end()), codes.end());
+
+  FailureNotificationArray msg;
+  for (const auto & code : codes) {
+    FailureNotificationMsg item;
+    item.code = code;
+    msg.notifications.push_back(item);
+  }
+  msg.stamp = now();
+  pub_failure_notification_->publish(msg);
 }
 
 }  // namespace autoware::failure_notification
