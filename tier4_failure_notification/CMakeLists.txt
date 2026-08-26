@@ -18,6 +18,11 @@ rclcpp_components_register_node(${PROJECT_NAME}
   EXECUTABLE failure_notification_node
 )
 
+install(PROGRAMS
+  script/message.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   ament_auto_add_gmock(gtest_${PROJECT_NAME}
     "test/src/test_condition.cpp"

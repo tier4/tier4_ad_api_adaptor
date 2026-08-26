@@ -53,9 +53,12 @@ class ErrorCodeMessage(rclpy.node.Node):
 
     def load_info(self):
         path = pathlib.Path(self.declare_parameter("path", "").value)
-        if not path.exists():
+        if not path.is_file():
             raise FileNotFoundError(f"File not found: {path}")
-        return json.loads(path.read_text())
+        info = json.loads(path.read_text()).get("ErrorCode")
+        if info is None:
+            raise KeyError("File must contain ErrorCode")
+        return info
 
 
 if __name__ == "__main__":
