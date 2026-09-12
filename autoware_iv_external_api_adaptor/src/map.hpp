@@ -18,30 +18,33 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
+#include <autoware/agnocast_wrapper/node.hpp>
+
 #include "tier4_external_api_msgs/msg/map_hash.hpp"
 #include "tier4_external_api_msgs/srv/get_text_file.hpp"
 
 namespace external_api
 {
 
-class Map : public rclcpp::Node
+class Map : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit Map(const rclcpp::NodeOptions & options);
 
 private:
+  using NodeT = autoware::agnocast_wrapper::Node;
   using GetTextFile = tier4_external_api_msgs::srv::GetTextFile;
   using MapHash = tier4_external_api_msgs::msg::MapHash;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  tier4_api_utils::Service<GetTextFile>::SharedPtr srv_lanelet_xml_;
-  tier4_api_utils::Client<GetTextFile>::SharedPtr cli_lanelet_xml_;
-  rclcpp::Publisher<MapHash>::SharedPtr pub_map_info_;
-  rclcpp::Subscription<MapHash>::SharedPtr sub_map_info_;
+  tier4_api_utils::Service<GetTextFile, NodeT>::SharedPtr srv_lanelet_xml_;
+  tier4_api_utils::Client<GetTextFile, NodeT>::SharedPtr cli_lanelet_xml_;
+  AUTOWARE_PUBLISHER_PTR(MapHash) pub_map_info_;
+  AUTOWARE_SUBSCRIPTION_PTR(MapHash) sub_map_info_;
 
   // ros callback
-  void getMapHash(const tier4_external_api_msgs::msg::MapHash::SharedPtr message);
+  void getMapHash(const tier4_external_api_msgs::msg::MapHash::ConstSharedPtr message);
   void getLaneletXml(
     const tier4_external_api_msgs::srv::GetTextFile::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::GetTextFile::Response::SharedPtr response);

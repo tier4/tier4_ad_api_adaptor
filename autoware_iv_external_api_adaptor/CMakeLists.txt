@@ -29,7 +29,6 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 )
 
 rclcpp_components_register_nodes(${PROJECT_NAME}
-  "external_api::CalibrationStatus"
   "external_api::CpuUsage"
   "external_api::Diagnostics"
   "external_api::Door"
@@ -38,18 +37,55 @@ rclcpp_components_register_nodes(${PROJECT_NAME}
   "external_api::FailSafeState"
   "external_api::InitialPose"
   "external_api::LocalizationScore"
-  "external_api::Map"
-  "external_api::MetadataPackages"
   "external_api::Operator"
-  "external_api::RosbagLoggingMode"
   "external_api::Route"
-  "external_api::RTCController"
   "external_api::Service"
   "external_api::Start"
   "external_api::SystemMonitor"
   "external_api::VehicleStatus"
   "external_api::Velocity"
-  "external_api::Version"
+)
+
+autoware_agnocast_wrapper_register_node(${PROJECT_NAME}
+  PLUGIN "external_api::CalibrationStatus"
+  EXECUTABLE calibration_status_node
+  ROS2_EXECUTOR MultiThreadedExecutor
+  AGNOCAST_EXECUTOR AgnocastOnlyCallbackIsolatedExecutor
+)
+
+autoware_agnocast_wrapper_register_node(${PROJECT_NAME}
+  PLUGIN "external_api::Map"
+  EXECUTABLE map_node
+  ROS2_EXECUTOR MultiThreadedExecutor
+  AGNOCAST_EXECUTOR AgnocastOnlyCallbackIsolatedExecutor
+)
+
+autoware_agnocast_wrapper_register_node(${PROJECT_NAME}
+  PLUGIN "external_api::MetadataPackages"
+  EXECUTABLE metadata_packages_node
+  ROS2_EXECUTOR SingleThreadedExecutor
+  AGNOCAST_EXECUTOR AgnocastOnlyCallbackIsolatedExecutor
+)
+
+autoware_agnocast_wrapper_register_node(${PROJECT_NAME}
+  PLUGIN "external_api::RosbagLoggingMode"
+  EXECUTABLE rosbag_logging_mode_node
+  ROS2_EXECUTOR MultiThreadedExecutor
+  AGNOCAST_EXECUTOR AgnocastOnlyCallbackIsolatedExecutor
+)
+
+autoware_agnocast_wrapper_register_node(${PROJECT_NAME}
+  PLUGIN "external_api::RTCController"
+  EXECUTABLE rtc_controller_node
+  ROS2_EXECUTOR MultiThreadedExecutor
+  AGNOCAST_EXECUTOR AgnocastOnlyCallbackIsolatedExecutor
+)
+
+autoware_agnocast_wrapper_register_node(${PROJECT_NAME}
+  PLUGIN "external_api::Version"
+  EXECUTABLE version_node
+  ROS2_EXECUTOR SingleThreadedExecutor
+  AGNOCAST_EXECUTOR AgnocastOnlyCallbackIsolatedExecutor
 )
 
 ament_auto_package(INSTALL_TO_SHARE launch)

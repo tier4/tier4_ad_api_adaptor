@@ -18,32 +18,35 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
+#include <autoware/agnocast_wrapper/node.hpp>
+
 #include "tier4_external_api_msgs/msg/calibration_status_array.hpp"
 #include "tier4_external_api_msgs/srv/get_accel_brake_map_calibration_data.hpp"
 
 namespace external_api
 {
 
-class CalibrationStatus : public rclcpp::Node
+class CalibrationStatus : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit CalibrationStatus(const rclcpp::NodeOptions & options);
 
 private:
+  using NodeT = autoware::agnocast_wrapper::Node;
   using GetAccelBrakeMapCalibrationData =
     tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData;
+  using CalibrationStatusMsg = tier4_external_api_msgs::msg::CalibrationStatus;
+  using CalibrationStatusArray = tier4_external_api_msgs::msg::CalibrationStatusArray;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  rclcpp::TimerBase::SharedPtr timer_;
-  tier4_api_utils::Service<GetAccelBrakeMapCalibrationData>::SharedPtr
+  AUTOWARE_TIMER_PTR timer_;
+  tier4_api_utils::Service<GetAccelBrakeMapCalibrationData, NodeT>::SharedPtr
     srv_get_accel_brake_map_calibration_data_;
-  tier4_api_utils::Client<GetAccelBrakeMapCalibrationData>::SharedPtr
+  tier4_api_utils::Client<GetAccelBrakeMapCalibrationData, NodeT>::SharedPtr
     cli_get_accel_brake_map_calibration_data_;
-  rclcpp::Publisher<tier4_external_api_msgs::msg::CalibrationStatusArray>::SharedPtr
-    pub_calibration_status_;
-  rclcpp::Subscription<tier4_external_api_msgs::msg::CalibrationStatus>::SharedPtr
-    sub_accel_brake_map_calibration_status_;
+  AUTOWARE_PUBLISHER_PTR(CalibrationStatusArray) pub_calibration_status_;
+  AUTOWARE_SUBSCRIPTION_PTR(CalibrationStatusMsg) sub_accel_brake_map_calibration_status_;
 
   // ros callback
   void onTimer();
@@ -53,7 +56,7 @@ private:
       response);
 
   // calibration status
-  tier4_external_api_msgs::msg::CalibrationStatus::ConstSharedPtr accel_brake_map_status_;
+  CalibrationStatusMsg::ConstSharedPtr accel_brake_map_status_;
 };
 
 }  // namespace external_api

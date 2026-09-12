@@ -28,7 +28,7 @@ MetadataPackages::MetadataPackages(const rclcpp::NodeOptions & options)
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface<NodeT> proxy(this);
 
   const auto resources = ament_index_cpp::get_resources("autoware_metadata_packages");
   nlohmann::json json = nlohmann::json::object();

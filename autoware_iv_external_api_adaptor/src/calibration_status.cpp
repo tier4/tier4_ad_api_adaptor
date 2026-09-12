@@ -24,7 +24,7 @@ CalibrationStatus::CalibrationStatus(const rclcpp::NodeOptions & options)
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface<NodeT> proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_get_accel_brake_map_calibration_data_ =
@@ -38,17 +38,14 @@ CalibrationStatus::CalibrationStatus(const rclcpp::NodeOptions & options)
 
   using namespace std::literals::chrono_literals;
 
-  pub_calibration_status_ = create_publisher<tier4_external_api_msgs::msg::CalibrationStatusArray>(
+  pub_calibration_status_ = create_publisher<CalibrationStatusArray>(
     "/api/external/get/calibration_status", rclcpp::QoS(1));
-  timer_ =
-    rclcpp::create_timer(this, get_clock(), 200ms, std::bind(&CalibrationStatus::onTimer, this));
+  timer_ = autoware::agnocast_wrapper::create_timer(
+    this, get_clock(), 200ms, std::bind(&CalibrationStatus::onTimer, this));
 
-  sub_accel_brake_map_calibration_status_ =
-    create_subscription<tier4_external_api_msgs::msg::CalibrationStatus>(
-      "/accel_brake_map_calibrator/output/calibration_status", rclcpp::QoS(1),
-      [this](const tier4_external_api_msgs::msg::CalibrationStatus::ConstSharedPtr msg) {
-        accel_brake_map_status_ = msg;
-      });
+  sub_accel_brake_map_calibration_status_ = create_subscription<CalibrationStatusMsg>(
+    "/accel_brake_map_calibrator/output/calibration_status", rclcpp::QoS(1),
+    [this](const CalibrationStatusMsg::ConstSharedPtr msg) { accel_brake_map_status_ = msg; });
 }
 
 void CalibrationStatus::onTimer()

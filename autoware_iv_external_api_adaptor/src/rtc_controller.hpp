@@ -15,6 +15,7 @@
 #ifndef RTC_CONTROLLER_HPP_
 #define RTC_CONTROLLER_HPP_
 
+#include <autoware/agnocast_wrapper/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
@@ -40,6 +41,7 @@ using AutoModeStatus = tier4_rtc_msgs::msg::AutoModeStatus;
 using CooperateStatusArray = tier4_rtc_msgs::msg::CooperateStatusArray;
 using CooperateStatus = tier4_rtc_msgs::msg::CooperateStatus;
 using Module = tier4_rtc_msgs::msg::Module;
+using RTCNodeT = autoware::agnocast_wrapper::Node;
 
 class RTCModule
 {
@@ -50,12 +52,12 @@ public:
   std::string enable_auto_mode_namespace_ = "/planning/enable_auto_mode";
   std::vector<CooperateStatus> module_statuses_;
   AutoModeStatus auto_mode_status_;
-  rclcpp::Subscription<CooperateStatusArray>::SharedPtr module_sub_;
-  rclcpp::Subscription<AutoModeStatus>::SharedPtr auto_mode_sub_;
-  tier4_api_utils::Client<CooperateCommands>::SharedPtr cli_set_module_;
-  tier4_api_utils::Client<AutoMode>::SharedPtr cli_set_auto_mode_;
+  AUTOWARE_SUBSCRIPTION_PTR(CooperateStatusArray) module_sub_;
+  AUTOWARE_SUBSCRIPTION_PTR(AutoModeStatus) auto_mode_sub_;
+  tier4_api_utils::Client<CooperateCommands, RTCNodeT>::SharedPtr cli_set_module_;
+  tier4_api_utils::Client<AutoMode, RTCNodeT>::SharedPtr cli_set_auto_mode_;
 
-  RTCModule(rclcpp::Node * node, const std::string & name);
+  RTCModule(RTCNodeT * node, const std::string & name);
   void moduleCallback(const CooperateStatusArray::ConstSharedPtr message);
   void autoModeCallback(const AutoModeStatus::ConstSharedPtr message);
   void insertMessage(std::vector<CooperateStatus> & cooperate_statuses);
@@ -69,7 +71,7 @@ public:
 
 namespace external_api
 {
-class RTCController : public rclcpp::Node
+class RTCController : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit RTCController(const rclcpp::NodeOptions & options);
@@ -97,16 +99,16 @@ private:
   std::unique_ptr<RTCModule> start_planner_;
 
   /* publishers */
-  rclcpp::Publisher<CooperateStatusArray>::SharedPtr rtc_status_pub_;
-  rclcpp::Publisher<AutoModeStatusArray>::SharedPtr auto_mode_pub_;
+  AUTOWARE_PUBLISHER_PTR(CooperateStatusArray) rtc_status_pub_;
+  AUTOWARE_PUBLISHER_PTR(AutoModeStatusArray) auto_mode_pub_;
   /* service from external */
   rclcpp::CallbackGroup::SharedPtr group_;
-  tier4_api_utils::Service<CooperateCommands>::SharedPtr srv_set_rtc_;
-  tier4_api_utils::Service<AutoModeWithModule>::SharedPtr srv_set_rtc_auto_mode_;
+  tier4_api_utils::Service<CooperateCommands, RTCNodeT>::SharedPtr srv_set_rtc_;
+  tier4_api_utils::Service<AutoModeWithModule, RTCNodeT>::SharedPtr srv_set_rtc_auto_mode_;
 
   /* Timer */
-  rclcpp::TimerBase::SharedPtr timer_;
-  rclcpp::TimerBase::SharedPtr auto_mode_timer_;
+  AUTOWARE_TIMER_PTR timer_;
+  AUTOWARE_TIMER_PTR auto_mode_timer_;
 
   void insertionSortAndValidation(std::vector<CooperateStatus> & statuses_vector);
   void checkInfDistance(CooperateStatus & status);

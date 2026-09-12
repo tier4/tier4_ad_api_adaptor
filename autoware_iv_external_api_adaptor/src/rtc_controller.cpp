@@ -18,12 +18,12 @@
 #include <string>
 #include <vector>
 
-RTCModule::RTCModule(rclcpp::Node * node, const std::string & name)
+RTCModule::RTCModule(RTCNodeT * node, const std::string & name)
 {
   using namespace std::literals::chrono_literals;
   using std::placeholders::_1;
   using std::placeholders::_2;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(node);
+  tier4_api_utils::ServiceProxyNodeInterface<RTCNodeT> proxy(node);
 
   module_sub_ = node->create_subscription<CooperateStatusArray>(
     cooperate_status_namespace_ + "/" + name, rclcpp::QoS(1),
@@ -92,7 +92,7 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
   using namespace std::literals::chrono_literals;
   using std::placeholders::_1;
   using std::placeholders::_2;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface<RTCNodeT> proxy(this);
 
   blind_spot_ = std::make_unique<RTCModule>(this, "blind_spot");
   crosswalk_ = std::make_unique<RTCModule>(this, "crosswalk");
@@ -130,8 +130,9 @@ RTCController::RTCController(const rclcpp::NodeOptions & options)
     "/api/external/set/rtc_auto_mode", std::bind(&RTCController::setRTCAutoMode, this, _1, _2),
     rmw_qos_profile_services_default, group_);
 
-  timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
-  auto_mode_timer_ = rclcpp::create_timer(
+  timer_ = autoware::agnocast_wrapper::create_timer(
+    this, get_clock(), 100ms, std::bind(&RTCController::onTimer, this));
+  auto_mode_timer_ = autoware::agnocast_wrapper::create_timer(
     this, get_clock(), 100ms, std::bind(&RTCController::onAutoModeTimer, this));
 }
 

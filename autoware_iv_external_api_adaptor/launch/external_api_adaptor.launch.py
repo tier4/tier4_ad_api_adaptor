@@ -14,12 +14,29 @@
 
 import launch
 from launch.actions import DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription
+from launch.actions import OpaqueFunction
 from launch.conditions import IfCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitution import Substitution
 from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.actions import LoadComposableNodes
+from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode
+from launch_ros.substitutions import FindPackageShare
+
+# Nodes derived from autoware::agnocast_wrapper::Node, as (node name, class name, executable).
+# Composed like any other node under ENABLE_AGNOCAST=0, where that base is backed by rclcpp; run as
+# their own process under =1.
+AGNOCAST_WRAPPER_NODES = [
+    ("calibration_status", "CalibrationStatus", "calibration_status_node"),
+    ("map", "Map", "map_node"),
+    ("metadata_packages", "MetadataPackages", "metadata_packages_node"),
+    ("rosbag_logging_mode", "RosbagLoggingMode", "rosbag_logging_mode_node"),
+    ("version", "Version", "version_node"),
+]
 
 
 # Usage: If the current namespace is /ros/ns:
@@ -47,23 +64,54 @@ def _create_api_node(node_name, class_name, **kwargs):
     )
 
 
-def generate_launch_description():
+def _create_standalone_api_node(node_name, executable):
+    """Launch one AGNOCAST_WRAPPER_NODES entry as its own process."""
+    return Node(
+        namespace="external",
+        name=node_name,
+        package="autoware_iv_external_api_adaptor",
+        executable=executable,
+        additional_env={"LD_PRELOAD": LaunchConfiguration("ld_preload_value")},
+        output="screen",
+    )
+
+
+def _get_agnocast_env():
+    return IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("autoware_agnocast_wrapper"),
+                    "launch",
+                    "agnocast_env.launch.py",
+                ]
+            )
+        )
+    )
+
+
+def launch_setup(context, *args, **kwargs):
+    use_agnocast = context.perform_substitution(LaunchConfiguration("use_agnocast")) == "1"
+
     # RTCController is launched by tier4_autoware_api_launch because it is used by autoware_universe.
+    components = [
+        _create_api_node("cpu_usage", "CpuUsage"),
+        _create_api_node("localization_score", "LocalizationScore"),
+        _create_api_node("system_monitor", "SystemMonitor"),
+    ]
+    nodes = []
+    for node_name, class_name, executable in AGNOCAST_WRAPPER_NODES:
+        if use_agnocast:
+            nodes.append(_create_standalone_api_node(node_name, executable))
+        else:
+            components.append(_create_api_node(node_name, class_name))
+
     container = ComposableNodeContainer(
         namespace="external",
         name="autoware_iv_adaptor",
         package="rclcpp_components",
         executable="component_container_mt",
-        composable_node_descriptions=[
-            _create_api_node("calibration_status", "CalibrationStatus"),
-            _create_api_node("cpu_usage", "CpuUsage"),
-            _create_api_node("localization_score", "LocalizationScore"),
-            _create_api_node("map", "Map"),
-            _create_api_node("metadata_packages", "MetadataPackages"),
-            _create_api_node("rosbag_logging_mode", "RosbagLoggingMode"),
-            _create_api_node("system_monitor", "SystemMonitor"),
-            _create_api_node("version", "Version"),
-        ],
+        composable_node_descriptions=components,
         ros_arguments=[
             "--log-level",
             Namespace(".", "external.autoware_iv_adaptor:=WARN"),
@@ -92,13 +140,15 @@ def generate_launch_description():
             _create_api_node("emergency", "Emergency"),
         ],
     )
+    return [container, loader_0_4_3, loader_0_4_4, *nodes]
 
+
+def generate_launch_description():
     return launch.LaunchDescription(
         [
             DeclareLaunchArgument("launch_api_0_4_3", default_value="false"),
             DeclareLaunchArgument("launch_api_0_4_4", default_value="false"),
-            container,
-            loader_0_4_3,
-            loader_0_4_4,
+            _get_agnocast_env(),
+            OpaqueFunction(function=launch_setup),
         ]
     )
