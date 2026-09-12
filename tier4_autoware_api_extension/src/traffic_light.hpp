@@ -15,6 +15,7 @@
 #ifndef TRAFFIC_LIGHT_HPP_
 #define TRAFFIC_LIGHT_HPP_
 
+#include <autoware/agnocast_wrapper/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_perception_msgs/msg/traffic_light_group.hpp>
@@ -26,15 +27,15 @@ namespace tier4_autoware_api_extension
 using ExternalMessage = tier4_external_api_msgs::msg::TrafficLightGroup;
 using InternalMessage = autoware_perception_msgs::msg::TrafficLightGroup;
 
-class TrafficLight : public rclcpp::Node
+class TrafficLight : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit TrafficLight(const rclcpp::NodeOptions & options);
 
 private:
   void on_message(const InternalMessage & internal);
-  rclcpp::Subscription<InternalMessage>::SharedPtr sub_traffic_light_group_;
-  rclcpp::Publisher<ExternalMessage>::SharedPtr pub_traffic_light_group_;
+  AUTOWARE_SUBSCRIPTION_PTR(InternalMessage) sub_traffic_light_group_;
+  AUTOWARE_PUBLISHER_PTR(ExternalMessage) pub_traffic_light_group_;
 };
 
 }  // namespace tier4_autoware_api_extension

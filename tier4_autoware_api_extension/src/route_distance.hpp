@@ -15,6 +15,7 @@
 #ifndef ROUTE_DISTANCE_HPP_
 #define ROUTE_DISTANCE_HPP_
 
+#include <autoware/agnocast_wrapper/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_internal_debug_msgs/msg/float64_stamped.hpp>
@@ -26,15 +27,15 @@ namespace tier4_autoware_api_extension
 using ExternalMessage = tier4_external_api_msgs::msg::RouteDistance;
 using InternalMessage = autoware_internal_debug_msgs::msg::Float64Stamped;
 
-class RouteDistance : public rclcpp::Node
+class RouteDistance : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit RouteDistance(const rclcpp::NodeOptions & options);
 
 private:
   void on_message(const InternalMessage & internal);
-  rclcpp::Subscription<InternalMessage>::SharedPtr sub_route_distance_;
-  rclcpp::Publisher<ExternalMessage>::SharedPtr pub_route_distance_;
+  AUTOWARE_SUBSCRIPTION_PTR(InternalMessage) sub_route_distance_;
+  AUTOWARE_PUBLISHER_PTR(ExternalMessage) pub_route_distance_;
 };
 
 }  // namespace tier4_autoware_api_extension
