@@ -18,27 +18,30 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
+#include <autoware/agnocast_wrapper/node.hpp>
+
 #include "tier4_external_api_msgs/msg/rosbag_logging_mode.hpp"
 #include "tier4_external_api_msgs/srv/set_rosbag_logging_mode.hpp"
 
 namespace external_api
 {
 
-class RosbagLoggingMode : public rclcpp::Node
+class RosbagLoggingMode : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit RosbagLoggingMode(const rclcpp::NodeOptions & options);
 
 private:
+  using NodeT = autoware::agnocast_wrapper::Node;
   using SetRosbagLoggingMode = tier4_external_api_msgs::srv::SetRosbagLoggingMode;
   using GetRosbagLoggingMode = tier4_external_api_msgs::msg::RosbagLoggingMode;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  tier4_api_utils::Service<SetRosbagLoggingMode>::SharedPtr srv_set_rosbag_logging_mode_;
-  tier4_api_utils::Client<SetRosbagLoggingMode>::SharedPtr cli_set_rosbag_logging_mode_;
-  rclcpp::Publisher<GetRosbagLoggingMode>::SharedPtr pub_get_rosbag_logging_mode_;
-  rclcpp::Subscription<GetRosbagLoggingMode>::SharedPtr sub_get_rosbag_logging_mode_;
+  tier4_api_utils::Service<SetRosbagLoggingMode, NodeT>::SharedPtr srv_set_rosbag_logging_mode_;
+  tier4_api_utils::Client<SetRosbagLoggingMode, NodeT>::SharedPtr cli_set_rosbag_logging_mode_;
+  AUTOWARE_PUBLISHER_PTR(GetRosbagLoggingMode) pub_get_rosbag_logging_mode_;
+  AUTOWARE_SUBSCRIPTION_PTR(GetRosbagLoggingMode) sub_get_rosbag_logging_mode_;
 
   // ros callback
   void setRosbagLoggingMode(

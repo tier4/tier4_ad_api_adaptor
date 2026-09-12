@@ -21,7 +21,7 @@ Version::Version(const rclcpp::NodeOptions & options) : Node("external_api_versi
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface<NodeT> proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_ = proxy.create_service<autoware_external_api_msgs::srv::GetVersion>(

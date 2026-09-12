@@ -21,7 +21,7 @@ Map::Map(const rclcpp::NodeOptions & options) : Node("external_api_map", options
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface<NodeT> proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_lanelet_xml_ = proxy.create_service<tier4_external_api_msgs::srv::GetTextFile>(
@@ -37,7 +37,7 @@ Map::Map(const rclcpp::NodeOptions & options) : Node("external_api_map", options
     std::bind(&Map::getMapHash, this, _1));
 }
 
-void Map::getMapHash(const tier4_external_api_msgs::msg::MapHash::SharedPtr message)
+void Map::getMapHash(const tier4_external_api_msgs::msg::MapHash::ConstSharedPtr message)
 {
   pub_map_info_->publish(*message);
 }
