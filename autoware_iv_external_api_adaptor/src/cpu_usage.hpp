@@ -16,7 +16,8 @@
 #define CPU_USAGE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
-#include "tier4_api_utils/tier4_api_utils.hpp"
+
+#include <autoware/agnocast_wrapper/node.hpp>
 
 #include "tier4_external_api_msgs/msg/cpu_status.hpp"
 #include "tier4_external_api_msgs/msg/cpu_usage.hpp"
@@ -24,14 +25,14 @@
 namespace external_api
 {
 
-class CpuUsage : public rclcpp::Node
+class CpuUsage : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit CpuUsage(const rclcpp::NodeOptions & options);
 
 private:
-  rclcpp::Publisher<tier4_external_api_msgs::msg::CpuUsage>::SharedPtr pub_cpu_usage_;
-  rclcpp::Subscription<tier4_external_api_msgs::msg::CpuUsage>::SharedPtr sub_cpu_usage_;
+  AUTOWARE_PUBLISHER_PTR(tier4_external_api_msgs::msg::CpuUsage) pub_cpu_usage_;
+  AUTOWARE_SUBSCRIPTION_PTR(tier4_external_api_msgs::msg::CpuUsage) sub_cpu_usage_;
 };
 
 }  // namespace external_api

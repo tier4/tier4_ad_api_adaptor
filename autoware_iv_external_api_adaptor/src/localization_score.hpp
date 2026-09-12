@@ -15,6 +15,7 @@
 #ifndef LOCALIZATION_SCORE_HPP_
 #define LOCALIZATION_SCORE_HPP_
 
+#include <autoware/agnocast_wrapper/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "tier4_external_api_msgs/msg/localization_score_array.hpp"
@@ -30,7 +31,7 @@ using autoware_internal_debug_msgs::msg::Float32Stamped;
 using geometry_msgs::msg::PoseWithCovarianceStamped;
 using tier4_external_api_msgs::msg::LocalizationScoreArray;
 
-class LocalizationScore : public rclcpp::Node
+class LocalizationScore : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit LocalizationScore(const rclcpp::NodeOptions & options);
@@ -40,12 +41,12 @@ private:
   void callbackNvtlScore(const Float32Stamped::ConstSharedPtr msg_ptr);
   void callbackTimer();
 
-  rclcpp::Publisher<LocalizationScoreArray>::SharedPtr pub_localization_scores_;
-  rclcpp::Subscription<Float32Stamped>::SharedPtr sub_transform_probability_;
-  rclcpp::Subscription<Float32Stamped>::SharedPtr sub_nearest_voxel_transformation_likelihood_;
+  AUTOWARE_PUBLISHER_PTR(LocalizationScoreArray) pub_localization_scores_;
+  AUTOWARE_SUBSCRIPTION_PTR(Float32Stamped) sub_transform_probability_;
+  AUTOWARE_SUBSCRIPTION_PTR(Float32Stamped) sub_nearest_voxel_transformation_likelihood_;
 
   rclcpp::Clock::SharedPtr clock_;
-  rclcpp::TimerBase::SharedPtr timer_;
+  AUTOWARE_TIMER_PTR timer_;
   double status_pub_hz_;
 
   tier4_external_api_msgs::msg::LocalizationScore score_tp_;
