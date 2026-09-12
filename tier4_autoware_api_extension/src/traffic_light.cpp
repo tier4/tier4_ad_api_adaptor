@@ -14,6 +14,8 @@
 
 #include "traffic_light.hpp"
 
+#include <utility>
+
 namespace tier4_autoware_api_extension
 {
 
@@ -39,12 +41,12 @@ TrafficLight::TrafficLight(const rclcpp::NodeOptions & options) : Node("traffic_
 
 void TrafficLight::on_message(const InternalMessage & internal)
 {
-  ExternalMessage external;
-  external.traffic_light_group_id = internal.traffic_light_group_id;
+  auto external = ALLOCATE_OUTPUT_MESSAGE_UNIQUE(pub_traffic_light_group_);
+  external->traffic_light_group_id = internal.traffic_light_group_id;
   for (const auto & element : internal.elements) {
-    external.elements.push_back(convert(element));
+    external->elements.push_back(convert(element));
   }
-  pub_traffic_light_group_->publish(external);
+  pub_traffic_light_group_->publish(std::move(external));
 }
 
 }  // namespace tier4_autoware_api_extension

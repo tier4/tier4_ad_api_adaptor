@@ -15,6 +15,7 @@
 #ifndef VELOCITY_LIMIT_HPP_
 #define VELOCITY_LIMIT_HPP_
 
+#include <autoware/agnocast_wrapper/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
@@ -23,7 +24,7 @@
 
 namespace tier4_autoware_api_extension
 {
-class VelocityLimit : public rclcpp::Node
+class VelocityLimit : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit VelocityLimit(const rclcpp::NodeOptions & options);
@@ -33,15 +34,15 @@ private:
   using ExternalMessage = tier4_external_api_msgs::msg::VelocityLimit;
   using InternalMessage = autoware_internal_planning_msgs::msg::VelocityLimit;
 
-  rclcpp::Service<ExternalService>::SharedPtr srv_api_velocity_;
-  rclcpp::Publisher<ExternalMessage>::SharedPtr pub_api_velocity_;
-  rclcpp::Publisher<InternalMessage>::SharedPtr pub_planning_velocity_;
-  rclcpp::Subscription<InternalMessage>::SharedPtr sub_planning_velocity_;
+  AUTOWARE_SERVICE_PTR(ExternalService) srv_api_velocity_;
+  AUTOWARE_PUBLISHER_PTR(ExternalMessage) pub_api_velocity_;
+  AUTOWARE_PUBLISHER_PTR(InternalMessage) pub_planning_velocity_;
+  AUTOWARE_SUBSCRIPTION_PTR(InternalMessage) sub_planning_velocity_;
 
-  void on_velocity_limit_message(const InternalMessage::SharedPtr msg);
+  void on_velocity_limit_message(AUTOWARE_MESSAGE_CONST_SHARED_PTR(InternalMessage) msg);
   void on_velocity_limit_service(
-    const ExternalService::Request::SharedPtr request,
-    const ExternalService::Response::SharedPtr response);
+    AUTOWARE_SERVER_REQUEST_PTR(ExternalService) request,
+    AUTOWARE_SERVER_RESPONSE_PTR(ExternalService) response);
 
   void publishApiVelocity(double velocity);
   void publishPlanningVelocity(double velocity);
