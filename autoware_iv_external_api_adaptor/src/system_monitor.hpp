@@ -15,8 +15,7 @@
 #ifndef SYSTEM_MONITOR_HPP_
 #define SYSTEM_MONITOR_HPP_
 
-#include "tier4_api_utils/tier4_api_utils.hpp"
-
+#include <autoware/agnocast_wrapper/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "tier4_external_api_msgs/msg/cpu_temperature.hpp"
@@ -34,7 +33,7 @@
 namespace external_api
 {
 
-class SystemMonitor : public rclcpp::Node
+class SystemMonitor : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit SystemMonitor(const rclcpp::NodeOptions & options);
@@ -45,14 +44,13 @@ private:
 
   std::map<std::string, tier4_external_api_msgs::msg::SystemMonitor> msg_system_monitor_;
 
-  rclcpp::Publisher<tier4_external_api_msgs::msg::SystemMonitor>::SharedPtr pub_system_monitor_;
+  AUTOWARE_PUBLISHER_PTR(tier4_external_api_msgs::msg::SystemMonitor) pub_system_monitor_;
 
-  rclcpp::Subscription<tier4_external_api_msgs::msg::CpuTemperature>::SharedPtr
-    sub_cpu_temperature_;
-  rclcpp::Subscription<tier4_external_api_msgs::msg::MemoryStatus>::SharedPtr sub_memory_status_;
-  rclcpp::Subscription<tier4_external_api_msgs::msg::GpuStatus>::SharedPtr sub_gpu_status_;
-  rclcpp::Subscription<tier4_external_api_msgs::msg::NetworkStatus>::SharedPtr sub_network_status_;
-  rclcpp::Subscription<tier4_external_api_msgs::msg::HddStatus>::SharedPtr sub_hdd_status_;
+  AUTOWARE_SUBSCRIPTION_PTR(tier4_external_api_msgs::msg::CpuTemperature) sub_cpu_temperature_;
+  AUTOWARE_SUBSCRIPTION_PTR(tier4_external_api_msgs::msg::MemoryStatus) sub_memory_status_;
+  AUTOWARE_SUBSCRIPTION_PTR(tier4_external_api_msgs::msg::GpuStatus) sub_gpu_status_;
+  AUTOWARE_SUBSCRIPTION_PTR(tier4_external_api_msgs::msg::NetworkStatus) sub_network_status_;
+  AUTOWARE_SUBSCRIPTION_PTR(tier4_external_api_msgs::msg::HddStatus) sub_hdd_status_;
 };
 
 }  // namespace external_api

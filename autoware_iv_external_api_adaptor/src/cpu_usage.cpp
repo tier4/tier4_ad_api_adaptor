@@ -25,7 +25,7 @@ CpuUsage::CpuUsage(const rclcpp::NodeOptions & options) : Node("cpu_usage", opti
     "/api/external/get/cpu_usage", rclcpp::QoS(1));
   sub_cpu_usage_ = create_subscription<tier4_external_api_msgs::msg::CpuUsage>(
     "/system/system_monitor/cpu_monitor/cpu_usage", rclcpp::QoS(1),
-    [this](const tier4_external_api_msgs::msg::CpuUsage::SharedPtr msg) {
+    [this](const tier4_external_api_msgs::msg::CpuUsage::ConstSharedPtr msg) {
       pub_cpu_usage_->publish(*msg);
     });
 }
