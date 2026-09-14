@@ -2,6 +2,7 @@
   <arg name="launch_api_0_4_3" default="false" description="Launch APIs with an EOL of v0.4.3."/>
 
   <let name="use_agnocast" value="$(env ENABLE_AGNOCAST 0)"/>
+  <!-- Set `ld_preload_value`. This env launch is needed regardless if we use agnocast or not -->
   <include file="$(find-pkg-share autoware_agnocast_wrapper)/launch/agnocast_env.launch.py"/>
 
   <!-- Component Container -->
