@@ -80,7 +80,9 @@ void Driving::on_enable(
   }
 
   // Handle level2 and level4 requests.
-  if (!operation_mode_.is_autonomous_mode_available) {
+  if (
+    operation_mode_.mode == OperationModeState::STOP &&
+    !operation_mode_.is_autonomous_mode_available) {
     res->status.code = ResponseStatus::ERROR;
     res->status.message = "autonomous mode is not available";
     return;
@@ -134,7 +136,7 @@ void Driving::publish(const rclcpp::Time & now)
   msg.is_level2_route = level2_available.route;
   msg.is_level4_route = level4_available.route;
   if (prev_status_ != msg) {
-    prev_status_ = msg;
+    prev_status_ = msg;  // Save the message before setting the stamp.
     msg.stamp = now;
     pub_status_->publish(msg);
   }
