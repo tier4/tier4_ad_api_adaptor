@@ -16,6 +16,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace
@@ -162,7 +163,9 @@ PlanningFactor::PlanningFactor(const rclcpp::NodeOptions & options)
 
   for (size_t i = 0; i < topics.size(); ++i) {
     const auto callback = [this](const int index) {
-      return [this, index](const InternalArray::ConstSharedPtr msg) { factors_[index] = msg; };
+      return [this, index](AUTOWARE_MESSAGE_CONST_SHARED_PTR(InternalArray) msg) {
+        factors_[index] = std::move(msg);
+      };
     };
     sub_planning_factors_[i] = create_subscription<InternalArray>(topics[i], 1, callback(i));
   }
@@ -170,7 +173,8 @@ PlanningFactor::PlanningFactor(const rclcpp::NodeOptions & options)
   pub_planning_factors_ = create_publisher<ExternalArray>("/api/external/get/planning_factors", 1);
 
   const auto period = rclcpp::Rate(declare_parameter<double>("rate")).period();
-  timer_ = rclcpp::create_timer(this, get_clock(), period, [this]() { on_timer(); });
+  timer_ =
+    autoware::agnocast_wrapper::create_timer(this, get_clock(), period, [this]() { on_timer(); });
 }
 
 void PlanningFactor::on_timer()
@@ -180,22 +184,22 @@ void PlanningFactor::on_timer()
     if (message) {
       const auto duration = (now() - message->header.stamp).seconds();
       if (timeout_ < duration) {
-        message.reset();
+        message = {};
       }
     }
   }
 
   // Convert planning factors.
-  ExternalArray external;
-  external.stamp = now();
+  auto external = ALLOCATE_OUTPUT_MESSAGE_UNIQUE(pub_planning_factors_);
+  external->stamp = now();
   for (const auto & message : factors_) {
     if (message) {
       for (const auto & factor : message->factors) {
-        external.factors.push_back(convert(message->header, factor, behavior_name_remapping_));
+        external->factors.push_back(convert(message->header, factor, behavior_name_remapping_));
       }
     }
   }
-  pub_planning_factors_->publish(external);
+  pub_planning_factors_->publish(std::move(external));
 }
 
 }  // namespace tier4_autoware_api_extension

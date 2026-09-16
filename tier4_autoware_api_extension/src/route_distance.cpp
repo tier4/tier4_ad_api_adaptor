@@ -14,6 +14,8 @@
 
 #include "route_distance.hpp"
 
+#include <utility>
+
 namespace tier4_autoware_api_extension
 {
 
@@ -28,10 +30,10 @@ RouteDistance::RouteDistance(const rclcpp::NodeOptions & options) : Node("route_
 
 void RouteDistance::on_message(const InternalMessage & internal)
 {
-  ExternalMessage external;
-  external.stamp = internal.stamp;
-  external.remaining_distance = internal.data;
-  pub_route_distance_->publish(external);
+  auto external = ALLOCATE_OUTPUT_MESSAGE_UNIQUE(pub_route_distance_);
+  external->stamp = internal.stamp;
+  external->remaining_distance = internal.data;
+  pub_route_distance_->publish(std::move(external));
 }
 
 }  // namespace tier4_autoware_api_extension
