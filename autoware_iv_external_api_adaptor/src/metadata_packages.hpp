@@ -18,20 +18,25 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
+#include <autoware/agnocast_wrapper/node.hpp>
+
 #include "tier4_external_api_msgs/srv/get_metadata_packages.hpp"
 
 namespace external_api
 {
 
-class MetadataPackages : public rclcpp::Node
+class MetadataPackages : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit MetadataPackages(const rclcpp::NodeOptions & options);
 
 private:
+  using NodeT = autoware::agnocast_wrapper::Node;
+
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  tier4_api_utils::Service<tier4_external_api_msgs::srv::GetMetadataPackages>::SharedPtr srv_;
+  tier4_api_utils::Service<tier4_external_api_msgs::srv::GetMetadataPackages, NodeT>::SharedPtr
+    srv_;
 
   // ros callback
   void getVersions(
