@@ -47,7 +47,8 @@ LocalizationScore::LocalizationScore(const rclcpp::NodeOptions & options)
   auto timer_callback = std::bind(&LocalizationScore::callbackTimer, this);
   auto period = std::chrono::duration_cast<std::chrono::nanoseconds>(
     std::chrono::duration<double>(1.0 / status_pub_hz_));
-  timer_ = rclcpp::create_timer(this, get_clock(), period, std::move(timer_callback));
+  timer_ =
+    autoware::agnocast_wrapper::create_timer(this, get_clock(), period, std::move(timer_callback));
 }
 
 void LocalizationScore::callbackTpScore(const Float32Stamped::ConstSharedPtr msg_ptr)
