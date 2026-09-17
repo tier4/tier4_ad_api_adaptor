@@ -36,6 +36,7 @@ void Notification::update(const Context & context, DiagLevel level)
 {
   current_failure_ = nullptr;
   if (level == DiagStatus::OK) return;
+  if (level == DiagStatus::WARN) return;
 
   for (const auto & failure : failures_->list()) {
     if (failure->condition()->evaluate(context)) {
