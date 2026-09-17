@@ -28,6 +28,7 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
 {
   const auto path = declare_parameter<std::string>("error_file");
   notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path));
+  publish_interval_ = declare_parameter<double>("interval");
 
   // Create context and related interfaces.
   context_.route_state.stamp = now();
@@ -62,6 +63,20 @@ void FailureNotification::on_create(DiagGraph::ConstSharedPtr graph)
   }
 }
 
+void FailureNotification::reset_publish_interval()
+{
+  const auto period = rclcpp::Duration::from_seconds(publish_interval_);
+  timer_.reset();
+  timer_ = autoware::agnocast_wrapper::create_timer(this, get_clock(), period, [this]() {
+    if (previous_failures_) {
+      FailureNotificationArray msg;
+      msg.stamp = now();
+      msg.notifications = previous_failures_.value();
+      pub_failure_notification_->publish(msg);
+    }
+  });
+}
+
 void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
 {
   for (const auto & node : graph->nodes()) {
@@ -92,6 +107,8 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
   msg.stamp = now();
   msg.notifications = failures;
   pub_failure_notification_->publish(msg);
+
+  reset_publish_interval();
 }
 
 }  // namespace autoware::failure_notification

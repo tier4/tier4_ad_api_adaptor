@@ -41,4 +41,4 @@ if(BUILD_TESTING)
   target_link_libraries(gtest_ros_${PROJECT_NAME} ${PROJECT_NAME})
 endif()
 
-ament_auto_package(INSTALL_TO_SHARE launch)
+ament_auto_package(INSTALL_TO_SHARE config launch)

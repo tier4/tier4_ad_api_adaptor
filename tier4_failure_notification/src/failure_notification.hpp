@@ -46,6 +46,10 @@ private:
   void on_update(DiagGraph::ConstSharedPtr graph);
   autoware::diagnostic_graph_utils::DiagGraphSubscription sub_graph_;
 
+  AUTOWARE_TIMER_PTR timer_;
+  double publish_interval_;
+  void reset_publish_interval();
+
   Context context_;
   std::unique_ptr<Notifications> notifications_;
   std::unordered_map<const DiagNode *, Notification *> mapping_;

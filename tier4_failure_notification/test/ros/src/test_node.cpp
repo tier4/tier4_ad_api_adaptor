@@ -68,6 +68,7 @@ FailureNotificationArray test_main(const std::vector<std::pair<uint8_t, uint8_t>
 {
   auto options = rclcpp::NodeOptions();
   options.append_parameter_override("error_file", resource("errors.yaml"));
+  options.append_parameter_override("interval", 1.0);
 
   auto node = std::make_shared<FailureNotification>(options);
   auto mock = std::make_shared<MockNode>();
