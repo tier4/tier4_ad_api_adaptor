@@ -43,3 +43,4 @@
       - /planning/planning_factors/diffusion_planner
       - /planning/planning_factors/modifier_obstacle_stop
       - /planning/planning_factors/modifier_traffic_light_stop
+      - /planning/planning_factors/ml_planner
