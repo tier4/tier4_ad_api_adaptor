@@ -24,11 +24,21 @@ install(PROGRAMS
 )
 
 if(BUILD_TESTING)
-  ament_auto_add_gmock(gtest_${PROJECT_NAME}
-    "test/src/test_condition.cpp"
-    "test/src/test_expression.cpp"
+  ament_auto_add_gmock(gtest_unit_${PROJECT_NAME}
+    "test/unit/src/test_condition.cpp"
+    "test/unit/src/test_expression.cpp"
   )
-  target_include_directories(gtest_${PROJECT_NAME} PRIVATE "src")
+  target_include_directories(gtest_unit_${PROJECT_NAME} PRIVATE "src")
+
+  ament_add_ros_isolated_gtest(gtest_ros_${PROJECT_NAME}
+    "test/ros/src/test_main.cpp"
+    "test/ros/src/test_node.cpp"
+    "test/ros/src/mock/mock.cpp"
+  )
+  get_filename_component(RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/ros/files" ABSOLUTE)
+  target_compile_definitions(gtest_ros_${PROJECT_NAME} PRIVATE TEST_RESOURCE_PATH="${RESOURCE_PATH}")
+  target_include_directories(gtest_ros_${PROJECT_NAME} PRIVATE "src")
+  target_link_libraries(gtest_ros_${PROJECT_NAME} ${PROJECT_NAME})
 endif()
 
 ament_auto_package(INSTALL_TO_SHARE launch)

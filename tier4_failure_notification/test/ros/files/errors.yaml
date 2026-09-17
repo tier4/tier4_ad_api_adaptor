@@ -1,0 +1,15 @@
+notifications:
+  /path/foo:
+    failures:
+      - condition: "True"
+        code: FOO-000
+
+  /path/bar:
+    failures:
+      - condition: "True"
+        code: BAR-000
+
+  /path/baz:
+    failures:
+      - condition: "True"
+        code: BAZ-000
