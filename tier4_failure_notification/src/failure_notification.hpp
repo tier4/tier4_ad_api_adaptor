@@ -17,6 +17,7 @@
 
 #include "core/notification.hpp"
 
+#include <autoware/agnocast_wrapper/node.hpp>
 #include <autoware/diagnostic_graph_utils/subscription.hpp>
 #include <rclcpp/rclcpp.hpp>
 
@@ -29,7 +30,7 @@
 namespace autoware::failure_notification
 {
 
-class FailureNotification : public rclcpp::Node
+class FailureNotification : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit FailureNotification(const rclcpp::NodeOptions & options);
@@ -48,7 +49,7 @@ private:
   Context context_;
   std::unique_ptr<Notifications> notifications_;
   std::unordered_map<const DiagNode *, Notification *> mapping_;
-  std::vector<const Failure *> previous_failures_;
+  std::optional<std::vector<FailureNotificationMsg>> previous_failures_;
 
   rclcpp::Subscription<Context::RouteState>::SharedPtr sub_route_state_;
   rclcpp::Subscription<Context::LocalizationState>::SharedPtr sub_localization_state_;

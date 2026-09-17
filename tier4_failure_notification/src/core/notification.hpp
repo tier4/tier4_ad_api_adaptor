@@ -33,15 +33,17 @@ class Notification
 public:
   Notification(const std::string & path, YAML::Node yaml);
   const auto & path() const { return path_; }
+  const auto & resolved() const { return resolved_; }
   const auto & current_failure() const { return current_failure_; }
 
   using DiagStatus = diagnostic_msgs::msg::DiagnosticStatus;
   using DiagLevel = DiagStatus::_level_type;
-  void update(const Context & context, DiagLevel level);
+  void update(const Context & context, DiagLevel level, DiagLevel input);
 
 private:
   const std::string path_;
-  const Failure * current_failure_ = nullptr;
+  Failure * current_failure_ = nullptr;
+  bool resolved_ = false;
   std::unique_ptr<Failures> failures_;
 };
 

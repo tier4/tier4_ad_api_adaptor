@@ -32,11 +32,15 @@ Notification::Notification(const std::string & path, YAML::Node yaml) : path_(pa
   }
 }
 
-void Notification::update(const Context & context, DiagLevel level)
+void Notification::update(const Context & context, DiagLevel level, DiagLevel input)
 {
+  const auto is_ok = [](DiagLevel level) {
+    return level == DiagStatus::OK || level == DiagStatus::WARN;
+  };
+
   current_failure_ = nullptr;
-  if (level == DiagStatus::OK) return;
-  if (level == DiagStatus::WARN) return;
+  resolved_ = is_ok(input);
+  if (is_ok(level)) return;
 
   for (const auto & failure : failures_->list()) {
     if (failure->condition()->evaluate(context)) {

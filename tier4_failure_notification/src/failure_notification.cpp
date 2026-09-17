@@ -29,9 +29,6 @@ FailureNotification::FailureNotification(const rclcpp::NodeOptions & options)
   const auto path = declare_parameter<std::string>("error_file");
   notifications_ = std::make_unique<Notifications>(YAML::LoadFile(path));
 
-  // Set a non-existent pattern to ensure the first message is published.
-  previous_failures_.push_back(nullptr);
-
   // Create context and related interfaces.
   context_.route_state.stamp = now();
   context_.route_state.state = Context::RouteState::UNKNOWN;
@@ -70,36 +67,30 @@ void FailureNotification::on_update(DiagGraph::ConstSharedPtr graph)
   for (const auto & node : graph->nodes()) {
     const auto notification = mapping_.at(node);
     if (notification) {
-      notification->update(context_, node->level());
+      notification->update(context_, node->level(), node->input_level());
     }
   }
 
-  std::vector<const Failure *> failures;
+  std::vector<FailureNotificationMsg> failures;
   for (const auto & notification : notifications_->list()) {
     const auto failure = notification->current_failure();
     if (failure) {
-      failures.push_back(failure);
+      FailureNotificationMsg msg;
+      msg.code = failure->code();
+      msg.is_resolved = notification->resolved();
+      failures.push_back(msg);
     }
   }
+  sort(failures.begin(), failures.end(), [](const auto & x, const auto & y) {
+    return x.code < y.code;
+  });
 
   if (previous_failures_ == failures) return;
   previous_failures_ = failures;
 
-  // Remove duplicate codes. Sort is required for std::unique to work correctly.
-  std::vector<std::string> codes;
-  for (const auto & failure : failures) {
-    codes.push_back(failure->code());
-  }
-  std::sort(codes.begin(), codes.end());
-  codes.erase(std::unique(codes.begin(), codes.end()), codes.end());
-
   FailureNotificationArray msg;
-  for (const auto & code : codes) {
-    FailureNotificationMsg item;
-    item.code = code;
-    msg.notifications.push_back(item);
-  }
   msg.stamp = now();
+  msg.notifications = failures;
   pub_failure_notification_->publish(msg);
 }
 
