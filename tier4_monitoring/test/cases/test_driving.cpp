@@ -36,6 +36,7 @@ using tier4_external_api_msgs::msg::ResponseStatus;
 struct DrivingLevelTestParam
 {
   uint8_t mode;
+  std::string operator_name;  // The operator that is responsible for the level.
 };
 
 std::string to_test_name(const testing::TestParamInfo<DrivingLevelTestParam> & info)
@@ -83,6 +84,23 @@ protected:
     return condition();
   }
 
+  // Calls the change service of the operator and waits until the status is published back.
+  void change_operator(const std::string & name, uint8_t status)
+  {
+    const auto client = mock_->client(name);
+    auto future = client->change(status);
+    const auto is_received = [&future]() {
+      return future.wait_for(0s) == std::future_status::ready;
+    };
+    ASSERT_TRUE(spin_until(is_received, 3s));
+    ASSERT_EQ(future.get()->status.code, ResponseStatus::SUCCESS);
+
+    const auto is_changed = [client, status]() {
+      return client->status() && client->status()->status == status;
+    };
+    ASSERT_TRUE(spin_until(is_changed, 3s));
+  }
+
   // Calls the enable service and waits until the status is published back.
   void enable(uint8_t mode)
   {
@@ -107,16 +125,18 @@ protected:
   bool heartbeat_enabled_ = true;
 };
 
-// TODO(isamu-takagi): This test fails until the operation mode, the route and the operator
-// statuses required for the transition are provided by the mock node.
+// TODO(isamu-takagi): The level4 case fails until the map and the route are provided by the
+// mock node because the level4 route is not available without them.
 TEST_P(DrivingLevelTest, Enable)
 {
   const auto & param = GetParam();
+  ASSERT_NO_FATAL_FAILURE(change_operator(param.operator_name, MonitoringStatus::OPERATING));
   enable(param.mode);
 }
 
 INSTANTIATE_TEST_SUITE_P(
   Monitoring, DrivingLevelTest,
   testing::Values(
-    DrivingLevelTestParam{DrivingStatus::LEVEL2}, DrivingLevelTestParam{DrivingStatus::LEVEL4}),
+    DrivingLevelTestParam{DrivingStatus::LEVEL2, "supervisor/mot"},
+    DrivingLevelTestParam{DrivingStatus::LEVEL4, "advisor/mot"}),
   to_test_name);

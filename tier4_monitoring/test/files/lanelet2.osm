@@ -53,8 +53,8 @@
   <way id="409"><nd ref="208"/><nd ref="209"/><tag k="type" v="line_thin"/><tag k="subtype" v="solid"/></way>
 
   <relation id="501"><member type="way" role="left" ref="301"/><member type="way" role="right" ref="401"/><tag k="type" v="lanelet"/><tag k="subtype" v="road"/><tag k="speed_limit" v="30"/></relation>
-  <relation id="502"><member type="way" role="left" ref="302"/><member type="way" role="right" ref="402"/><tag k="type" v="lanelet"/><tag k="subtype" v="road"/><tag k="speed_limit" v="30"/></relation>
-  <relation id="503"><member type="way" role="left" ref="303"/><member type="way" role="right" ref="403"/><tag k="type" v="lanelet"/><tag k="subtype" v="road"/><tag k="speed_limit" v="30"/></relation>
+  <relation id="502"><member type="way" role="left" ref="302"/><member type="way" role="right" ref="402"/><tag k="type" v="lanelet"/><tag k="subtype" v="road"/><tag k="speed_limit" v="30"/><tag k="level4_operation_end_lanelet" v="506"/></relation>
+  <relation id="503"><member type="way" role="left" ref="303"/><member type="way" role="right" ref="403"/><tag k="type" v="lanelet"/><tag k="subtype" v="road"/><tag k="speed_limit" v="30"/><tag k="level4_operation_end_lanelet" v="507,508"/></relation>
   <relation id="504"><member type="way" role="left" ref="304"/><member type="way" role="right" ref="404"/><tag k="type" v="lanelet"/><tag k="subtype" v="road"/><tag k="speed_limit" v="30"/></relation>
   <relation id="505"><member type="way" role="left" ref="305"/><member type="way" role="right" ref="405"/><tag k="type" v="lanelet"/><tag k="subtype" v="road"/><tag k="speed_limit" v="30"/></relation>
   <relation id="506"><member type="way" role="left" ref="306"/><member type="way" role="right" ref="406"/><tag k="type" v="lanelet"/><tag k="subtype" v="road"/><tag k="speed_limit" v="30"/></relation>
