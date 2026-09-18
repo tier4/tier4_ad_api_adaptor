@@ -21,7 +21,12 @@
 #include <tier4_external_api_msgs/msg/monitoring_status.hpp>
 #include <tier4_external_api_msgs/srv/change_monitoring_status.hpp>
 
+#include <cstdint>
+#include <future>
+#include <memory>
+#include <optional>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 using tier4_external_api_msgs::msg::MonitoringHeartbeat;
@@ -31,7 +36,16 @@ using tier4_external_api_msgs::srv::ChangeMonitoringStatus;
 class Client
 {
 public:
+  using ChangeFuture = std::shared_future<ChangeMonitoringStatus::Response::SharedPtr>;
+
   Client(rclcpp::Node & node, const std::string & name);
+  Client(const Client &) = delete;
+  Client & operator=(const Client &) = delete;
+
+  bool is_ready() const;
+  void heartbeat(const rclcpp::Time & stamp);
+  ChangeFuture change(uint8_t status);
+  const std::optional<MonitoringStatus> & status() const { return status_; }
 
 private:
   rclcpp::Client<ChangeMonitoringStatus>::SharedPtr cli_change_;
@@ -44,9 +58,13 @@ class MockNode : public rclcpp::Node
 {
 public:
   MockNode();
+  bool is_ready() const;
+  void heartbeat();
+  auto client(const std::string & name) { return clients_.at(name); }
 
 private:
-  std::vector<Client> clients_;
+  std::vector<std::string> names_;
+  std::unordered_map<std::string, std::shared_ptr<Client>> clients_;
 };
 
 #endif  // UTIL__MOCK_HPP_

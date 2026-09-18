@@ -14,6 +14,7 @@
 
 #include "mock.hpp"
 
+#include <memory>
 #include <string>
 
 Client::Client(rclcpp::Node & node, const std::string & name)
@@ -27,10 +28,48 @@ Client::Client(rclcpp::Node & node, const std::string & name)
     [this](const MonitoringStatus & msg) { status_ = msg; });
 }
 
+bool Client::is_ready() const
+{
+  if (!cli_change_->service_is_ready()) return false;
+  if (pub_heartbeat_->get_subscription_count() == 0) return false;
+  if (sub_status_->get_publisher_count() == 0) return false;
+  return true;
+}
+
+void Client::heartbeat(const rclcpp::Time & stamp)
+{
+  MonitoringHeartbeat msg;
+  msg.stamp = stamp;
+  pub_heartbeat_->publish(msg);
+}
+
+Client::ChangeFuture Client::change(uint8_t status)
+{
+  const auto req = std::make_shared<ChangeMonitoringStatus::Request>();
+  req->status = status;
+  return cli_change_->async_send_request(req).future.share();
+}
+
 MockNode::MockNode() : rclcpp::Node("mock")
 {
-  clients_.push_back(Client(*this, "supervisor/mot"));
-  clients_.push_back(Client(*this, "supervisor/remote"));
-  clients_.push_back(Client(*this, "advisor/mot"));
-  clients_.push_back(Client(*this, "advisor/remote"));
+  names_ = {"supervisor/mot", "supervisor/remote", "advisor/mot", "advisor/remote"};
+  for (const auto & name : names_) {
+    clients_.emplace(name, std::make_shared<Client>(*this, name));
+  }
+}
+
+bool MockNode::is_ready() const
+{
+  for (const auto & [name, client] : clients_) {
+    if (!client->is_ready()) return false;
+  }
+  return true;
+}
+
+void MockNode::heartbeat()
+{
+  const auto stamp = now();
+  for (const auto & [name, client] : clients_) {
+    client->heartbeat(stamp);
+  }
 }
