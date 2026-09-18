@@ -33,14 +33,12 @@ using namespace tier4_monitoring;      // NOLINT(build/namespaces)
 using namespace std::chrono_literals;  // NOLINT(build/namespaces)
 using tier4_external_api_msgs::msg::ResponseStatus;
 
-struct DrivingLevelTestParam
-{
-  uint8_t mode;
-  std::string operator_name;   // The operator that is responsible for the level.
-  std::vector<int64_t> route;  // The lanelets that the route consists of.
-};
+// Any route is available for level2. The level4 section of the lanelet 502 ends at the lanelet 506,
+// so the goal of the level4 route is the lanelet 506.
+const std::vector<int64_t> kLevel2Route = {501, 502, 503, 504};
+const std::vector<int64_t> kLevel4Route = {502, 503, 504, 505, 506};
 
-struct DrivingOperatorTestParam
+struct DrivingLevelTestParam
 {
   uint8_t mode;
   std::string operator_name;   // The operator that is responsible for the level.
@@ -81,12 +79,7 @@ std::string to_unavailable_message(uint8_t mode)
   return "unknown mode";
 }
 
-std::string to_level_test_name(const testing::TestParamInfo<DrivingLevelTestParam> & info)
-{
-  return to_level_name(info.param.mode);
-}
-
-std::string to_operator_test_name(const testing::TestParamInfo<DrivingOperatorTestParam> & info)
+std::string to_test_name(const testing::TestParamInfo<DrivingLevelTestParam> & info)
 {
   return to_level_name(info.param.mode) + to_status_name(info.param.status);
 }
@@ -229,24 +222,10 @@ class DrivingLevelTest : public DrivingTest,
 {
 };
 
-class DrivingOperatorTest : public DrivingTest,
-                            public testing::WithParamInterface<DrivingOperatorTestParam>
-{
-};
-
-TEST_P(DrivingLevelTest, Enable)
-{
-  const auto & param = GetParam();
-  mock_->routing()->set_route(param.route);
-  ASSERT_NO_FATAL_FAILURE(change_operator(param.operator_name, MonitoringStatus::OPERATING));
-  ASSERT_NO_FATAL_FAILURE(wait_until_available(param.mode));
-  enable(param.mode);
-}
-
 // The level2 transition needs a supervisor that is operating, so it is rejected while the
 // supervisor is unavailable or available. The level4 transition needs an advisor that is available
 // or operating, so it is accepted while the advisor is available.
-TEST_P(DrivingOperatorTest, Enable)
+TEST_P(DrivingLevelTest, Enable)
 {
   const auto & param = GetParam();
   mock_->routing()->set_route(param.route);
@@ -277,38 +256,21 @@ TEST_F(DrivingTest, EnableLevel4WithoutLevel4Route)
   EXPECT_FALSE(mock_->driving()->status()->is_level4_route);
 }
 
+// NOLINTBEGIN(build/namespaces, whitespace/line_length)
+// clang-format off
 INSTANTIATE_TEST_SUITE_P(
   Monitoring, DrivingLevelTest,
   testing::Values(
-    DrivingLevelTestParam{DrivingStatus::LEVEL2, "supervisor/mot", {501, 502, 503, 504}},
-    DrivingLevelTestParam{DrivingStatus::LEVEL4, "advisor/mot", {502, 503, 504, 505, 506}}),
-  to_level_test_name);
-
-INSTANTIATE_TEST_SUITE_P(
-  Monitoring, DrivingOperatorTest,
-  testing::Values(
-    DrivingOperatorTestParam{
-      DrivingStatus::LEVEL2,
-      "supervisor/mot",
-      {501, 502, 503, 504},
-      MonitoringStatus::UNAVAILABLE,
-      false},
-    DrivingOperatorTestParam{
-      DrivingStatus::LEVEL2,
-      "supervisor/mot",
-      {501, 502, 503, 504},
-      MonitoringStatus::AVAILABLE,
-      false},
-    DrivingOperatorTestParam{
-      DrivingStatus::LEVEL4,
-      "advisor/mot",
-      {502, 503, 504, 505, 506},
-      MonitoringStatus::UNAVAILABLE,
-      false},
-    DrivingOperatorTestParam{
-      DrivingStatus::LEVEL4,
-      "advisor/mot",
-      {502, 503, 504, 505, 506},
-      MonitoringStatus::AVAILABLE,
-      true}),
-  to_operator_test_name);
+    DrivingLevelTestParam{DrivingStatus::LEVEL2, "supervisor/mot", kLevel2Route, MonitoringStatus::TIMEOUT, false},
+    DrivingLevelTestParam{DrivingStatus::LEVEL2, "supervisor/mot", kLevel2Route, MonitoringStatus::UNAVAILABLE, false},
+    DrivingLevelTestParam{DrivingStatus::LEVEL2, "supervisor/mot", kLevel2Route, MonitoringStatus::AVAILABLE, false},
+    DrivingLevelTestParam{DrivingStatus::LEVEL2, "supervisor/mot", kLevel2Route, MonitoringStatus::OPERATING, true},
+    DrivingLevelTestParam{DrivingStatus::LEVEL4, "advisor/mot", kLevel4Route, MonitoringStatus::TIMEOUT, false},
+    DrivingLevelTestParam{DrivingStatus::LEVEL4, "advisor/mot", kLevel4Route, MonitoringStatus::UNAVAILABLE, false},
+    DrivingLevelTestParam{DrivingStatus::LEVEL4, "advisor/mot", kLevel4Route, MonitoringStatus::AVAILABLE, true},
+    DrivingLevelTestParam{DrivingStatus::LEVEL4, "advisor/mot", kLevel4Route, MonitoringStatus::OPERATING, true}
+  ),
+  to_test_name
+);
+// clang-format on
+// NOLINTEND
