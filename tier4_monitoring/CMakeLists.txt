@@ -22,4 +22,16 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
 )
 
+if(BUILD_TESTING)
+  ament_add_ros_isolated_gtest(gtest_ros_${PROJECT_NAME}
+    "test/src/test_main.cpp"
+    "test/src/test_node.cpp"
+    "test/src/util/mock.cpp"
+  )
+  get_filename_component(RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/files" ABSOLUTE)
+  target_compile_definitions(gtest_ros_${PROJECT_NAME} PRIVATE TEST_RESOURCE_PATH="${RESOURCE_PATH}")
+  target_include_directories(gtest_ros_${PROJECT_NAME} PRIVATE "src")
+  target_link_libraries(gtest_ros_${PROJECT_NAME} ${PROJECT_NAME})
+endif()
+
 ament_auto_package(INSTALL_TO_SHARE config launch)
