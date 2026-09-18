@@ -3,6 +3,10 @@
   <arg name="launch_api_0_4_3" default="false" description="Launch APIs with an EOL of v0.4.3."/>
   <arg name="launch_api_0_4_4" default="true" description="Launch APIs with an EOL of v0.4.4."/>
 
+  <let name="use_agnocast" value="$(env ENABLE_AGNOCAST 0)"/>
+  <!-- Set `ld_preload_value`. This env launch is used regardless of using agnocast or not -->
+  <include file="$(find-pkg-share autoware_agnocast_wrapper)/launch/agnocast_env.launch.py"/>
+
   <!-- rosbridge options -->
   <arg name="rosbridge_enabled" default="false"/>
   <arg name="rosbridge_respawn" default="true"/>
@@ -33,11 +37,19 @@
   </group>
 
   <!-- external api adaptor (RTC controller) -->
-  <group>
+  <group unless="$(var use_agnocast)">
     <push-ros-namespace namespace="autoware_api/external/rtc_controller"/>
     <node_container pkg="rclcpp_components" exec="component_container_mt" name="container" namespace="" ros_args="--log-level autoware_api.external.rtc_controller.container:=warn">
       <composable_node pkg="autoware_iv_external_api_adaptor" plugin="external_api::RTCController" name="node"/>
     </node_container>
+  </group>
+
+  <!-- Run RTCController standalone when ENABLE_AGNOCAST=1. -->
+  <group if="$(var use_agnocast)">
+    <push-ros-namespace namespace="autoware_api/external/rtc_controller"/>
+    <node pkg="autoware_iv_external_api_adaptor" exec="rtc_controller_node" name="node" output="screen">
+      <env name="LD_PRELOAD" value="$(var ld_preload_value)"/>
+    </node>
   </group>
 
   <!-- internal api adaptor -->

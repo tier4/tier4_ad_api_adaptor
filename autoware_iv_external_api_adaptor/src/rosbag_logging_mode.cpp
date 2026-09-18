@@ -22,7 +22,7 @@ RosbagLoggingMode::RosbagLoggingMode(const rclcpp::NodeOptions & options)
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
-  tier4_api_utils::ServiceProxyNodeInterface proxy(this);
+  tier4_api_utils::ServiceProxyNodeInterface<NodeT> proxy(this);
 
   group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   srv_set_rosbag_logging_mode_ =

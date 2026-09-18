@@ -18,20 +18,24 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tier4_api_utils/tier4_api_utils.hpp"
 
+#include <autoware/agnocast_wrapper/node.hpp>
+
 #include "autoware_external_api_msgs/srv/get_version.hpp"
 
 namespace external_api
 {
 
-class Version : public rclcpp::Node
+class Version : public autoware::agnocast_wrapper::Node
 {
 public:
   explicit Version(const rclcpp::NodeOptions & options);
 
 private:
+  using NodeT = autoware::agnocast_wrapper::Node;
+
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
-  tier4_api_utils::Service<autoware_external_api_msgs::srv::GetVersion>::SharedPtr srv_;
+  tier4_api_utils::Service<autoware_external_api_msgs::srv::GetVersion, NodeT>::SharedPtr srv_;
 
   // ros callback
   void getVersion(

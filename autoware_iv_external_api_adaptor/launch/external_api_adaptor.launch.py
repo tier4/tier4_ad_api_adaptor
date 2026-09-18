@@ -31,9 +31,14 @@ from launch_ros.substitutions import FindPackageShare
 # Composed like any other node under ENABLE_AGNOCAST=0, where that base is backed by rclcpp; run as
 # their own process under =1.
 AGNOCAST_WRAPPER_NODES = [
+    ("calibration_status", "CalibrationStatus", "calibration_status_node"),
     ("cpu_usage", "CpuUsage", "cpu_usage_node"),
     ("localization_score", "LocalizationScore", "localization_score_node"),
+    ("map", "Map", "map_node"),
+    ("metadata_packages", "MetadataPackages", "metadata_packages_node"),
+    ("rosbag_logging_mode", "RosbagLoggingMode", "rosbag_logging_mode_node"),
     ("system_monitor", "SystemMonitor", "system_monitor_node"),
+    ("version", "Version", "version_node"),
 ]
 
 
@@ -92,13 +97,7 @@ def launch_setup(context, *args, **kwargs):
     use_agnocast = context.perform_substitution(LaunchConfiguration("use_agnocast")) == "1"
 
     # RTCController is launched by tier4_autoware_api_launch because it is used by autoware_universe.
-    components = [
-        _create_api_node("calibration_status", "CalibrationStatus"),
-        _create_api_node("map", "Map"),
-        _create_api_node("metadata_packages", "MetadataPackages"),
-        _create_api_node("rosbag_logging_mode", "RosbagLoggingMode"),
-        _create_api_node("version", "Version"),
-    ]
+    components = []
     nodes = []
     for node_name, class_name, executable in AGNOCAST_WRAPPER_NODES:
         if use_agnocast:
