@@ -84,6 +84,19 @@ std::string to_test_name(const testing::TestParamInfo<DrivingLevelTestParam> & i
   return to_level_name(info.param.mode) + to_status_name(info.param.status);
 }
 
+struct VelocityLimitTestParam
+{
+  uint8_t mode;
+  std::string operator_name;   // The operator that is responsible for the level.
+  std::vector<int64_t> route;  // The lanelets that the route consists of.
+  uint8_t status;              // The status that makes the enabled level unavailable.
+};
+
+std::string to_velocity_limit_test_name(const testing::TestParamInfo<VelocityLimitTestParam> & info)
+{
+  return to_level_name(info.param.mode) + to_status_name(info.param.status);
+}
+
 class DrivingTest : public testing::Test
 {
 protected:
@@ -212,6 +225,50 @@ protected:
     EXPECT_EQ(response->status.message, message);
   }
 
+  // Enables the given level after making the route and the operator satisfy its condition.
+  void enable_level(uint8_t mode, const std::string & operator_name)
+  {
+    ASSERT_NO_FATAL_FAILURE(change_operator(operator_name, MonitoringStatus::OPERATING));
+    ASSERT_NO_FATAL_FAILURE(wait_until_route(mode));
+    ASSERT_NO_FATAL_FAILURE(wait_until_available(mode));
+    ASSERT_NO_FATAL_FAILURE(enable(mode));
+  }
+
+  // Waits until the velocity limit is set and checks the contents of the request.
+  void wait_velocity_limit_set()
+  {
+    const auto planning = mock_->planning();
+    const auto is_set = [planning]() { return planning->velocity_limit_set().has_value(); };
+    ASSERT_TRUE(spin_until(is_set, 3s)) << "velocity limit is not set";
+
+    const auto & msg = planning->velocity_limit_set().value();
+    EXPECT_EQ(msg.max_velocity, 0.0);
+    EXPECT_FALSE(msg.use_constraints);
+    EXPECT_EQ(msg.sender, "monitoring_api");
+    EXPECT_FALSE(planning->velocity_limit_clear().has_value());
+  }
+
+  // Waits until the velocity limit is cleared and checks the contents of the request.
+  void wait_velocity_limit_clear()
+  {
+    const auto planning = mock_->planning();
+    const auto is_clear = [planning]() { return planning->velocity_limit_clear().has_value(); };
+    ASSERT_TRUE(spin_until(is_clear, 3s)) << "velocity limit is not cleared";
+
+    const auto & msg = planning->velocity_limit_clear().value();
+    EXPECT_TRUE(msg.command);
+    EXPECT_EQ(msg.sender, "monitoring_api");
+    EXPECT_FALSE(planning->velocity_limit_set().has_value());
+  }
+
+  // Waits for a while and checks that neither request is sent.
+  void expect_no_velocity_limit()
+  {
+    spin_until([]() { return false; }, 500ms);
+    EXPECT_FALSE(mock_->planning()->velocity_limit_set().has_value());
+    EXPECT_FALSE(mock_->planning()->velocity_limit_clear().has_value());
+  }
+
   std::shared_ptr<Monitoring> node_;
   std::shared_ptr<MockNode> mock_;
   bool heartbeat_enabled_ = true;
@@ -219,6 +276,11 @@ protected:
 
 class DrivingLevelTest : public DrivingTest,
                          public testing::WithParamInterface<DrivingLevelTestParam>
+{
+};
+
+class VelocityLimitTest : public DrivingTest,
+                          public testing::WithParamInterface<VelocityLimitTestParam>
 {
 };
 
@@ -256,6 +318,47 @@ TEST_F(DrivingTest, EnableLevel4WithoutLevel4Route)
   EXPECT_FALSE(mock_->driving()->status()->is_level4_route);
 }
 
+// The velocity limit is set when the enabled level becomes unavailable because of the operator
+// status, and is cleared when the level becomes available again.
+TEST_P(VelocityLimitTest, OperatorStatus)
+{
+  const auto & param = GetParam();
+  mock_->routing()->set_route(param.route);
+  ASSERT_NO_FATAL_FAILURE(enable_level(param.mode, param.operator_name));
+
+  // The velocity limit is not set while the level is available.
+  ASSERT_NO_FATAL_FAILURE(expect_no_velocity_limit());
+
+  // The level becomes unavailable, so the velocity limit is set.
+  ASSERT_NO_FATAL_FAILURE(change_operator(param.operator_name, param.status));
+  ASSERT_NO_FATAL_FAILURE(wait_velocity_limit_set());
+
+  // The level becomes available again, so the velocity limit is cleared.
+  mock_->planning()->reset();
+  ASSERT_NO_FATAL_FAILURE(change_operator(param.operator_name, MonitoringStatus::OPERATING));
+  ASSERT_NO_FATAL_FAILURE(wait_velocity_limit_clear());
+}
+
+// The velocity limit is set when the operator of the enabled level times out, and is cleared when
+// the operator comes back.
+TEST_F(DrivingTest, VelocityLimitByTimeout)
+{
+  mock_->routing()->set_route(kLevel2Route);
+  ASSERT_NO_FATAL_FAILURE(enable_level(DrivingStatus::LEVEL2, "supervisor/mot"));
+
+  // The operator times out, so the velocity limit is set. The timeout parameter is 1 second.
+  heartbeat_enabled_ = false;
+  ASSERT_NO_FATAL_FAILURE(wait_velocity_limit_set());
+
+  // The operator comes back, so the velocity limit is cleared. The heartbeat is resumed first
+  // because the operator times out again if the status is changed with the stale heartbeat.
+  mock_->planning()->reset();
+  heartbeat_enabled_ = true;
+  spin_until([]() { return false; }, 200ms);
+  ASSERT_NO_FATAL_FAILURE(change_operator("supervisor/mot", MonitoringStatus::OPERATING));
+  ASSERT_NO_FATAL_FAILURE(wait_velocity_limit_clear());
+}
+
 // NOLINTBEGIN(build/namespaces, whitespace/line_length)
 // clang-format off
 INSTANTIATE_TEST_SUITE_P(
@@ -271,6 +374,18 @@ INSTANTIATE_TEST_SUITE_P(
     DrivingLevelTestParam{DrivingStatus::LEVEL4, "advisor/mot", kLevel4Route, MonitoringStatus::OPERATING, true}
   ),
   to_test_name
+);
+
+// The level2 needs an operating supervisor, so it becomes unavailable when the supervisor is only
+// available. The level4 needs an available advisor, so the advisor must be unavailable.
+INSTANTIATE_TEST_SUITE_P(
+  Monitoring, VelocityLimitTest,
+  testing::Values(
+    VelocityLimitTestParam{DrivingStatus::LEVEL2, "supervisor/mot", kLevel2Route, MonitoringStatus::AVAILABLE},
+    VelocityLimitTestParam{DrivingStatus::LEVEL2, "supervisor/mot", kLevel2Route, MonitoringStatus::UNAVAILABLE},
+    VelocityLimitTestParam{DrivingStatus::LEVEL4, "advisor/mot", kLevel4Route, MonitoringStatus::UNAVAILABLE}
+  ),
+  to_velocity_limit_test_name
 );
 // clang-format on
 // NOLINTEND

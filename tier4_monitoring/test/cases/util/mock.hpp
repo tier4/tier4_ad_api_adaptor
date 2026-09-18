@@ -20,6 +20,8 @@
 #include <autoware_adapi_v1_msgs/msg/operation_mode_state.hpp>
 #include <autoware_adapi_v1_msgs/msg/route.hpp>
 #include <autoware_adapi_v1_msgs/srv/change_operation_mode.hpp>
+#include <autoware_internal_planning_msgs/msg/velocity_limit.hpp>
+#include <autoware_internal_planning_msgs/msg/velocity_limit_clear_command.hpp>
 #include <autoware_map_msgs/msg/lanelet_map_bin.hpp>
 #include <tier4_external_api_msgs/msg/driving_status.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_heartbeat.hpp>
@@ -38,6 +40,8 @@
 using autoware_adapi_v1_msgs::msg::OperationModeState;
 using autoware_adapi_v1_msgs::msg::Route;
 using autoware_adapi_v1_msgs::srv::ChangeOperationMode;
+using autoware_internal_planning_msgs::msg::VelocityLimit;
+using autoware_internal_planning_msgs::msg::VelocityLimitClearCommand;
 using autoware_map_msgs::msg::LaneletMapBin;
 using tier4_external_api_msgs::msg::DrivingStatus;
 using tier4_external_api_msgs::msg::MonitoringHeartbeat;
@@ -136,6 +140,26 @@ private:
   rclcpp::Publisher<Route>::SharedPtr pub_route_;
 };
 
+// Dummy planning that records the velocity limit set and clear requests.
+class Planning
+{
+public:
+  explicit Planning(rclcpp::Node & node);
+  Planning(const Planning &) = delete;
+  Planning & operator=(const Planning &) = delete;
+
+  bool is_ready() const;
+  void reset();
+  const std::optional<VelocityLimit> & velocity_limit_set() const { return set_; }
+  const std::optional<VelocityLimitClearCommand> & velocity_limit_clear() const { return clear_; }
+
+private:
+  rclcpp::Subscription<VelocityLimit>::SharedPtr sub_set_;
+  rclcpp::Subscription<VelocityLimitClearCommand>::SharedPtr sub_clear_;
+  std::optional<VelocityLimit> set_;
+  std::optional<VelocityLimitClearCommand> clear_;
+};
+
 class MockNode : public rclcpp::Node
 {
 public:
@@ -146,6 +170,7 @@ public:
   auto driving() { return driving_; }
   auto operation_mode() { return operation_mode_; }
   auto routing() { return routing_; }
+  auto planning() { return planning_; }
 
 private:
   std::vector<std::string> names_;
@@ -154,6 +179,7 @@ private:
   std::shared_ptr<OperationMode> operation_mode_;
   std::shared_ptr<VectorMap> vector_map_;
   std::shared_ptr<Routing> routing_;
+  std::shared_ptr<Planning> planning_;
 };
 
 #endif  // CASES__UTIL__MOCK_HPP_

@@ -156,6 +156,30 @@ void Routing::set_route(const std::vector<int64_t> & ids)
   pub_route_->publish(msg);
 }
 
+Planning::Planning(rclcpp::Node & node)
+{
+  sub_set_ = node.create_subscription<VelocityLimit>(
+    "/planning/scenario_planning/max_velocity_candidates", rclcpp::QoS(1).transient_local(),
+    [this](const VelocityLimit & msg) { set_ = msg; });
+  sub_clear_ = node.create_subscription<VelocityLimitClearCommand>(
+    "/planning/scenario_planning/clear_velocity_limit", rclcpp::QoS(1).transient_local(),
+    [this](const VelocityLimitClearCommand & msg) { clear_ = msg; });
+}
+
+bool Planning::is_ready() const
+{
+  if (sub_set_->get_publisher_count() == 0) return false;
+  if (sub_clear_->get_publisher_count() == 0) return false;
+  return true;
+}
+
+// Discards the recorded requests so that the test can wait for the next one.
+void Planning::reset()
+{
+  set_ = std::nullopt;
+  clear_ = std::nullopt;
+}
+
 MockNode::MockNode() : rclcpp::Node("mock")
 {
   names_ = {"supervisor/mot", "supervisor/remote", "advisor/mot", "advisor/remote"};
@@ -166,6 +190,7 @@ MockNode::MockNode() : rclcpp::Node("mock")
   operation_mode_ = std::make_shared<OperationMode>(*this);
   vector_map_ = std::make_shared<VectorMap>(*this);
   routing_ = std::make_shared<Routing>(*this);
+  planning_ = std::make_shared<Planning>(*this);
 }
 
 bool MockNode::is_ready() const
@@ -177,6 +202,7 @@ bool MockNode::is_ready() const
   if (!operation_mode_->is_ready()) return false;
   if (!vector_map_->is_ready()) return false;
   if (!routing_->is_ready()) return false;
+  if (!planning_->is_ready()) return false;
   return true;
 }
 
