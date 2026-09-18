@@ -80,9 +80,9 @@ void Driving::on_enable(
   }
 
   // Handle level2 and level4 requests.
-  if (
-    operation_mode_.mode == OperationModeState::STOP &&
-    !operation_mode_.is_autonomous_mode_available) {
+  // Allow switching between level2 and level4 without rechecking autonomous available.
+  const auto is_autonomous = operation_mode_.mode == OperationModeState::AUTONOMOUS;
+  if (!is_autonomous && !operation_mode_.is_autonomous_mode_available) {
     res->status.code = ResponseStatus::ERROR;
     res->status.message = "autonomous mode is not available";
     return;
