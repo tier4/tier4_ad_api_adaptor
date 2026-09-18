@@ -25,8 +25,9 @@ install(PROGRAMS
 if(BUILD_TESTING)
   ament_add_ros_isolated_gtest(gtest_ros_${PROJECT_NAME}
     "test/test_main.cpp"
-    "test/cases/test_driving.cpp"
-    "test/cases/test_operators.cpp"
+    "test/cases/test_driving_enable.cpp"
+    "test/cases/test_operator_responsible.cpp"
+    "test/cases/test_operator_status.cpp"
     "test/cases/test_velocity_limit.cpp"
     "test/cases/util/mock.cpp"
     "test/cases/util/fixture.cpp"

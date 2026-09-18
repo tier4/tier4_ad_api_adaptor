@@ -49,6 +49,7 @@ std::string to_status_name(uint8_t status)
 {
   // clang-format off
   switch (status) {
+    case MonitoringStatus::TIMEOUT:     return "Timeout";
     case MonitoringStatus::UNAVAILABLE: return "Unavailable";
     case MonitoringStatus::AVAILABLE:   return "Available";
     case MonitoringStatus::OPERATING:   return "Operating";
