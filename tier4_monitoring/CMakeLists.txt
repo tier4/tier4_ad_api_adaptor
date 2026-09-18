@@ -27,7 +27,9 @@ if(BUILD_TESTING)
     "test/test_main.cpp"
     "test/cases/test_driving.cpp"
     "test/cases/test_operators.cpp"
+    "test/cases/test_velocity_limit.cpp"
     "test/cases/util/mock.cpp"
+    "test/cases/util/fixture.cpp"
   )
   get_filename_component(RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/files" ABSOLUTE)
   target_compile_definitions(gtest_ros_${PROJECT_NAME} PRIVATE TEST_RESOURCE_PATH="${RESOURCE_PATH}")
