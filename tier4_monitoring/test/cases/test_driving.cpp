@@ -40,16 +40,55 @@ struct DrivingLevelTestParam
   std::vector<int64_t> route;  // The lanelets that the route consists of.
 };
 
-std::string to_test_name(const testing::TestParamInfo<DrivingLevelTestParam> & info)
+struct DrivingOperatorTestParam
+{
+  uint8_t mode;
+  std::string operator_name;   // The operator that is responsible for the level.
+  std::vector<int64_t> route;  // The lanelets that the route consists of.
+  uint8_t status;              // The status of the operator.
+  bool available;              // Whether the level becomes available with the status.
+};
+
+std::string to_level_name(uint8_t mode)
 {
   // clang-format off
-  switch (info.param.mode) {
+  switch (mode) {
     case DrivingStatus::STOP:   return "Stop";
     case DrivingStatus::LEVEL2: return "Level2";
     case DrivingStatus::LEVEL4: return "Level4";
     default:                    return "Unknown";
   }
   // clang-format on
+}
+
+std::string to_status_name(uint8_t status)
+{
+  // clang-format off
+  switch (status) {
+    case MonitoringStatus::UNAVAILABLE: return "Unavailable";
+    case MonitoringStatus::AVAILABLE:   return "Available";
+    case MonitoringStatus::OPERATING:   return "Operating";
+    default:                            return "Unknown";
+  }
+  // clang-format on
+}
+
+// The message that the enable service returns when the requested level is not available.
+std::string to_unavailable_message(uint8_t mode)
+{
+  if (mode == DrivingStatus::LEVEL2) return "level2 is not available";
+  if (mode == DrivingStatus::LEVEL4) return "level4 is not available";
+  return "unknown mode";
+}
+
+std::string to_level_test_name(const testing::TestParamInfo<DrivingLevelTestParam> & info)
+{
+  return to_level_name(info.param.mode);
+}
+
+std::string to_operator_test_name(const testing::TestParamInfo<DrivingOperatorTestParam> & info)
+{
+  return to_level_name(info.param.mode) + to_status_name(info.param.status);
 }
 
 class DrivingTest : public testing::Test
@@ -117,6 +156,36 @@ protected:
     ASSERT_TRUE(spin_until(is_available, 3s));
   }
 
+  // Waits until the route of the given level is reflected in the status. This makes sure that the
+  // level is not available because of the operator status and not because of the route.
+  void wait_until_route(uint8_t mode)
+  {
+    const auto driving = mock_->driving();
+    const auto is_route = [driving, mode]() {
+      const auto & status = driving->status();
+      if (!status) return false;
+      if (mode == DrivingStatus::LEVEL2) return status->is_level2_route;
+      if (mode == DrivingStatus::LEVEL4) return status->is_level4_route;
+      return true;
+    };
+    ASSERT_TRUE(spin_until(is_route, 3s));
+  }
+
+  // Waits for a while and checks that the given level is neither available nor enabled.
+  void expect_not_available(uint8_t mode)
+  {
+    spin_until([]() { return false; }, 500ms);
+    const auto & status = mock_->driving()->status();
+    ASSERT_TRUE(status.has_value());
+    EXPECT_NE(status->mode, mode);
+    if (mode == DrivingStatus::LEVEL2) {
+      EXPECT_FALSE(status->is_level2_available);
+    }
+    if (mode == DrivingStatus::LEVEL4) {
+      EXPECT_FALSE(status->is_level4_available);
+    }
+  }
+
   // Calls the enable service and waits until the status is published back.
   void enable(uint8_t mode)
   {
@@ -160,6 +229,11 @@ class DrivingLevelTest : public DrivingTest,
 {
 };
 
+class DrivingOperatorTest : public DrivingTest,
+                            public testing::WithParamInterface<DrivingOperatorTestParam>
+{
+};
+
 TEST_P(DrivingLevelTest, Enable)
 {
   const auto & param = GetParam();
@@ -169,21 +243,38 @@ TEST_P(DrivingLevelTest, Enable)
   enable(param.mode);
 }
 
+// The level2 transition needs a supervisor that is operating, so it is rejected while the
+// supervisor is unavailable or available. The level4 transition needs an advisor that is available
+// or operating, so it is accepted while the advisor is available.
+TEST_P(DrivingOperatorTest, Enable)
+{
+  const auto & param = GetParam();
+  mock_->routing()->set_route(param.route);
+  ASSERT_NO_FATAL_FAILURE(change_operator(param.operator_name, param.status));
+  ASSERT_NO_FATAL_FAILURE(wait_until_route(param.mode));
+
+  if (param.available) {
+    ASSERT_NO_FATAL_FAILURE(wait_until_available(param.mode));
+    enable(param.mode);
+    return;
+  }
+  ASSERT_NO_FATAL_FAILURE(expect_not_available(param.mode));
+  ASSERT_NO_FATAL_FAILURE(enable_error(param.mode, to_unavailable_message(param.mode)));
+  ASSERT_NO_FATAL_FAILURE(expect_not_available(param.mode));
+}
+
 // The level4 transition is rejected because the goal of the route is not the end of the level4
 // section of the start lanelet. The level4 section of the lanelet 502 ends at the lanelet 506.
 TEST_F(DrivingTest, EnableLevel4WithoutLevel4Route)
 {
   mock_->routing()->set_route({502, 503, 504, 505});
   ASSERT_NO_FATAL_FAILURE(change_operator("advisor/mot", MonitoringStatus::OPERATING));
-  ASSERT_NO_FATAL_FAILURE(enable_error(DrivingStatus::LEVEL4, "level4 is not available"));
+  ASSERT_NO_FATAL_FAILURE(
+    enable_error(DrivingStatus::LEVEL4, to_unavailable_message(DrivingStatus::LEVEL4)));
 
   // The mode does not change to level4 because the request is rejected.
-  spin_until([]() { return false; }, 500ms);
-  const auto & status = mock_->driving()->status();
-  ASSERT_TRUE(status.has_value());
-  EXPECT_NE(status->mode, DrivingStatus::LEVEL4);
-  EXPECT_FALSE(status->is_level4_route);
-  EXPECT_FALSE(status->is_level4_available);
+  ASSERT_NO_FATAL_FAILURE(expect_not_available(DrivingStatus::LEVEL4));
+  EXPECT_FALSE(mock_->driving()->status()->is_level4_route);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -191,4 +282,33 @@ INSTANTIATE_TEST_SUITE_P(
   testing::Values(
     DrivingLevelTestParam{DrivingStatus::LEVEL2, "supervisor/mot", {501, 502, 503, 504}},
     DrivingLevelTestParam{DrivingStatus::LEVEL4, "advisor/mot", {502, 503, 504, 505, 506}}),
-  to_test_name);
+  to_level_test_name);
+
+INSTANTIATE_TEST_SUITE_P(
+  Monitoring, DrivingOperatorTest,
+  testing::Values(
+    DrivingOperatorTestParam{
+      DrivingStatus::LEVEL2,
+      "supervisor/mot",
+      {501, 502, 503, 504},
+      MonitoringStatus::UNAVAILABLE,
+      false},
+    DrivingOperatorTestParam{
+      DrivingStatus::LEVEL2,
+      "supervisor/mot",
+      {501, 502, 503, 504},
+      MonitoringStatus::AVAILABLE,
+      false},
+    DrivingOperatorTestParam{
+      DrivingStatus::LEVEL4,
+      "advisor/mot",
+      {502, 503, 504, 505, 506},
+      MonitoringStatus::UNAVAILABLE,
+      false},
+    DrivingOperatorTestParam{
+      DrivingStatus::LEVEL4,
+      "advisor/mot",
+      {502, 503, 504, 505, 506},
+      MonitoringStatus::AVAILABLE,
+      true}),
+  to_operator_test_name);
