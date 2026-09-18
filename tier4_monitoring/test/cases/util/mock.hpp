@@ -17,9 +17,11 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <tier4_external_api_msgs/msg/driving_status.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_heartbeat.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_status.hpp>
 #include <tier4_external_api_msgs/srv/change_monitoring_status.hpp>
+#include <tier4_external_api_msgs/srv/enable_driving.hpp>
 
 #include <cstdint>
 #include <future>
@@ -29,9 +31,11 @@
 #include <unordered_map>
 #include <vector>
 
+using tier4_external_api_msgs::msg::DrivingStatus;
 using tier4_external_api_msgs::msg::MonitoringHeartbeat;
 using tier4_external_api_msgs::msg::MonitoringStatus;
 using tier4_external_api_msgs::srv::ChangeMonitoringStatus;
+using tier4_external_api_msgs::srv::EnableDriving;
 
 class Client
 {
@@ -54,6 +58,25 @@ private:
   std::optional<MonitoringStatus> status_;
 };
 
+class DrivingClient
+{
+public:
+  using EnableFuture = std::shared_future<EnableDriving::Response::SharedPtr>;
+
+  explicit DrivingClient(rclcpp::Node & node);
+  DrivingClient(const DrivingClient &) = delete;
+  DrivingClient & operator=(const DrivingClient &) = delete;
+
+  bool is_ready() const;
+  EnableFuture enable(uint8_t mode);
+  const std::optional<DrivingStatus> & status() const { return status_; }
+
+private:
+  rclcpp::Client<EnableDriving>::SharedPtr cli_enable_;
+  rclcpp::Subscription<DrivingStatus>::SharedPtr sub_status_;
+  std::optional<DrivingStatus> status_;
+};
+
 class MockNode : public rclcpp::Node
 {
 public:
@@ -61,10 +84,12 @@ public:
   bool is_ready() const;
   void heartbeat();
   auto client(const std::string & name) { return clients_.at(name); }
+  auto driving() { return driving_; }
 
 private:
   std::vector<std::string> names_;
   std::unordered_map<std::string, std::shared_ptr<Client>> clients_;
+  std::shared_ptr<DrivingClient> driving_;
 };
 
 #endif  // CASES__UTIL__MOCK_HPP_

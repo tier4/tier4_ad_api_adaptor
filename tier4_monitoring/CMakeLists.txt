@@ -25,10 +25,10 @@ install(PROGRAMS
 if(BUILD_TESTING)
   ament_add_ros_isolated_gtest(gtest_ros_${PROJECT_NAME}
     "test/test_main.cpp"
+    "test/cases/test_driving.cpp"
     "test/cases/test_operators.cpp"
     "test/cases/util/mock.cpp"
   )
-  get_filename_component(RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/files" ABSOLUTE)
   target_include_directories(gtest_ros_${PROJECT_NAME} PRIVATE "src")
   target_link_libraries(gtest_ros_${PROJECT_NAME} ${PROJECT_NAME})
 endif()

@@ -50,12 +50,35 @@ Client::ChangeFuture Client::change(uint8_t status)
   return cli_change_->async_send_request(req).future.share();
 }
 
+DrivingClient::DrivingClient(rclcpp::Node & node)
+{
+  cli_enable_ = node.create_client<EnableDriving>("/api/external/set/monitoring/driving/enable");
+  sub_status_ = node.create_subscription<DrivingStatus>(
+    "/api/external/get/monitoring/driving/status", rclcpp::QoS(1).transient_local(),
+    [this](const DrivingStatus & msg) { status_ = msg; });
+}
+
+bool DrivingClient::is_ready() const
+{
+  if (!cli_enable_->service_is_ready()) return false;
+  if (sub_status_->get_publisher_count() == 0) return false;
+  return true;
+}
+
+DrivingClient::EnableFuture DrivingClient::enable(uint8_t mode)
+{
+  const auto req = std::make_shared<EnableDriving::Request>();
+  req->mode = mode;
+  return cli_enable_->async_send_request(req).future.share();
+}
+
 MockNode::MockNode() : rclcpp::Node("mock")
 {
   names_ = {"supervisor/mot", "supervisor/remote", "advisor/mot", "advisor/remote"};
   for (const auto & name : names_) {
     clients_.emplace(name, std::make_shared<Client>(*this, name));
   }
+  driving_ = std::make_shared<DrivingClient>(*this);
 }
 
 bool MockNode::is_ready() const
@@ -63,6 +86,7 @@ bool MockNode::is_ready() const
   for (const auto & [name, client] : clients_) {
     if (!client->is_ready()) return false;
   }
+  if (!driving_->is_ready()) return false;
   return true;
 }
 
