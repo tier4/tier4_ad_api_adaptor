@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UTIL__MOCK_HPP_
-#define UTIL__MOCK_HPP_
+#ifndef CASES__UTIL__MOCK_HPP_
+#define CASES__UTIL__MOCK_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -67,4 +67,4 @@ private:
   std::unordered_map<std::string, std::shared_ptr<Client>> clients_;
 };
 
-#endif  // UTIL__MOCK_HPP_
+#endif  // CASES__UTIL__MOCK_HPP_
