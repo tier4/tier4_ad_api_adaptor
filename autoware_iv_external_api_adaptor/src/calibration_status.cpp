@@ -38,7 +38,7 @@ CalibrationStatus::CalibrationStatus(const rclcpp::NodeOptions & options)
 
   using namespace std::literals::chrono_literals;
 
-  pub_calibration_status_ = create_publisher<CalibrationStatusArray>(
+  pub_calibration_status_ = create_publisher<CalibrationStatusArrayMsg>(
     "/api/external/get/calibration_status", rclcpp::QoS(1));
   timer_ = autoware::agnocast_wrapper::create_timer(
     this, get_clock(), 200ms, std::bind(&CalibrationStatus::onTimer, this));
@@ -50,7 +50,7 @@ CalibrationStatus::CalibrationStatus(const rclcpp::NodeOptions & options)
 
 void CalibrationStatus::onTimer()
 {
-  CalibrationStatusArray calibration_status;
+  CalibrationStatusArrayMsg calibration_status;
 
   calibration_status.stamp = now();
   if (accel_brake_map_status_ != nullptr) {

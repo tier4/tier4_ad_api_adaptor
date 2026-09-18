@@ -36,7 +36,7 @@ private:
   using GetAccelBrakeMapCalibrationData =
     tier4_external_api_msgs::srv::GetAccelBrakeMapCalibrationData;
   using CalibrationStatusMsg = tier4_external_api_msgs::msg::CalibrationStatus;
-  using CalibrationStatusArray = tier4_external_api_msgs::msg::CalibrationStatusArray;
+  using CalibrationStatusArrayMsg = tier4_external_api_msgs::msg::CalibrationStatusArray;
 
   // ros interface
   rclcpp::CallbackGroup::SharedPtr group_;
@@ -45,7 +45,7 @@ private:
     srv_get_accel_brake_map_calibration_data_;
   tier4_api_utils::Client<GetAccelBrakeMapCalibrationData, NodeT>::SharedPtr
     cli_get_accel_brake_map_calibration_data_;
-  AUTOWARE_PUBLISHER_PTR(CalibrationStatusArray) pub_calibration_status_;
+  AUTOWARE_PUBLISHER_PTR(CalibrationStatusArrayMsg) pub_calibration_status_;
   AUTOWARE_SUBSCRIPTION_PTR(CalibrationStatusMsg) sub_accel_brake_map_calibration_status_;
 
   // ros callback
