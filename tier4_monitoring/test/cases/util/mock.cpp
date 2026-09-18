@@ -72,6 +72,47 @@ DrivingClient::EnableFuture DrivingClient::enable(uint8_t mode)
   return cli_enable_->async_send_request(req).future.share();
 }
 
+OperationMode::OperationMode(rclcpp::Node & node)
+{
+  clock_ = node.get_clock();
+  pub_state_ = node.create_publisher<OperationModeState>(
+    "/api/operation_mode/state", rclcpp::QoS(1).transient_local());
+  const auto create_service = [&node, this](const std::string & name, uint8_t mode) {
+    return node.create_service<ChangeOperationMode>(
+      name, [this, mode](
+              const ChangeOperationMode::Request::SharedPtr,
+              const ChangeOperationMode::Response::SharedPtr res) { change(mode, res); });
+  };
+  srv_change_stop_mode_ =
+    create_service("/api/operation_mode/change_to_stop", OperationModeState::STOP);
+  srv_change_autonomous_mode_ =
+    create_service("/api/operation_mode/change_to_autonomous", OperationModeState::AUTONOMOUS);
+
+  state_.mode = OperationModeState::STOP;
+  state_.is_autoware_control_enabled = true;
+  state_.is_stop_mode_available = true;
+  state_.is_autonomous_mode_available = true;
+  publish();
+}
+
+bool OperationMode::is_ready() const
+{
+  return pub_state_->get_subscription_count() != 0;
+}
+
+void OperationMode::change(uint8_t mode, const ChangeOperationMode::Response::SharedPtr res)
+{
+  state_.mode = mode;
+  publish();
+  res->status.success = true;
+}
+
+void OperationMode::publish()
+{
+  state_.stamp = clock_->now();
+  pub_state_->publish(state_);
+}
+
 MockNode::MockNode() : rclcpp::Node("mock")
 {
   names_ = {"supervisor/mot", "supervisor/remote", "advisor/mot", "advisor/remote"};
@@ -79,6 +120,7 @@ MockNode::MockNode() : rclcpp::Node("mock")
     clients_.emplace(name, std::make_shared<Client>(*this, name));
   }
   driving_ = std::make_shared<DrivingClient>(*this);
+  operation_mode_ = std::make_shared<OperationMode>(*this);
 }
 
 bool MockNode::is_ready() const
@@ -87,6 +129,7 @@ bool MockNode::is_ready() const
     if (!client->is_ready()) return false;
   }
   if (!driving_->is_ready()) return false;
+  if (!operation_mode_->is_ready()) return false;
   return true;
 }
 

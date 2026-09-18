@@ -17,6 +17,8 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <autoware_adapi_v1_msgs/msg/operation_mode_state.hpp>
+#include <autoware_adapi_v1_msgs/srv/change_operation_mode.hpp>
 #include <tier4_external_api_msgs/msg/driving_status.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_heartbeat.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_status.hpp>
@@ -31,6 +33,8 @@
 #include <unordered_map>
 #include <vector>
 
+using autoware_adapi_v1_msgs::msg::OperationModeState;
+using autoware_adapi_v1_msgs::srv::ChangeOperationMode;
 using tier4_external_api_msgs::msg::DrivingStatus;
 using tier4_external_api_msgs::msg::MonitoringHeartbeat;
 using tier4_external_api_msgs::msg::MonitoringStatus;
@@ -77,6 +81,27 @@ private:
   std::optional<DrivingStatus> status_;
 };
 
+class OperationMode
+{
+public:
+  explicit OperationMode(rclcpp::Node & node);
+  OperationMode(const OperationMode &) = delete;
+  OperationMode & operator=(const OperationMode &) = delete;
+
+  bool is_ready() const;
+  const OperationModeState & state() const { return state_; }
+
+private:
+  void change(uint8_t mode, const ChangeOperationMode::Response::SharedPtr res);
+  void publish();
+
+  rclcpp::Clock::SharedPtr clock_;
+  rclcpp::Publisher<OperationModeState>::SharedPtr pub_state_;
+  rclcpp::Service<ChangeOperationMode>::SharedPtr srv_change_stop_mode_;
+  rclcpp::Service<ChangeOperationMode>::SharedPtr srv_change_autonomous_mode_;
+  OperationModeState state_;
+};
+
 class MockNode : public rclcpp::Node
 {
 public:
@@ -85,11 +110,13 @@ public:
   void heartbeat();
   auto client(const std::string & name) { return clients_.at(name); }
   auto driving() { return driving_; }
+  auto operation_mode() { return operation_mode_; }
 
 private:
   std::vector<std::string> names_;
   std::unordered_map<std::string, std::shared_ptr<Client>> clients_;
   std::shared_ptr<DrivingClient> driving_;
+  std::shared_ptr<OperationMode> operation_mode_;
 };
 
 #endif  // CASES__UTIL__MOCK_HPP_
