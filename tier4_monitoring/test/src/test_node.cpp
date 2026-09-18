@@ -21,6 +21,7 @@
 
 #include <gtest/gtest.h>
 
+#include <cctype>
 #include <chrono>
 #include <cstdint>
 #include <functional>
@@ -39,7 +40,6 @@ struct MonitoringStatusTestParam
   uint8_t status;
 };
 
-// Converts the parameter into a test name such as "SupervisorMotOperating".
 std::string to_test_name(const testing::TestParamInfo<MonitoringStatusTestParam> & info)
 {
   std::string name;
@@ -87,7 +87,7 @@ protected:
   {
     const auto end = std::chrono::steady_clock::now() + timeout;
     while (std::chrono::steady_clock::now() < end) {
-      mock_->heartbeat();
+      if (heartbeat_enabled_) mock_->heartbeat();
       rclcpp::spin_some(node_);
       rclcpp::spin_some(mock_);
       if (condition()) return true;
@@ -96,25 +96,45 @@ protected:
     return condition();
   }
 
+  // Calls the change service and waits until the status is published back.
+  void change(const std::shared_ptr<Client> & client, uint8_t status)
+  {
+    auto future = client->change(status);
+    const auto is_received = [&future]() {
+      return future.wait_for(0s) == std::future_status::ready;
+    };
+    ASSERT_TRUE(spin_until(is_received, 3s));
+    ASSERT_EQ(future.get()->status.code, ResponseStatus::SUCCESS);
+
+    const auto is_changed = [client, status]() {
+      return client->status() && client->status()->status == status;
+    };
+    ASSERT_TRUE(spin_until(is_changed, 3s));
+  }
+
   std::shared_ptr<Monitoring> node_;
   std::shared_ptr<MockNode> mock_;
+  bool heartbeat_enabled_ = true;
 };
 
 TEST_P(MonitoringStatusTest, Change)
 {
   const auto & param = GetParam();
-  auto client = mock_->client(param.client);
-  auto future = client->change(param.status);
+  change(mock_->client(param.client), param.status);
+}
 
-  const auto is_received = [&future]() { return future.wait_for(0s) == std::future_status::ready; };
+TEST_P(MonitoringStatusTest, Timeout)
+{
+  const auto & param = GetParam();
+  const auto client = mock_->client(param.client);
+  ASSERT_NO_FATAL_FAILURE(change(client, param.status));
 
-  ASSERT_TRUE(spin_until(is_received, 3s));
-  ASSERT_EQ(future.get()->status.code, ResponseStatus::SUCCESS);
-
-  const auto is_changed = [client, param]() {
-    return client->status() && client->status()->status == param.status;
+  // The status returns to timeout when the heartbeat is no longer sent.
+  heartbeat_enabled_ = false;
+  const auto is_timeout = [client]() {
+    return client->status() && client->status()->status == MonitoringStatus::TIMEOUT;
   };
-  EXPECT_TRUE(spin_until(is_changed, 3s));
+  EXPECT_TRUE(spin_until(is_timeout, 3s));
 }
 
 INSTANTIATE_TEST_SUITE_P(
