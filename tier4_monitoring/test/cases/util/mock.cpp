@@ -14,8 +14,12 @@
 
 #include "mock.hpp"
 
+#include <autoware/lanelet2_utils/conversion.hpp>
+
+#include <cstdint>
 #include <memory>
 #include <string>
+#include <vector>
 
 Client::Client(rclcpp::Node & node, const std::string & name)
 {
@@ -113,6 +117,45 @@ void OperationMode::publish()
   pub_state_->publish(state_);
 }
 
+VectorMap::VectorMap(rclcpp::Node & node)
+{
+  pub_map_ =
+    node.create_publisher<LaneletMapBin>("/map/vector_map", rclcpp::QoS(1).transient_local());
+
+  const auto path = std::string(TEST_RESOURCE_PATH) + "/lanelet2.osm";
+  const auto map = autoware::experimental::lanelet2_utils::load_mgrs_coordinate_map(path);
+  pub_map_->publish(autoware::experimental::lanelet2_utils::to_autoware_map_msgs(map));
+}
+
+bool VectorMap::is_ready() const
+{
+  return pub_map_->get_subscription_count() != 0;
+}
+
+Routing::Routing(rclcpp::Node & node)
+{
+  clock_ = node.get_clock();
+  pub_route_ = node.create_publisher<Route>("/api/routing/route", rclcpp::QoS(1).transient_local());
+}
+
+bool Routing::is_ready() const
+{
+  return pub_route_->get_subscription_count() != 0;
+}
+
+void Routing::set_route(const std::vector<int64_t> & ids)
+{
+  Route msg;
+  msg.header.stamp = clock_->now();
+  msg.data.emplace_back();
+  for (const auto & id : ids) {
+    auto & segment = msg.data.front().segments.emplace_back();
+    segment.preferred.id = id;
+    segment.preferred.type = "lane";
+  }
+  pub_route_->publish(msg);
+}
+
 MockNode::MockNode() : rclcpp::Node("mock")
 {
   names_ = {"supervisor/mot", "supervisor/remote", "advisor/mot", "advisor/remote"};
@@ -121,6 +164,8 @@ MockNode::MockNode() : rclcpp::Node("mock")
   }
   driving_ = std::make_shared<DrivingClient>(*this);
   operation_mode_ = std::make_shared<OperationMode>(*this);
+  vector_map_ = std::make_shared<VectorMap>(*this);
+  routing_ = std::make_shared<Routing>(*this);
 }
 
 bool MockNode::is_ready() const
@@ -130,6 +175,8 @@ bool MockNode::is_ready() const
   }
   if (!driving_->is_ready()) return false;
   if (!operation_mode_->is_ready()) return false;
+  if (!vector_map_->is_ready()) return false;
+  if (!routing_->is_ready()) return false;
   return true;
 }
 

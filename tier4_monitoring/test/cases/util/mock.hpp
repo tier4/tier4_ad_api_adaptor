@@ -18,7 +18,9 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/operation_mode_state.hpp>
+#include <autoware_adapi_v1_msgs/msg/route.hpp>
 #include <autoware_adapi_v1_msgs/srv/change_operation_mode.hpp>
+#include <autoware_map_msgs/msg/lanelet_map_bin.hpp>
 #include <tier4_external_api_msgs/msg/driving_status.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_heartbeat.hpp>
 #include <tier4_external_api_msgs/msg/monitoring_status.hpp>
@@ -34,7 +36,9 @@
 #include <vector>
 
 using autoware_adapi_v1_msgs::msg::OperationModeState;
+using autoware_adapi_v1_msgs::msg::Route;
 using autoware_adapi_v1_msgs::srv::ChangeOperationMode;
+using autoware_map_msgs::msg::LaneletMapBin;
 using tier4_external_api_msgs::msg::DrivingStatus;
 using tier4_external_api_msgs::msg::MonitoringHeartbeat;
 using tier4_external_api_msgs::msg::MonitoringStatus;
@@ -102,6 +106,36 @@ private:
   OperationModeState state_;
 };
 
+// Dummy vector map that publishes the lanelet2 map in the test resource directory.
+class VectorMap
+{
+public:
+  explicit VectorMap(rclcpp::Node & node);
+  VectorMap(const VectorMap &) = delete;
+  VectorMap & operator=(const VectorMap &) = delete;
+
+  bool is_ready() const;
+
+private:
+  rclcpp::Publisher<LaneletMapBin>::SharedPtr pub_map_;
+};
+
+// Dummy routing that publishes a route consisting of the given lanelets.
+class Routing
+{
+public:
+  explicit Routing(rclcpp::Node & node);
+  Routing(const Routing &) = delete;
+  Routing & operator=(const Routing &) = delete;
+
+  bool is_ready() const;
+  void set_route(const std::vector<int64_t> & ids);
+
+private:
+  rclcpp::Clock::SharedPtr clock_;
+  rclcpp::Publisher<Route>::SharedPtr pub_route_;
+};
+
 class MockNode : public rclcpp::Node
 {
 public:
@@ -111,12 +145,15 @@ public:
   auto client(const std::string & name) { return clients_.at(name); }
   auto driving() { return driving_; }
   auto operation_mode() { return operation_mode_; }
+  auto routing() { return routing_; }
 
 private:
   std::vector<std::string> names_;
   std::unordered_map<std::string, std::shared_ptr<Client>> clients_;
   std::shared_ptr<DrivingClient> driving_;
   std::shared_ptr<OperationMode> operation_mode_;
+  std::shared_ptr<VectorMap> vector_map_;
+  std::shared_ptr<Routing> routing_;
 };
 
 #endif  // CASES__UTIL__MOCK_HPP_
